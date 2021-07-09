@@ -1,0 +1,74 @@
+#:kivy 2.0.0
+
+<LoadDialog>:
+    id: loaddialog
+    size: root.size
+    pos: root.pos
+    orientation: 'vertical'
+    FileChooserListView:
+        id: filechooser
+        path: 'problems'
+        on_submit: root.load(self.path, self.selection[0])
+
+    BoxLayout:
+        size_hint_y: None
+        Button:
+            text: 'Cancel'
+            size_hint_x: 0.5
+            on_release: root.cancel()
+
+        Button:
+            text: 'Load'
+            size_hint_x: 0.5
+            on_release: root.load(filechooser.path, filechooser.selection[0])
+
+<SaveDialog>:
+    id: savedialog
+    size: root.size
+    pos: root.pos
+    orientation: "vertical"
+    filename: filename
+
+    FileChooserListView:
+        id: filechooser
+        path: 'solutions'
+        on_selection: savedialog.update_name(self.selection)
+
+    TextInput:
+        id: filename
+        size_hint_y: None
+        multiline: False
+
+    BoxLayout:
+        size_hint_y: None
+        Button:
+            text: "Cancel"
+            size_hint_x: 0.5
+            on_release: root.cancel()
+
+        Button:
+            text: "Save"
+            size_hint_x: 0.5
+            on_release: root.save(filechooser.path, filename.text)
+
+<Field>:
+
+<Player>:
+    orientation: 'vertical'
+    field: field
+    
+    Field:
+        id: field
+        size_hint_x: 1
+        size_hint_y: 1
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint_y: None
+        Button:
+            text: 'Load'
+            size_hint_x: 0.5
+            on_release: root.show_load()
+        Button:
+            text: 'Save'
+            size_hint_x: 0.5
+            on_release: root.show_save()
