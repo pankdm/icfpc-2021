@@ -6,8 +6,10 @@ import Hole from './svg/Hole.jsx'
 import Figure from './svg/Figure.jsx'
 import RenderDebugger from './RenderDebugger.jsx'
 import styles from './ProblemViewer.module.css'
+import useBlip from '../utils/useBlip.js'
 
 export default function ProblemViewer({ problem, ...props }) {
+  const [shake, toggleShake] = useBlip(300)
   if (!problem) {
     return (
       <AspectRatioBox>
@@ -31,9 +33,10 @@ export default function ProblemViewer({ problem, ...props }) {
           <RenderDebugger name='ProblemViewer'/>
           <Hole safePadding={safePadding} vertices={hole} />
           <Grid xMin={xMin} yMin={yMin} xMax={xMax} yMax={yMax} color='#787' />
-          <Figure figure={figure} epsilon={epsilon} />
+          <Figure shake={shake} figure={figure} epsilon={epsilon} />
         </g>
       </svg>
+      <button className={styles.shakeButton} onClick={toggleShake}>Shake</button>
     </AspectRatioBox>
   )
 }

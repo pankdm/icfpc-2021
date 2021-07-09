@@ -1,10 +1,17 @@
 import React from 'react'
 import _ from 'lodash'
-import { animated } from 'react-spring'
+import Line from './Line.jsx'
+import Point from './Point.jsx'
+import { shakePoint } from '../../utils/utils.js'
+
+const springConfig={
+  tension: 250,
+  friction: 15,
+}
 
 export default function Figure({
   figure,
-  epsilon,
+  shake=false,
   snap=true,
   pointColor='#fff',
   pointRadius=0.5,
@@ -15,18 +22,20 @@ export default function Figure({
   ...props
 }) {
   const { vertices, edges } = figure
+  const _vertices = shake ? _.map(vertices, p => shakePoint(p)) : vertices
   return (
     <g id='figure' {...props}>
       {edges.map(([start, end], idx) => {
-        const [x1, y1] = vertices[start]
-        const [x2, y2] = vertices[end]
+        const [x1, y1] = _vertices[start]
+        const [x2, y2] = _vertices[end]
         return (
-          <animated.line
+          <Line
             key={idx}
             x1={x1}
             x2={x2}
             y1={y1}
             y2={y2}
+            springConfig={springConfig}
             stroke={lineColor}
             strokeWidth={lineWidth}
             strokeLinecap='round'
@@ -34,9 +43,9 @@ export default function Figure({
           />
         )
       })}
-      {vertices.map(([x, y], idx) => {
+      {_vertices.map(([x, y], idx) => {
         return (
-          <circle key={idx} cx={x} cy={y} r={0.5} fill={pointColor}/>
+          <Point key={idx} x={x} y={y} radius={0.5} color={pointColor} springConfig={springConfig} />
         )
       })}
     </g>

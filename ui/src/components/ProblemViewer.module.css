@@ -3,3 +3,9 @@
   height: 100%;
   background-color: rgb(153, 138, 124);
 }
+
+.shake-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}

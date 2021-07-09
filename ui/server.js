@@ -1,6 +1,7 @@
 import fs from 'fs'
 import express from 'express'
 import { createServer as createViteServer } from 'vite'
+import { naturalSort } from './src/utils/utils.js'
 
 const PORT = process.env.PORT || 3000
 
@@ -16,6 +17,11 @@ async function createServer() {
   app.get('/api', (req, res) => {
     res.status(200)
     res.send('ok')
+  })
+
+  app.get('/api/problems', (req, res) => {
+    const problems = fs.readdirSync('../problems')
+    res.send(problems.sort(naturalSort))
   })
 
   app.get('/api/problems/:id', (req, res) => {
