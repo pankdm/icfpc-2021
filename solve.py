@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import sys
+from typing import Tuple
 import json
 import copy
 import random
@@ -25,7 +26,52 @@ def dist2(pt1, pt2):
     return (x1 - x2) ** 2 + (y1 - y2) ** 2
 
 
+def ccw(A: Tuple, B: Tuple, C: Tuple):
+    # True if A, B, C are in counter-clockwise order
+    # Source https://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
+    return (C[1]-A[1])*(B[0]-A[0]) > (B[1]-A[1])*(C[0]-A[0])
+
+
+def segment_intersect(A: Tuple, B: Tuple, C: Tuple, D: Tuple) -> bool:
+    # Check if AB strictly intersects CD
+    if A in (C, D) or B in (C, D):
+        # Two edges share a vertex - no strict intersection
+        return False
+    return (ccw(A, C, D) + ccw(B, C, D) == 1 and ccw(A, D, C) + ccw(B, D, C) == 1
+            and ccw(A, B, C) + ccw(A, B, D) == 1 and ccw(A, C, B) + ccw(A, D, B) == 1)
+
+def test_intersect():
+    a,b,c,d,e = (0,0), (0,2), (2,2), (2,0), (1,1)
+    assert not segment_intersect(a,b,c,d)
+    assert segment_intersect(a,c,b,d)
+    assert not segment_intersect(a,c,e,b) # vertex inside the other edge
+    assert not segment_intersect(a,b,a,d)
+    assert not segment_intersect(a,d,a,b)
+    assert not segment_intersect(a,c,a,c)
+
+polygon = None
+
+
+def point_average(A: Tuple, B: Tuple, a=0.1) -> Tuple:
+    # Get a point on line AB, 'a' fraction distance from A
+    return ((1-a)*A[0]+a*B[0], (1-a)*A[1]+a*B[1])
+
+def is_edge_inside(spec, A: Tuple, B: Tuple):
+# Check if AB is fully within the hole
+    if not all(is_inside(polygon, *point_average(A, B, a)) for a in (0.1, 0.5, 0.9)):
+        return False
+    for i, v in enumerate(spec['hole']):
+        if i == 0:
+            continue
+        v_prev = spec['hole'][i-1]
+        if segment_intersect(v_prev, v, A, B):
+            return False
+    if segment_intersect(spec['hole'][-1], spec['hole'][0], A, B):
+        return False
+    return True
+
 def compute_inside_points(spec):
+    global polygon
     res = set()
 
     # compute bounding box
@@ -71,7 +117,6 @@ def check_distance(spec, orig_dist, new_dist):
 
 # solution = {id -> [x, y]}
 def check_partial_solution(spec, solution):
-    # TODO: check intersection with boundaries
     for edge in spec['figure']['edges']:
         a, b = edge
         if a in solution and b in solution:
@@ -138,7 +183,7 @@ class Solver():
         orig_dist = dist2(spec['figure']['vertices'][a], spec['figure']['vertices'][b])    
         for pt in self.inside_points:
             new_dist = dist2(solution[a], pt)
-            if check_distance(spec, orig_dist, new_dist):
+            if check_distance(spec, orig_dist, new_dist) and is_edge_inside(spec, solution[a], pt):
                 solution[b] = pt
                 self.try_solve(solution)
                 # otherwise restore previous state
@@ -160,7 +205,7 @@ class Solver():
                 if self.best_score == 0:
                     break
                 print ('Trying connecting index={} to {}'.format(index, first_hole_pt))
-                solution = {index: first_hole_pt}
+                solution = {index: tuple(first_hole_pt)}
 
                 self.try_solve(solution)
 
@@ -214,10 +259,12 @@ def solve_and_submit(problem_id):
         print ('Skipping submit as this is not better')
 
 if __name__ == "__main__":
-    # problem_id = sys.argv[1]
-    # solve_and_submit(problem_id)
-    for i in range(60, 79):
-        solve_and_submit(i)
+    if len(sys.argv)==2:
+        problem_id = sys.argv[1]
+        solve_and_submit(problem_id)
+    else:
+        for i in range(60, 79):
+            solve_and_submit(i)
 
 
 
