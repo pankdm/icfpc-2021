@@ -1,8 +1,10 @@
 import requests
 import os
+from dotenv import load_dotenv
 
 LAST_PROBLEM = 59
 
+load_dotenv()
 api_key = os.getenv('API_KEY')
 print (f'api_key = {api_key}')
 assert api_key is not None
