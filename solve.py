@@ -1,15 +1,12 @@
+#!/usr/bin/env python3
 import sys
 from utils import read_problem
 import json
+import copy
+
+from get_problems import submit_solution
 
 from shapely.geometry import Point, Polygon
-
-problem_id = sys.argv[1]
-print (f'Solving {problem_id}')
-
-spec = read_problem(problem_id)
-print (spec)
-
 
 def is_inside(polygon, x, y):
     pt = Point(x, y)
@@ -45,6 +42,13 @@ def compute_inside_points(spec):
     return res
 
 
+def count_dislikes(spec, solution):
+    total_dislikes = 0
+    for hole_pt in spec['hole']:
+        min_dist = min(dist2(hole_pt, pt) for pt in solution.values())
+        total_dislikes += min_dist
+    return total_dislikes
+
 def check_distance(spec, orig_dist, new_dist):
     if abs(1.0 * new_dist / orig_dist - 1) <= spec['epsilon'] / 10**6:
         return True
@@ -64,10 +68,14 @@ def check_partial_solution(spec, solution):
                 return False
     return True
 
+best_score = None
+best_solution = None
+
 def try_solve(spec, solution, inside_points):
+    global best_score, best_solution
     ok = check_partial_solution(spec, solution)
     if not ok:
-        return False
+        return
 
     # find next edge to add
     edge_to_add = None
@@ -87,7 +95,14 @@ def try_solve(spec, solution, inside_points):
         
     # nothing to add - this is final answer
     if edge_to_add is None:
-        return True
+        score = count_dislikes(spec, solution)
+        if best_score is None or score < best_score:
+            best_score = score
+            best_solution = copy.copy(solution)
+            print ("Found better score = {}, best solution = {}".format(
+                score, best_solution
+            ))
+        return
 
     # find next possible point for b
     orig_dist = dist2(spec['figure']['vertices'][a], spec['figure']['vertices'][b])    
@@ -95,30 +110,49 @@ def try_solve(spec, solution, inside_points):
         new_dist = dist2(solution[a], pt)
         if check_distance(spec, orig_dist, new_dist):
             solution[b] = pt
-            found = try_solve(spec, solution, inside_points)
-            if found:
-                return True
+            try_solve(spec, solution, inside_points)
             # otherwise restore previous state
+            if best_score == 0: break
             del solution[b]
     return False
-        
-inside = list(sorted(compute_inside_points(spec)))
-print ('inside points:', len(inside))
+
+def solve_and_submit(problem_id):
+    print (f'Solving {problem_id}')
+
+    spec = read_problem(problem_id)
+    print (spec)
+
+    inside = list(sorted(compute_inside_points(spec)))
+    print ('inside points:', len(inside))
 
 
-first_hole_pt = spec['hole'][0]
-total_points = len(spec['figure']['vertices'])
+    first_hole_pt = spec['hole'][0]
+    total_points = len(spec['figure']['vertices'])
 
-for index in range(total_points):
-    print ('Trying connecting index={} to {}'.format(index, first_hole_pt))
-    solution = {index: first_hole_pt}
-    found = try_solve(spec, solution, inside)
-    if found:
-        print ('Writing solution', solution)
-        with open(f'solutions/tmp/{problem_id}', 'w') as f:
-            vertices = []
-            for index in range(total_points):
-                vertices.append(solution[index])
-            res = {'vertices' : vertices}
-            f.write(json.dumps(res))
-        break
+    for index in range(total_points):
+        if best_score == 0:
+            break
+        print ('Trying connecting index={} to {}'.format(index, first_hole_pt))
+        solution = {index: first_hole_pt}
+        try_solve(spec, solution, inside)
+
+    print ('[score = {}], writing best solution {}'.format(best_score, best_solution))
+    dislikes = count_dislikes(spec, best_solution)
+    vertices = []
+    for index in range(total_points):
+        vertices.append(best_solution[index])
+    res = {'vertices' : vertices}
+    js_str = json.dumps(res)
+    with open(f'solutions/tmp/{problem_id}', 'w') as f:
+        f.write(js_str)
+    
+    submit_solution(problem_id, js_str)
+
+if __name__ == "__main__":
+    problem_id = sys.argv[1]
+    solve_and_submit(problem_id)
+
+
+
+
+
