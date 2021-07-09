@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "es2020",
+    "target": "es2020"
+  },
+  "exclude": ["./node_modules"],
+}

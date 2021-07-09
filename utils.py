@@ -16,3 +16,8 @@ class JSLikeObject():
         return json.dumps(self.__original_data)
     def __repr__(self):
         return str(self)
+
+
+def read_problem(problem_id):
+    with open(f'problems/{problem_id}') as f:
+        return json.loads(f.read())

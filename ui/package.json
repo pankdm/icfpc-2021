@@ -1,0 +1,24 @@
+{
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "nodemon --watch ./server.js server.js",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "type": "module",
+  "dependencies": {
+    "express": "^4.17.1",
+    "lodash": "^4.17.21",
+    "nodemon": "^2.0.11",
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0",
+    "react-hotkeys-hook": "^3.3.2",
+    "react-query": "^3.18.1",
+    "react-spring": "^9.2.3"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "@vitejs/plugin-react-refresh": "^1.3.1",
+    "vite": "^2.4.0"
+  }
+}
