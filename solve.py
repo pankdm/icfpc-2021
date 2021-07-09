@@ -126,15 +126,15 @@ def solve_and_submit(problem_id):
     print ('inside points:', len(inside))
 
 
-    first_hole_pt = spec['hole'][0]
     total_points = len(spec['figure']['vertices'])
-
-    for index in range(total_points):
-        if best_score == 0:
-            break
-        print ('Trying connecting index={} to {}'.format(index, first_hole_pt))
-        solution = {index: first_hole_pt}
-        try_solve(spec, solution, inside)
+    for first_index in range(len(spec['hole'])):
+        first_hole_pt = spec['hole'][first_index]
+        for index in range(total_points):
+            if best_score == 0:
+                break
+            print ('Trying connecting index={} to {}'.format(index, first_hole_pt))
+            solution = {index: first_hole_pt}
+            try_solve(spec, solution, inside)
 
     print ('[score = {}], writing best solution {}'.format(best_score, best_solution))
     dislikes = count_dislikes(spec, best_solution)
