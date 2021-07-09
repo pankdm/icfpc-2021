@@ -121,6 +121,8 @@ def solve_and_submit(problem_id):
 
     spec = read_problem(problem_id)
     print (spec)
+    print ('edges:', len(spec['figure']['edges']))
+    print ('vertices:', len(spec['figure']['vertices']))
 
     inside = list(sorted(compute_inside_points(spec)))
     print ('inside points:', len(inside))
