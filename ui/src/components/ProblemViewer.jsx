@@ -171,7 +171,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     let vertices = getCurrentVertices()
     const frozenPoints = frozenFigurePoints
     if (simMode == 'inflate') {
-      vertices = inflateLoop(vertices, { optimalDistancesMap })
+      vertices = inflateLoop(vertices, { optimalDistancesMap, frozenPoints })
     }
     if (simMode == 'simpleInflate') {
       vertices = inflateSimpleRadialLoop(vertices, { optimalDistancesMap, frozenPoints })
