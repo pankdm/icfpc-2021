@@ -14,12 +14,8 @@ from shapely.geometry import Point, Polygon
 from utils import read_problem
 from get_problems import submit_solution
 
-<<<<<<< HEAD
-TIMEOUT = 10 # seconds
-=======
 TIMEOUT = 60 # seconds
 eps = 1e-6
->>>>>>> 8a1817a (Fixed is_edge_inside() and pose validity check)
 
 
 def is_inside(polygon: Polygon, x, y, eps = 0):
@@ -228,28 +224,28 @@ class Solver():
         total_points = len(spec['figure']['vertices'])
 
         # start from some setup
-        # with open('solutions/manual/51_dm_start_1625955629376') as f:
-        #     start = json.loads(f.read())
-        # solution = {}
-        # for (idx, v) in enumerate(start['vertices']):
-        #     if v in spec['hole']:
-        #         solution[idx] = v
-        # print ('start with {} nodes'.format(len(solution)))
-        # self.try_solve(solution)
+        with open('solutions/manual/59_dm_start_1625956775678') as f:
+            start = json.loads(f.read())
+        solution = {}
+        for (idx, v) in enumerate(start['vertices']):
+            if v in spec['hole']:
+                solution[idx] = v
+        print ('start with {} nodes'.format(len(solution)))
+        self.try_solve(solution)
 
-        hole_indices = list(range(len(spec['hole'])))
-        random.shuffle(hole_indices)
-        for first_index in hole_indices:
-            first_hole_pt = spec['hole'][first_index]
-            point_indices = list(range(total_points))
-            random.shuffle(point_indices)
-            for index in point_indices:
-                if self.best_score == 0:
-                    break
-                print ('Trying connecting index={} to {}'.format(index, first_hole_pt))
-                solution = {index: tuple(first_hole_pt)}
+        # hole_indices = list(range(len(spec['hole'])))
+        # random.shuffle(hole_indices)
+        # for first_index in hole_indices:
+        #     first_hole_pt = spec['hole'][first_index]
+        #     point_indices = list(range(total_points))
+        #     random.shuffle(point_indices)
+        #     for index in point_indices:
+        #         if self.best_score == 0:
+        #             break
+        #         print ('Trying connecting index={} to {}'.format(index, first_hole_pt))
+        #         solution = {index: tuple(first_hole_pt)}
 
-                self.try_solve(solution)
+        #         self.try_solve(solution)
 
 
 

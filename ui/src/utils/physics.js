@@ -44,7 +44,7 @@ const applyForce = (vec, force) => vecAdd(vec, vecMult(force, TIME_STEP))
 export const applyConstraints = (vertices, { optimalDistancesMap, frozenPoints }) => {
   const newVertices = vertices.map((v, idx) => {
     let sumForce = [0,0]
-    if (frozenPoints.has(idx)) {
+    if (frozenPoints && frozenPoints.has(idx)) {
       return v
     }
     vertices.forEach((ov, ovIdx) => {
@@ -63,7 +63,7 @@ export const applyConstraints = (vertices, { optimalDistancesMap, frozenPoints }
 export const applyGravity = (vertices, { meanCoords, gravityCenter, frozenPoints }) => {
   const gravity = getLinearFravityForce(meanCoords, gravityCenter)
   const newVertices = vertices.map((v, idx) => {
-    if (frozenPoints.has(idx)) {
+    if (frozenPoints && frozenPoints.has(idx)) {
       return v
     }
     return applyForce(v, gravity)
@@ -73,7 +73,7 @@ export const applyGravity = (vertices, { meanCoords, gravityCenter, frozenPoints
 
 export const applyShake = (vertices, { maxAmplitude, frozenPoints }) => {
   const newVertices = vertices.map((v, idx) => {
-    if (frozenPoints.has(idx)) {
+    if (frozenPoints && frozenPoints.has(idx)) {
       return v
     }
     const randForce = vecRand(Math.random()*maxAmplitude/TIME_STEP)
@@ -84,7 +84,7 @@ export const applyShake = (vertices, { maxAmplitude, frozenPoints }) => {
 
 export const inflateSimpleRadial = (vertices, { meanCoords, simpleRepelConst, frozenPoints }) => {
   const newVertices = vertices.map((v, idx) => {
-    if (frozenPoints.has(idx)) {
+    if (frozenPoints && frozenPoints.has(idx)) {
       return v
     }
     let repelForce = getSimpleRadialForce(v, meanCoords, simpleRepelConst)
@@ -95,7 +95,7 @@ export const inflateSimpleRadial = (vertices, { meanCoords, simpleRepelConst, fr
 
 export const inflate = (vertices, { repelConst, maxRepel, frozenPoints }) => {
   const newVertices = vertices.map((v, idx) => {
-    if (frozenPoints.has(idx)) {
+    if (frozenPoints && frozenPoints.has(idx)) {
       return v
     }
     let repelForce = [0, 0]
@@ -110,24 +110,24 @@ export const inflate = (vertices, { repelConst, maxRepel, frozenPoints }) => {
 }
 
 // Top Level Anim Loop Simulation Functions
-export const inflateLoop = (vertices, { optimalDistancesMap, frozenPoints=[] }) => {
+export const inflateLoop = (vertices, { optimalDistancesMap, frozenPoints }) => {
   vertices = inflate(vertices, { frozenPoints })
   vertices = applyConstraints(vertices, { optimalDistancesMap, frozenPoints })
   return vertices
 }
 
-export const inflateSimpleRadialLoop = (vertices, { optimalDistancesMap, frozenPoints=[] }) => {
+export const inflateSimpleRadialLoop = (vertices, { optimalDistancesMap, frozenPoints }) => {
   const meanCoords = vecMean(vertices)
   vertices = inflateSimpleRadial(vertices, { meanCoords, frozenPoints })
   vertices = applyConstraints(vertices, { optimalDistancesMap, frozenPoints })
   return vertices
 }
 
-export const relaxLoop = (vertices, { optimalDistancesMap, frozenPoints=[] }) => {
+export const relaxLoop = (vertices, { optimalDistancesMap, frozenPoints }) => {
   return applyConstraints(vertices, { optimalDistancesMap, frozenPoints })
 }
 
-export const gravityLoop = (vertices, { gravityCenter, frozenPoints=[] }) => {
+export const gravityLoop = (vertices, { gravityCenter, frozenPoints }) => {
   const meanCoords = vecMean(vertices)
   return applyGravity(vertices, { meanCoords, gravityCenter, frozenPoints })
 }

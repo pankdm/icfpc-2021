@@ -63,6 +63,10 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     setFrozenFigurePoints(newSet)
   }
   const clearFrozenFigurePoints = () => setFrozenFigurePoints(new Set())
+  const unselectAllGluedPoints = () => {
+    stopPlaying()
+    clearFrozenFigurePoints()
+  }
   const minCoord = _.min([..._.flatten(hole), ..._.flatten(figure.vertices)])
   const maxCoord = _.max([..._.flatten(hole), ..._.flatten(figure.vertices)])
   const safePadding = 5
@@ -171,7 +175,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     let vertices = getCurrentVertices()
     const frozenPoints = frozenFigurePoints
     if (simMode == 'inflate') {
-      vertices = inflateLoop(vertices, { optimalDistancesMap })
+      vertices = inflateLoop(vertices, { optimalDistancesMap, frozenPoints })
     }
     if (simMode == 'simpleInflate') {
       vertices = inflateSimpleRadialLoop(vertices, { optimalDistancesMap, frozenPoints })
@@ -252,6 +256,9 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   useHotkeys('o', () => {
     toggleSimMode('infalte')
   }, {}, [toggleSimMode])
+  useHotkeys('s', () => {
+    snapVertices()
+  }, {}, [snapVertices])
   useDOMEvent('keydown', (ev) => {
     // on press Shift
     if (ev.keyCode == 16) {
@@ -327,7 +334,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         <button onClick={reset}>Reset</button>
         <Spacer />
         <button onClick={() => setMultiselectMode(!multiselectMode)}>{multiselectMode ? 'Selecting...' : 'Glue Points'}</button>
-        <button onClick={() => clearFrozenFigurePoints()}>Unselect {frozenFigurePoints.size}</button>
+        <button onClick={() => unselectAllGluedPoints()}>Unselect {frozenFigurePoints.size}</button>
         <button onClick={toggleDragMode}>{dragMode ? 'Pan Enabled' : 'Pan Disabled'}</button>
       </div>
       <div className={styles.bottomRight}>
