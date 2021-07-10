@@ -10,6 +10,9 @@ from kivy.properties import ObjectProperty
 from kivy.uix.popup import Popup
 from kivy.graphics import *
 
+from itertools import chain
+
+import json
 import os
 
 class LoadDialog(BoxLayout):
@@ -27,21 +30,47 @@ class SaveDialog(BoxLayout):
 
 
 class Field(Widget):
+    model = ObjectProperty(None)
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.bind(pos=self._update_canvas)
         self.bind(size=self._update_canvas)
+        self.bind(model=self._update_canvas)
 
     def _update_canvas(self, instance, value):
         self.canvas.clear()
+        if self.model:
+            points = self.model['hole'] + self.model['figure']['vertices']
+            self._min_x = min(p[0] for p in points)
+            self._max_x = max(p[0] for p in points)
+            self._min_y = min(p[1] for p in points)
+            self._max_y = max(p[1] for p in points)
+            self._width = max((self._max_x - self._min_x) * 1.2, 1)
+            self._height = max((self._max_y - self._min_y) * 1.2, 1)
+
+            scale = min(self.width / self._width, self.height / self._height)
+
+            hole = list(chain(*self.model['hole']))
+            vertices = self.model['figure']['vertices']
+
+            with self.canvas:
+                PushMatrix()
+                Translate(0, self.y)
+                Scale(scale, -scale, 1)
+                Translate(0, -self._height)
+                Color(1, 0, 0)
+                Line(points=hole, close=True)
+                Color(0, 1, 0)
+                for (i, j) in self.model['figure']['edges']:
+                    Line(points=vertices[i] + vertices[j])
+                PopMatrix()
 
 
 class Player(BoxLayout):
     loadfile = ObjectProperty(None)
     savefile = ObjectProperty(None)
     field = ObjectProperty(None)
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
     
     def dismiss_popup(self):
         self._popup.dismiss()
@@ -57,7 +86,8 @@ class Player(BoxLayout):
         self._popup.open()
 
     def load(self, path, filename):
-        print(os.path.join(path, filename))
+        with open(os.path.join(path, filename)) as stream:
+            self.field.model = json.load(stream)
         self.dismiss_popup()
 
     def save(self, path, filename):

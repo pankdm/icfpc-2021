@@ -52,10 +52,17 @@
             on_release: root.save(filechooser.path, filename.text)
 
 <Field>:
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
 
 <Player>:
     orientation: 'vertical'
     field: field
+    spacing: 16
     
     Field:
         id: field
@@ -64,6 +71,7 @@
     BoxLayout:
         orientation: 'horizontal'
         size_hint_y: None
+        size_y: 48
         Button:
             text: 'Load'
             size_hint_x: 0.5
