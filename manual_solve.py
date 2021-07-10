@@ -2,7 +2,7 @@
 from utils import read_problem
 
 
-problem_id = 49
+problem_id = 39
 spec = read_problem(problem_id)
 
 
