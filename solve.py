@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
 import sys
-from utils import read_problem
 import json
 import copy
+import random
+import time
 
-from get_problems import submit_solution
+import os.path
 
 from shapely.geometry import Point, Polygon
+
+from utils import read_problem
+from get_problems import submit_solution
+
+TIMEOUT = 10 # seconds
+
 
 def is_inside(polygon, x, y):
     pt = Point(x, y)
@@ -42,12 +49,20 @@ def compute_inside_points(spec):
     return res
 
 
-def count_dislikes(spec, solution):
+
+def count_dislikes_impl(spec, values):
     total_dislikes = 0
     for hole_pt in spec['hole']:
-        min_dist = min(dist2(hole_pt, pt) for pt in solution.values())
+        min_dist = min(dist2(hole_pt, pt) for pt in values)
         total_dislikes += min_dist
     return total_dislikes
+
+
+def count_dislikes(spec, solution):
+    return count_dislikes_impl(spec, solution.values())
+
+def count_dislikes_from_submitted(spec, js_output):
+    return count_dislikes_impl(spec, js_output['vertices'])
 
 def check_distance(spec, orig_dist, new_dist):
     if abs(1.0 * new_dist / orig_dist - 1) <= spec['epsilon'] / 10**6:
@@ -68,53 +83,87 @@ def check_partial_solution(spec, solution):
                 return False
     return True
 
-best_score = None
-best_solution = None
+class TimeoutException(Exception):
+    pass
 
-def try_solve(spec, solution, inside_points):
-    global best_score, best_solution
-    ok = check_partial_solution(spec, solution)
-    if not ok:
-        return
 
-    # find next edge to add
-    edge_to_add = None
-    for edge in spec['figure']['edges']:
-        a, b = edge
-        # swap to always treat as a in solution
-        if b in solution:
-            a, b = b, a
-        if a not in solution:
-            continue
-        assert (a in solution)
-        if b in solution:
-            continue
-        assert (b not in solution)
-        edge_to_add = a, b
-        break
-        
-    # nothing to add - this is final answer
-    if edge_to_add is None:
-        score = count_dislikes(spec, solution)
-        if best_score is None or score < best_score:
-            best_score = score
-            best_solution = copy.copy(solution)
-            print ("Found better score = {}, best solution = {}".format(
-                score, best_solution
-            ))
-        return
+class Solver():
+    def __init__(self, spec, inside_points):
+        self.spec = spec
+        self.inside_points = inside_points
+        self.best_score = None
+        self.best_solution = None
+        self.timer = None
 
-    # find next possible point for b
-    orig_dist = dist2(spec['figure']['vertices'][a], spec['figure']['vertices'][b])    
-    for pt in inside_points:
-        new_dist = dist2(solution[a], pt)
-        if check_distance(spec, orig_dist, new_dist):
-            solution[b] = pt
-            try_solve(spec, solution, inside_points)
-            # otherwise restore previous state
-            if best_score == 0: break
-            del solution[b]
-    return False
+    def try_solve(self, solution):
+        spec = self.spec
+        ok = check_partial_solution(spec, solution)
+        if not ok:
+            return
+
+        now = time.time()
+        delta = now - self.start
+        if delta > TIMEOUT:
+            print ('timeout after {} seconds'.format(delta))
+            raise TimeoutException()
+
+        # find next edge to add
+        edge_to_add = None
+        for edge in spec['figure']['edges']:
+            a, b = edge
+            # swap to always treat as a in solution
+            if b in solution:
+                a, b = b, a
+            if a not in solution:
+                continue
+            assert (a in solution)
+            if b in solution:
+                continue
+            assert (b not in solution)
+            edge_to_add = a, b
+            break
+            
+        # nothing to add - this is final answer
+        if edge_to_add is None:
+            score = count_dislikes(spec, solution)
+            if self.best_score is None or score < self.best_score:
+                self.best_score = score
+                self.best_solution = copy.copy(solution)
+                print ("Found better score = {}, best solution = {}, solution = {}".format(
+                    score, self.best_solution, solution
+                ))
+            return
+
+        # find next possible point for b
+        orig_dist = dist2(spec['figure']['vertices'][a], spec['figure']['vertices'][b])    
+        for pt in self.inside_points:
+            new_dist = dist2(solution[a], pt)
+            if check_distance(spec, orig_dist, new_dist):
+                solution[b] = pt
+                self.try_solve(solution)
+                # otherwise restore previous state
+                if self.best_score == 0: break
+                del solution[b]
+        return False
+
+    def full_solve(self):
+        # start the timer
+        self.start = time.time()
+
+        spec = self.spec
+        total_points = len(spec['figure']['vertices'])
+        for first_index in range(len(spec['hole'])):
+            first_hole_pt = spec['hole'][first_index]
+            point_indices = list(range(total_points))
+            random.shuffle(point_indices)
+            for index in point_indices:
+                if self.best_score == 0:
+                    break
+                print ('Trying connecting index={} to {}'.format(index, first_hole_pt))
+                solution = {index: first_hole_pt}
+
+                self.try_solve(solution)
+
 
 def solve_and_submit(problem_id):
     print (f'Solving {problem_id}')
@@ -127,32 +176,48 @@ def solve_and_submit(problem_id):
     inside = list(sorted(compute_inside_points(spec)))
     print ('inside points:', len(inside))
 
+    solver = Solver(spec, inside)
+    try:
+        solver.full_solve()
+    except TimeoutException:
+        pass
 
     total_points = len(spec['figure']['vertices'])
-    for first_index in range(len(spec['hole'])):
-        first_hole_pt = spec['hole'][first_index]
-        for index in range(total_points):
-            if best_score == 0:
-                break
-            print ('Trying connecting index={} to {}'.format(index, first_hole_pt))
-            solution = {index: first_hole_pt}
-            try_solve(spec, solution, inside)
+    print ('[score = {}], best solution {}'.format(solver.best_score, solver.best_solution))
+    if solver.best_score is None:
+        return
 
-    print ('[score = {}], writing best solution {}'.format(best_score, best_solution))
-    dislikes = count_dislikes(spec, best_solution)
-    vertices = []
-    for index in range(total_points):
-        vertices.append(best_solution[index])
-    res = {'vertices' : vertices}
-    js_str = json.dumps(res)
-    with open(f'solutions/tmp/{problem_id}', 'w') as f:
-        f.write(js_str)
-    
-    submit_solution(problem_id, js_str)
+    dislikes = count_dislikes(spec, solver.best_solution)
+
+    solution_file = f'solutions/tmp/{problem_id}'
+
+    # check if some solution already exist
+    old_score = None
+    if os.path.isfile(solution_file):
+        with open(solution_file, 'r') as f:
+            old_solution = json.loads(f.read())
+            old_score = count_dislikes_from_submitted(spec, old_solution)
+
+    if old_score is None or solver.best_score < old_score:
+        print("[old score = {}] -> Overwriting".format(old_score))
+        vertices = []
+        for index in range(total_points):
+            vertices.append(solver.best_solution[index])
+
+        res = {'vertices' : vertices}
+        js_str = json.dumps(res)
+        with open(solution_file, 'w') as f:
+            f.write(js_str)
+        
+        submit_solution(problem_id, js_str)
+    else:
+        print ('Skipping submit as this is not better')
 
 if __name__ == "__main__":
-    problem_id = sys.argv[1]
-    solve_and_submit(problem_id)
+    # problem_id = sys.argv[1]
+    # solve_and_submit(problem_id)
+    for i in range(26, 60):
+        solve_and_submit(i)
 
 
 
