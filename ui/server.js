@@ -33,6 +33,7 @@ const getSolutions = (folder) => {
 
 async function createServer() {
   const app = express()
+  app.use(express.json())
   const vite = await createViteServer({
     server: {
       middlewareMode: 'html',
@@ -66,6 +67,13 @@ async function createServer() {
       const solutions = getSolutions('../solutions')
       res.send(solutions[problemId] || [])
     }
+  })
+  app.post('/api/solutions/:problemId', (req, res) => {
+    const { problemId } = req.params
+    const solution = req.body
+    fs.writeFileSync(`../solutions/manual/${problemId}_${Date.now()}`, JSON.stringify(solution))
+    res.status(201)
+    res.send()
   })
 
   // UI frontend server Vite.js

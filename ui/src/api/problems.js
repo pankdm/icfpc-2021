@@ -28,3 +28,7 @@ export function useSolution(problemId, solutionId, opts={}) {
   const finalOpts = _.merge(defaultOpts, opts)
   return useQuery(`solution_${solutionId}`, () => fetchJson(`${API_ROOT}/solutions/${problemId}?solutionKey=${encodeURIComponent(solutionId)}`), finalOpts)
 }
+
+export function saveSolution(problemId, solution) {
+  return fetch(`${API_ROOT}/solutions/${problemId}`, { method: 'POST', json: solution })
+}

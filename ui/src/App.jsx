@@ -4,7 +4,7 @@ import Flex from './components/Flex.jsx'
 import ProblemViewer from './components/ProblemViewer.jsx'
 import styles from './App.module.css'
 import useLocalStorage from './utils/useLocalStorage.js'
-import { useProblems, useProblem, useSolutions, useSolution } from './api/problems'
+import { useProblems, useProblem, useSolutions, useSolution, saveSolution } from './api/problems'
 
 function App() {
   const [problemId, setProblemId] = useLocalStorage('problemId', 1)
@@ -13,6 +13,10 @@ function App() {
   const { data: problem } = useProblem(problemId, { enabled: !!problemId })
   const { data: solutions } = useSolutions(problemId, { enabled: !!problemId, refetchInterval: 1000 })
   const { data: solution, refetch: refetchSolution } = useSolution(problemId, solutionId, { enabled: !!problemId && !!solutionId })
+  const onSaveSolution = (problemId, solution) => {
+    console.log('Saving solution', problemId, solution)
+    return saveSolution(problemId, solution)
+  }
   return (
     <div className={styles.app}>
       <h1>Welcome to ICFPC 2021!</h1>
@@ -57,7 +61,13 @@ function App() {
         }
       </p>
       {problem &&
-        <ProblemViewer key={problemId} problem={problem} solution={solution} />
+        <ProblemViewer
+          key={problemId}
+          problemId={problemId}
+          problem={problem}
+          solution={solution}
+          onSaveSolution={onSaveSolution}
+        />
       }
     </div>
   )

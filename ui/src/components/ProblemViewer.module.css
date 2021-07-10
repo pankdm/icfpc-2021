@@ -6,6 +6,12 @@
   user-select: none;
 }
 
+.top-left {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+}
+
 .top-right {
   position: absolute;
   top: 1rem;

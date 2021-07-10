@@ -12,8 +12,9 @@ import { useOnChangeValues } from '../utils/useOnChange.js'
 import useAnimLoop from '../utils/useAnimLoop.js'
 import { useHotkeys } from 'react-hotkeys-hook'
 import useDrag from '../utils/useDrag.js'
+import useBlip from '../utils/useBlip.js'
 
-export default function ProblemViewer({ problem, solution, ...props }) {
+export default function ProblemViewer({ problemId, problem, solution, onSaveSolution, ...props }) {
   const { hole, epsilon, figure } = problem
   const epsilonFraction = epsilon/1e6
   const zeroPointLocation = useRef()
@@ -35,6 +36,7 @@ export default function ProblemViewer({ problem, solution, ...props }) {
   }
   const overriddenVertices = useRef(null)
   const [zoom, setZoom] = useState(0)
+  const [saved, toggleSaved] = useBlip(300)
   const zoomScale = 2**-zoom
   const [panDragStartPoint, setPanDragStartPoint] = useState(null)
   const [panDragStartOffset, setPanDragStartOffset] = useState(null)
@@ -198,7 +200,6 @@ export default function ProblemViewer({ problem, solution, ...props }) {
   useOnChangeValues([problem, solution], () => {
     reset()
   })
-
   return (
     <AspectRatioBox>
       <svg ref={svgRef} className={styles.svg} viewBox={`${0} ${0} ${xMax - xMin} ${yMax - yMin}`}>
@@ -231,6 +232,17 @@ export default function ProblemViewer({ problem, solution, ...props }) {
           </Group>
         </Group>
       </svg>
+      <div className={styles.topLeft}>
+        <button
+          disabled={saved}
+          onClick={() => {
+            onSaveSolution(problemId, { vertices: getCurrentVertices() })
+            toggleSaved()
+          }
+        }>
+          {saved ? 'Saved' : 'Save'}
+        </button>
+      </div>
       <div className={styles.topRight}>
         <button onClick={togglePlaying}>{playing ? 'Physics: on' : 'Physics: off'}</button>
         <button onClick={() => toggleSimMode('inflate')}>{simMode == 'inflate' ? 'Inflating' : 'Inflate'}</button>
