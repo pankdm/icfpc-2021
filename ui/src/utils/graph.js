@@ -87,6 +87,9 @@ export const vecRand = (abs=1) => {
   return [abs*Math.cos(randAngle), abs*Math.sin(randAngle)]
 }
 export const isVecZero = (vec) => vec[0]==0&&vec[1]==0
+export const snapVecs = (vecs) => {
+  return _.map(vecs, v => [Math.round(v[0]), Math.round(v[1])])
+}
 
 export function getDistances(points, edges) {
   return edges.map(([p1, p2]) => distance(points[p1], points[p2]))

@@ -6,7 +6,7 @@ import Grid from './svg/Grid.jsx'
 import Hole from './svg/Hole.jsx'
 import Figure from './svg/Figure.jsx'
 import styles from './ProblemViewer.module.css'
-import { getDistanceMap, getDistances, getScore, vecAdd, vecSub } from '../utils/graph.js'
+import { getDistanceMap, getDistances, getScore, snapVecs, vecAdd, vecSub } from '../utils/graph.js'
 import { inflateLoop, inflateSimpleRadialLoop, relaxLoop, gravityLoop, applyShake } from '../utils/physics.js'
 import { useOnChangeValues } from '../utils/useOnChange.js'
 import useAnimLoop from '../utils/useAnimLoop.js'
@@ -172,6 +172,11 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     vertices = applyShake(vertices, { maxAmplitude: 3, frozenPoints: frozenFigurePoints })
     setOverriddenVertices(vertices)
   }
+  const snapVertices = () => {
+    let vertices = getCurrentVertices()
+    vertices = snapVecs(vertices)
+    setOverriddenVertices(vertices)
+  }
   const reset = () => {
     setSimMode(null)
     stopPlaying()
@@ -249,6 +254,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         <button onClick={() => toggleSimMode('simpleInflate')}>{simMode == 'simpleInflate' ? 'Stretching' : 'Stretch'}</button>
         <button onClick={() => toggleSimMode('gravity')}>{simMode == 'gravity' ? 'Gravitating' : 'Gravity'}</button>
         <button onClick={singleShake}>Shake</button>
+        <button onClick={snapVertices}>Snap</button>
         <button onClick={reset}>Reset</button>
       </div>
       <div className={styles.bottomRight}>
