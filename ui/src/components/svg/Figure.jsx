@@ -12,11 +12,12 @@ const springConfig={
 export default function Figure({
   figure,
   shake=false,
-  snap=true,
   pointColor='#fff',
   pointRadius=0.5,
   lineColor='red',
   lineWidth=0.5,
+  stretchedLines=null,
+  shrinkedLines=null,
   stretchColor='gold',
   shrinkColor='orange',
   ...props

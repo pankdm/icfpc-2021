@@ -5,8 +5,20 @@
   transform: translateZ(0);
 }
 
-.shake-button {
+.control-buttons {
   position: absolute;
   top: 1rem;
   right: 1rem;
+}
+
+.control-buttons button {
+  display: block;
+  min-width: 5em;
+  margin-bottom: .5em;
+  font-size: 100%;
+  appearance: unset;
+  border: 1px solid #888;
+  border-radius: .25rem;
+  padding: .25em .25em;
+  cursor: pointer;
 }
