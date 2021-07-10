@@ -50,13 +50,10 @@ export function RGBToHexColor(r, g, b) {
 
 export function hexColorLerp(fromHexColor, toHexColor, alpha) {
   const [rFrom, gFrom, bFrom] = hexColorToRGB(fromHexColor)
-  console.log(rFrom, gFrom, bFrom)
   const [rTo, gTo, bTo] = hexColorToRGB(toHexColor)
-  console.log(rTo, gTo, bTo)
   const r = lerp(rFrom, rTo, alpha)
   const g = lerp(gFrom, gTo, alpha)
   const b = lerp(bFrom, bTo, alpha)
-  console.log(r, g, b)
   return RGBToHexColor(r, g, b)
 }
 
@@ -101,13 +98,11 @@ export function RGBToHSL(r, g, b) {
 
 export function hexColorToHSL(hexColor) {
   const [r, g, b] = hexColorToRGB(hexColor)
-  console.log(r,g,b)
   return RGBToHSL(r, g, b)
 }
 
 export function HSLToHexColor(h, s, l) {
   const [r, g, b] = HSLToRGB(h, s, l)
-  console.log(r,g,b)
   return RGBToHexColor(r, g, b)
 }
 
