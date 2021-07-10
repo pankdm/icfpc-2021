@@ -209,6 +209,18 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     vertices = snapVecs(vertices)
     setOverriddenVertices(vertices)
   }
+  const rotateCw = (phi) => {
+    let vertices = getCurrentVertices()
+    const cosPhi = Math.cos(phi)
+    const sinPhi = Math.sin(phi)
+
+    vertices = vertices.map(([x, y]) => {
+      let _x = (x - xMean) * cosPhi - (y - yMean) * sinPhi + xMean
+      let _y = (x - xMean) * sinPhi + (y - yMean) * cosPhi + yMean
+      return [_x, _y];
+    })
+    setOverriddenVertices(vertices)
+  }
   const reset = () => {
     setSimMode(null)
     stopPlaying()
@@ -216,6 +228,12 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     setZoom(0)
     setPanOffset([0, 0])
   }
+  useHotkeys('e', () => {
+    rotateCw(Math.PI/12)
+  }, {}, [rotateCw])
+  useHotkeys('q', () => {
+      rotateCw(-Math.PI/12)
+    }, {}, [rotateCw])
   useHotkeys('r', () => {
     reset()
   }, {}, [reset])
