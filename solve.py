@@ -14,7 +14,7 @@ from shapely.geometry import Point, Polygon
 from utils import read_problem
 from get_problems import submit_solution
 
-TIMEOUT = 60 # seconds
+TIMEOUT = 10 # seconds
 
 
 def is_inside(polygon: Polygon, x, y):
@@ -218,8 +218,8 @@ class Solver():
         spec = self.spec
         total_points = len(spec['figure']['vertices'])
 
-        # # start from some setup
-        # with open('38_start') as f:
+        # start from some setup
+        # with open('solutions/manual/35_dm_start_1625954779909') as f:
         #     start = json.loads(f.read())
         # solution = {}
         # for (idx, v) in enumerate(start['vertices']):
@@ -241,6 +241,7 @@ class Solver():
                 solution = {index: tuple(first_hole_pt)}
 
                 self.try_solve(solution)
+
 
 
 class GreedySolver:
