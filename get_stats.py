@@ -46,7 +46,7 @@ def parse_problems_html(html):
 if __name__ == "__main__":
     html = get_problem_stats()
     output = parse_problems_html(html)
-    file_name = "data/stat.json"
+    file_name = "data/stats.json"
     print ('Writing stats to {}'.format(file_name))
     with open(file_name, 'w') as f:
         f.write(json.dumps(output, indent=4))
