@@ -166,7 +166,7 @@ class Solver():
 
 
 def solve_and_submit(problem_id):
-    print (f'Solving {problem_id}')
+    print (f'=== Solving {problem_id} ====')
 
     spec = read_problem(problem_id)
     print (spec)
@@ -216,7 +216,7 @@ def solve_and_submit(problem_id):
 if __name__ == "__main__":
     # problem_id = sys.argv[1]
     # solve_and_submit(problem_id)
-    for i in range(26, 60):
+    for i in range(60, 79):
         solve_and_submit(i)
 
 
