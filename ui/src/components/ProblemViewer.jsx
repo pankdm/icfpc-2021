@@ -225,6 +225,22 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     })
     setOverriddenVertices(vertices)
   }
+  const flipHz = () => {
+    let vertices = getCurrentVertices()
+    vertices = vertices.map(([x, y]) => {
+      let _x = xMean - (x - xMean)
+      return [_x, y]
+    })
+    setOverriddenVertices(vertices)
+  }
+  const flipVert = () => {
+    let vertices = getCurrentVertices()
+    vertices = vertices.map(([x, y]) => {
+      let _y = yMean - (y - yMean)
+      return [x, _y]
+    })
+    setOverriddenVertices(vertices)
+  }
   const reset = () => {
     setSimMode(null)
     stopPlaying()
@@ -236,8 +252,14 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     rotateCw(Math.PI/12)
   }, {}, [rotateCw])
   useHotkeys('q', () => {
-      rotateCw(-Math.PI/12)
-    }, {}, [rotateCw])
+    rotateCw(-Math.PI/12)
+  }, {}, [rotateCw])
+  useHotkeys('a', () => {
+    flipHz()
+  }, {}, [flipHz])
+  useHotkeys('d', () => {
+    flipVert()
+  }, {}, [flipVert])
   useHotkeys('r', () => {
     reset()
   }, {}, [reset])
