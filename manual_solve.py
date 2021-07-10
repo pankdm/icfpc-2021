@@ -2,7 +2,7 @@
 from utils import read_problem
 
 
-problem_id = 26
+problem_id = 49
 spec = read_problem(problem_id)
 
 
@@ -18,8 +18,8 @@ def dist2(pt1, pt2):
     return (x1 - x2) ** 2 + (y1 - y2) ** 2
 
 hole = spec['hole']
-for i in range(len(hole)):
-    print (i, (i + 1) % len(hole), dist2(hole[i], hole[(i + 1) % len(hole)]))
+# for i in range(len(hole)):
+#     print (i, (i + 1) % len(hole), dist2(hole[i], hole[(i + 1) % len(hole)]))
 
 print ("======")
 
@@ -36,8 +36,7 @@ def find_all_pairs(new_dist):
     
 
 v = spec['figure']['vertices']
-for (a, b) in spec['figure']['edges']:
-    if a != 4 and b !=  4:
-        new_dist = dist2(v[a], v[b])
-        valid = find_all_pairs(new_dist)
-        print (a, b, new_dist, valid)
+for (a, b) in sorted(spec['figure']['edges']):
+    new_dist = dist2(v[a], v[b])
+    valid = find_all_pairs(new_dist)
+    print (a, b, new_dist, valid)

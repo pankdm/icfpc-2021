@@ -14,7 +14,7 @@ from shapely.geometry import Point, Polygon
 from utils import read_problem
 from get_problems import submit_solution
 
-TIMEOUT = 7 # seconds
+TIMEOUT = 60 # seconds
 
 
 def is_inside(polygon: Polygon, x, y):
