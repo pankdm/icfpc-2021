@@ -12,8 +12,9 @@ const springConfig={
 }
 
 export default function Figure({
-  figure,
-  shake=false,
+  vertices,
+  edges,
+  hint=false,
   pointColor='#fff',
   pointRadius=0.5,
   lineColor='red',
@@ -24,8 +25,7 @@ export default function Figure({
   shrinkColor='orange',
   ...props
 }) {
-  const { vertices, edges } = figure
-  const _vertices = shake ? _.map(vertices, p => shakePoint(p)) : vertices
+  const _vertices = hint ? _.map(vertices, p => shakePoint(p)) : vertices
   return (
     <g id='figure' {...props}>
       {edges.map(([start, end], idx) => {

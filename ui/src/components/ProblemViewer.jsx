@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import _ from 'lodash'
 import AspectRatioBox from './AspectRatioBox.jsx'
 import Grid from './svg/Grid.jsx'
@@ -7,25 +7,17 @@ import Figure from './svg/Figure.jsx'
 import styles from './ProblemViewer.module.css'
 import useBlip from '../utils/useBlip.js'
 import { getDistanceMap } from '../utils/graph.js'
-import { relaxVertices } from '../utils/physics.js'
+import { inflateLoop, inflateSimpleRadialLoop, relaxLoop, gravityLoop, applyShake } from '../utils/physics.js'
 import { useOnChangeValues } from '../utils/useOnChange.js'
 import useAnimLoop from '../utils/useAnimLoop.js'
+import useToggle from '../utils/useToggle.js'
+import { useHotkeys } from 'react-hotkeys-hook'
 
 export default function ProblemViewer({ problem, solution, ...props }) {
-  const [shake, toggleShake] = useBlip(300)
-  const _overriddenVertices = useRef(null)
-  const [overriddenVertices, setOverriddenVertices] = useState(null)
-  const { playing, togglePlaying, stopPlaying } = useAnimLoop(() => {
-    let _vertices = _overriddenVertices.current || (solution ? solution.vertices : figure.vertices)
-    _vertices = relaxVertices(_vertices, optimalDistancesMap, [xMean, yMean])
-    _overriddenVertices.current = _vertices
-    setOverriddenVertices(_vertices)
-  })
-  const reset = () => {
-    stopPlaying()
-    _overriddenVertices.current = null
-    setOverriddenVertices(null)
-  }
+  const [hint, toggleHint] = useBlip(300)
+  const overriddenVertices = useRef(null)
+  const [overriddenVerticesKey, setOverriddenVerticesKey] = useState(null)
+  const [simMode, setSimMode] = useState(null)
   const { hole, epsilon, figure } = problem
   const minCoord = _.min([..._.flatten(hole), ..._.flatten(figure.vertices)])
   const maxCoord = _.max([..._.flatten(hole), ..._.flatten(figure.vertices)])
@@ -36,12 +28,57 @@ export default function ProblemViewer({ problem, solution, ...props }) {
   const yMax = maxCoord + safePadding
   const xMean = (maxCoord - minCoord) / 2
   const yMean = (maxCoord - minCoord) / 2
-  const optimalDistancesMap = useMemo(() => getDistanceMap(figure.vertices, figure.edges), [figure])
-  useOnChangeValues([problem, solution], () => {
+  const getCurrentVertices = () => overriddenVertices.current || (solution && solution.vertices) || figure.vertices
+  const setOverriddenVertices = (vertices) => {
+    overriddenVertices.current = vertices
+    setOverriddenVerticesKey(vertices ? Math.random() : null)
+  }
+  const optimalDistancesMap = useMemo(() => {
+    console.log('distance map')
+    return getDistanceMap(figure.vertices, figure.edges)
+  }, [figure])
+  const { playing, togglePlaying, stopPlaying } = useAnimLoop(() => {
+    let vertices = getCurrentVertices()
+    if (simMode == 'inflate') {
+      vertices = inflateLoop(vertices, { optimalDistancesMap })
+    }
+    if (simMode == 'simpleInflate') {
+      vertices = inflateSimpleRadialLoop(vertices, { optimalDistancesMap })
+    }
+    if (simMode == 'gravity') {
+      vertices = gravityLoop(vertices, { gravityCenter: [xMean, yMean] })
+    }
+    vertices = relaxLoop(vertices, { optimalDistancesMap })
+    setOverriddenVertices(vertices)
+  }, {}, [simMode, optimalDistancesMap, xMean, yMean])
+  const toggleSimMode = (mode) => {
+    if (mode != simMode) {
+      setSimMode(mode)
+      if (!playing) {
+        togglePlaying()
+      }
+    } else {
+      setSimMode(null)
+    }
+  }
+  useHotkeys('p', () => {
+    togglePlaying()
+  }, {}, [togglePlaying])
+  const singleShake = () => {
+    let vertices = getCurrentVertices()
+    console.log(vertices[0])
+    vertices = applyShake(vertices, { maxAmplitude: 3 })
+    console.log(vertices[0])
+    setOverriddenVertices(vertices)
+  }
+  const reset = () => {
+    setSimMode(null)
+    stopPlaying()
     setOverriddenVertices(null)
+  }
+  useOnChangeValues([problem, solution], () => {
+    reset()
   })
-  const _vertices = overriddenVertices || (solution ? solution.vertices : figure.vertices)
-  const _figure = {...figure, vertices: _vertices}
 
   return (
     <AspectRatioBox>
@@ -49,12 +86,16 @@ export default function ProblemViewer({ problem, solution, ...props }) {
         <g transform={`translate(${-xMin},${-yMin})`}>
           <Hole safePadding={safePadding} vertices={hole} />
           <Grid xMin={xMin} yMin={yMin} xMax={xMax} yMax={yMax} color='#787' />
-          <Figure shake={shake} figure={_figure} epsilon={epsilon} />
+          <Figure hint={hint} edges={figure.edges} vertices={getCurrentVertices()} epsilon={epsilon} />
         </g>
       </svg>
       <div className={styles.controlButtons}>
-        <button onClick={toggleShake}>Shake</button>
-        <button onClick={togglePlaying}>{playing ? 'Relaxing' : 'Relax'}</button>
+        <button onClick={toggleHint}>Hint</button>
+        <button onClick={togglePlaying}>{playing ? 'Physics: on' : 'Physics: off'}</button>
+        <button onClick={() => toggleSimMode('inflate')}>{simMode == 'inflate' ? 'Inflating' : 'Inflate'}</button>
+        <button onClick={() => toggleSimMode('simpleInflate')}>{simMode == 'simpleInflate' ? 'Stretching' : 'Sretch'}</button>
+        <button onClick={() => toggleSimMode('gravity')}>{simMode == 'gravity' ? 'Gravitating' : 'Gravity'}</button>
+        <button onClick={singleShake}>Shake</button>
         <button onClick={reset}>Reset</button>
       </div>
     </AspectRatioBox>
