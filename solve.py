@@ -14,7 +14,7 @@ from shapely.geometry import Point, Polygon
 from utils import read_problem
 from get_problems import submit_solution
 
-TIMEOUT = 15 # seconds
+TIMEOUT = 7 # seconds
 
 
 def is_inside(polygon: Polygon, x, y):
@@ -90,7 +90,9 @@ def compute_inside_points(spec):
         for y in range(ymin, ymax + 1):
             if is_inside(polygon, x, y):
                 res.add((x, y))
-    return list(res), polygon
+    res = list(res)
+    random.shuffle(res)
+    return res, polygon
 
 
 
@@ -344,9 +346,10 @@ def solve_and_submit(problem_id):
     total_points = len(spec['figure']['vertices'])
     # write_solution(f'solutions/debug/{problem_id}', total_points, solver.partial_solution)
 
-    print ('[score = {}], best solution {}'.format(solver.best_score, solver.best_solution))
     if solver.best_score is None:
+        print("No solution found")
         return
+    print(f'[score = {solver.best_score}], best solution 0->{solver.best_solution[0]}, 1>{solver.best_solution[1]}, ...')
 
     dislikes = count_dislikes(spec, solver.best_solution)
 
@@ -375,7 +378,7 @@ if __name__ == "__main__":
         problem_id = sys.argv[1]
         solve_and_submit(problem_id)
     else:
-        for i in range(1, 11):
+        for i in (50, 54, 55, 67, 70, 73, 77):
             solve_and_submit(i)
 
 
