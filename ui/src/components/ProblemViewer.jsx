@@ -1,6 +1,8 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import _ from 'lodash'
 import AspectRatioBox from './AspectRatioBox.jsx'
+import Spacer from './Spacer.jsx'
+import Bonuses from './svg/Bonuses.jsx'
 import Group from './svg/Group.jsx'
 import Grid from './svg/Grid.jsx'
 import Hole from './svg/Hole.jsx'
@@ -14,9 +16,11 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import useDrag from '../utils/useDrag.js'
 import useBlip from '../utils/useBlip.js'
 import useLocalStorage from '../utils/useLocalStorage.js'
+import useDOMEvent from '../utils/useDOMEvent.js'
+
 
 export default function ProblemViewer({ problemId, problem, solution, onSaveSolution, ...props }) {
-  const { hole, epsilon, figure } = problem
+  const { hole, epsilon, figure, bonuses } = problem
   const epsilonFraction = epsilon/1e6
   const zeroPointLocation = useRef()
   const getZeroPointClientLocation = () => {
@@ -38,14 +42,31 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   const [username, setUsername] = useLocalStorage('username', 'Snake-n-Lambda')
   const overriddenVertices = useRef(null)
   const [zoom, setZoom] = useState(0)
+  const [dragMode, setDragMode] = useState(true)
   const [saved, toggleSaved] = useBlip(300)
   const zoomScale = 2**-zoom
   const [panDragStartPoint, setPanDragStartPoint] = useState(null)
   const [panDragStartOffset, setPanDragStartOffset] = useState(null)
+  const [multiselectMode, setMultiselectMode] = useState(false)
   const [panOffset, setPanOffset] = useState([0, 0])
   const [overriddenVerticesKey, setOverriddenVerticesKey] = useState(null)
   const [simMode, setSimMode] = useState(null)
-  const [frozenFigurePoints, setFrozenFigurePoints] = useState([])
+  const [frozenFigurePoints, setFrozenFigurePoints] = useState(new Set())
+  const addFrozenFigurePoint = (idx) => {
+    const newSet = new Set(frozenFigurePoints)
+    newSet.add(idx)
+    setFrozenFigurePoints(newSet)
+  }
+  const removeFrozenFigurePoint = (idx) => {
+    const newSet = new Set(frozenFigurePoints)
+    newSet.delete(idx)
+    setFrozenFigurePoints(newSet)
+  }
+  const clearFrozenFigurePoints = () => setFrozenFigurePoints(new Set())
+  const unselectAllGluedPoints = () => {
+    stopPlaying()
+    clearFrozenFigurePoints()
+  }
   const minCoord = _.min([..._.flatten(hole), ..._.flatten(figure.vertices)])
   const maxCoord = _.max([..._.flatten(hole), ..._.flatten(figure.vertices)])
   const safePadding = 5
@@ -73,35 +94,41 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     const dy = clientDelta[1]*yScale
     return [dx, dy]
   }
-  useDrag(svgRef, [zoomScale, panDragStartPoint, panDragStartOffset, panOffset], {
+  useDrag(svgRef, [zoomScale, panDragStartPoint, panDragStartOffset, panOffset, dragMode], {
     onDragStart: (ev) => {
-      const x = ev.clientX
-      const y = ev.clientY
-      const localPoint = clientPointToLocalSpacePoint([x, y], true)
-      setPanDragStartPoint(localPoint)
-      setPanDragStartOffset(panOffset)
+      if (dragMode) {
+        const x = ev.clientX
+        const y = ev.clientY
+        const localPoint = clientPointToLocalSpacePoint([x, y], true)
+        setPanDragStartPoint(localPoint)
+        setPanDragStartOffset(panOffset)
+      }
     },
     onDrag: (ev) => {
-      const x = ev.clientX
-      const y = ev.clientY
-      if (panDragStartPoint && panDragStartOffset) {
-        const localPoint = clientPointToLocalSpacePoint([x, y], true)
-        const panDragOffset = vecSub(localPoint, panDragStartPoint)
-        const newPanOffset = vecAdd(panDragOffset, panDragStartOffset)
-        setPanOffset(newPanOffset)
+      if (dragMode) {
+        const x = ev.clientX
+        const y = ev.clientY
+        if (panDragStartPoint && panDragStartOffset) {
+          const localPoint = clientPointToLocalSpacePoint([x, y], true)
+          const panDragOffset = vecSub(localPoint, panDragStartPoint)
+          const newPanOffset = vecAdd(panDragOffset, panDragStartOffset)
+          setPanOffset(newPanOffset)
+        }
       }
     },
     onDragEnd: (ev) => {
-      const x = ev.clientX
-      const y = ev.clientY
-      if (panDragStartPoint && panDragStartOffset) {
-        const localPoint = clientPointToLocalSpacePoint([x, y], true)
-        const panDragOffset = vecSub(localPoint, panDragStartPoint)
-        const newPanOffset = vecAdd(panDragOffset, panDragStartOffset)
-        setPanOffset(newPanOffset)
+      if (dragMode) {
+        const x = ev.clientX
+        const y = ev.clientY
+        if (panDragStartPoint && panDragStartOffset) {
+          const localPoint = clientPointToLocalSpacePoint([x, y], true)
+          const panDragOffset = vecSub(localPoint, panDragStartPoint)
+          const newPanOffset = vecAdd(panDragOffset, panDragStartOffset)
+          setPanOffset(newPanOffset)
+        }
+        setPanDragStartPoint(null)
+        setPanDragStartOffset(null)
       }
-      setPanDragStartPoint(null)
-      setPanDragStartOffset(null)
     },
   })
   const optimalDistancesMap = useMemo(() => {
@@ -124,8 +151,8 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     }))
     return [
       _.values(stretches),
-      _.pickBy(stretches, (v) => v > 1+epsilonFraction),
-      _.pickBy(stretches, (v) => v < 1-epsilonFraction),
+      _.pickBy(stretches, (v) => v * v > 1+epsilonFraction),
+      _.pickBy(stretches, (v) => v * v < 1-epsilonFraction),
     ]
   }, [figure, optimalDistancesMap, currentDistances, epsilon])
   const score = useMemo(() => {
@@ -148,7 +175,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     let vertices = getCurrentVertices()
     const frozenPoints = frozenFigurePoints
     if (simMode == 'inflate') {
-      vertices = inflateLoop(vertices, { optimalDistancesMap })
+      vertices = inflateLoop(vertices, { optimalDistancesMap, frozenPoints })
     }
     if (simMode == 'simpleInflate') {
       vertices = inflateSimpleRadialLoop(vertices, { optimalDistancesMap, frozenPoints })
@@ -167,6 +194,13 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
       }
     } else {
       setSimMode(null)
+    }
+  }
+  const toggleDragMode = () => {
+    if (dragMode == true) {
+      setDragMode(false)
+    } else {
+      setDragMode(true)
     }
   }
   const singleShake = () => {
@@ -204,6 +238,18 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   useHotkeys('o', () => {
     toggleSimMode('infalte')
   }, {}, [toggleSimMode])
+  useDOMEvent('keydown', (ev) => {
+    // on press Shift
+    if (ev.keyCode == 16) {
+      setMultiselectMode(true)
+    }
+  })
+  useDOMEvent('keyup', (ev) => {
+    // on release Shift
+    if (ev.keyCode == 16) {
+      setMultiselectMode(false)
+    }
+  })
   useOnChangeValues([problem, solution], () => {
     reset()
   })
@@ -215,6 +261,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
             <Group x={-(xMax-xMin)/2+panOffset[0]} y={-(yMax-yMin)/2+panOffset[1]}>
               <Group ref={zeroPointLocation} x={0} y={0} />
               <Hole safePadding={safePadding} vertices={hole} />
+              <Bonuses vertices={bonuses}/>
               <Grid xMin={xMin} yMin={yMin} xMax={xMax} yMax={yMax} color='#787' />
               <Figure
                 animate={true}
@@ -227,9 +274,13 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
                 frozenPoints={frozenFigurePoints}
                 onPointGrab={(ev, idx) => {
                   ev.stopPropagation()
-                  setFrozenFigurePoints([idx])
+                  addFrozenFigurePoint(idx)
                 }}
-                onPointRelease={() => setFrozenFigurePoints([])}
+                onPointRelease={(ev, idx) => {
+                  if (!multiselectMode) {
+                    removeFrozenFigurePoint(idx)
+                  }
+                }}
                 onPointDrag={(ev, idx) => {
                   const localDelta = clientDeltaToLocalSpaceDelta([ev.movementX, ev.movementY])
                   updateVerticePosition(idx, localDelta)
@@ -244,6 +295,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         <button
           disabled={saved}
           onClick={() => {
+            snapVertices()
             onSaveSolution(problemId, username, { vertices: getCurrentVertices() })
             toggleSaved()
           }
@@ -259,6 +311,10 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         <button onClick={singleShake}>Shake</button>
         <button onClick={snapVertices}>Snap</button>
         <button onClick={reset}>Reset</button>
+        <Spacer />
+        <button onClick={() => setMultiselectMode(!multiselectMode)}>{multiselectMode ? 'Selecting...' : 'Glue Points'}</button>
+        <button onClick={() => unselectAllGluedPoints()}>Unselect {frozenFigurePoints.size}</button>
+        <button onClick={toggleDragMode}>{dragMode ? 'Pan Enabled' : 'Pan Disabled'}</button>
       </div>
       <div className={styles.bottomRight}>
         <button onClick={() => setZoom(zoom+1)}>+</button>

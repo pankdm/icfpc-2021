@@ -1,75 +1,28 @@
-import React, { useState } from 'react'
-import _ from 'lodash'
-import Flex from './components/Flex.jsx'
-import ProblemViewer from './components/ProblemViewer.jsx'
+import React from 'react'
+import {
+  Switch,
+  Route,
+  Link,
+} from "react-router-dom"
 import styles from './App.module.css'
-import useLocalStorage from './utils/useLocalStorage.js'
-import { useProblems, useProblem, useSolutions, useSolution, saveSolution } from './api/problems'
+import Problems from './pages/Problems.jsx'
+import Scores from './pages/Scores.jsx'
+import About from './pages/About.jsx'
+
 
 function App() {
-  const [problemId, setProblemId] = useLocalStorage('problemId', 1)
-  const [solutionId, setSolutionId] = useState(null)
-  const { data: problems } = useProblems()
-  const { data: problem } = useProblem(problemId, { enabled: !!problemId })
-  const { data: solutions } = useSolutions(problemId, { enabled: !!problemId, refetchInterval: 1000 })
-  const { data: solution, refetch: refetchSolution } = useSolution(problemId, solutionId, { enabled: !!problemId && !!solutionId })
-  const onSaveSolution = (problemId, username, solution) => {
-    console.log('Saving solution', problemId, solution)
-    return saveSolution(problemId, username, solution)
-  }
   return (
-    <div className={styles.app}>
-      <h1>Welcome to ICFPC 2021!</h1>
-      <p>
-        Choose your destiny:
-        {` `}
-        {problems &&
-          <select
-            value={problemId}
-            onChange={e => {
-              setProblemId(e.target.value)
-              setSolutionId(null)
-            }}
-          >
-            {_.map(
-              problems,
-              (id) => <option key={id} value={id.toString()}>{id}</option>
-            )}
-          </select>
-        }
-        {` `}
-        Display solution:
-        {` `}
-        <select
-          value={solutionId || 'NONE'}
-          onChange={e => {
-            const { value } = e.target
-            setSolutionId(value == 'NONE' ? null : value)
-          }}
-        >
-          <option value='NONE'>None</option>
-          {solutions &&
-            _.map(
-              solutions,
-              (id) => <option key={id} value={id.toString()}>{id}</option>
-            )
-          }
-        </select>
-        {` `}
-        {solutionId &&
-          <span className={styles.refreshLabel} onClick={() => refetchSolution()}>Refresh</span>
-        }
-      </p>
-      {problem &&
-        <ProblemViewer
-          key={problemId}
-          problemId={problemId}
-          problem={problem}
-          solution={solution}
-          onSaveSolution={onSaveSolution}
-        />
-      }
-    </div>
+    <Switch>
+      <Route path="/scores">
+        <Scores />
+      </Route>
+      <Route path="/about">
+        <About />
+      </Route>
+      <Route path="/">
+        <Problems />
+      </Route>
+    </Switch>
   )
 }
 

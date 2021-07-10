@@ -14,12 +14,17 @@ from shapely.geometry import Point, Polygon
 from utils import read_problem
 from get_problems import submit_solution
 
-TIMEOUT = 7 # seconds
+TIMEOUT = 60 # seconds
+eps = 1e-6
 
 
-def is_inside(polygon: Polygon, x, y):
-    pt = Point(x, y)
-    return polygon.contains(pt) or polygon.touches(pt)
+def is_inside(polygon: Polygon, x, y, eps = 0):
+    if eps == 0:
+        pt = Point(x, y)
+        return polygon.contains(pt) or polygon.touches(pt)
+    else:
+        # allow for floating point errors
+        return any(polygon.contains(Point(x+dx, y+dy)) for dx in (eps, -eps) for dy in (eps, -eps) )
 
 def dist2(pt1, pt2):
     x1, y1 = pt1
@@ -57,7 +62,7 @@ def point_average(A: Tuple, B: Tuple, a=0.1) -> Tuple:
 
 def is_edge_inside(spec, A: Tuple, B: Tuple):
 # Check if AB is fully within the hole
-    if not all(is_inside(spec['hole_poly'], *point_average(A, B, a)) for a in (0.1, 0.3, 0.5, 0.7, 0.9)):
+    if not all(is_inside(spec['hole_poly'], *point_average(A, B, a), eps) for a in (0.1, 0.3, 0.5, 0.7, 0.9)):
         return False
     for i, v in enumerate(spec['hole']):
         if i == 0:
@@ -135,8 +140,10 @@ def check_full_solution(spec, solution):
             orig_dist = dist2(spec['figure']['vertices'][adj_v], spec['figure']['vertices'][v]) 
             new_dist = dist2(solution[adj_v], solution[v])
             if not check_distance(spec, orig_dist, new_dist):
+                print("Distance incorrect for edge: (", v, adj_v, ")", orig_dist, new_dist)
                 return False
             if not is_edge_inside(spec, solution[adj_v], solution[v]):
+                print("Edge is not inside:", v, adj_v)
                 return False
     return True
 
@@ -211,22 +218,35 @@ class Solver():
     def full_solve(self):
         # start the timer
         self.start = time.time()
+        
 
         spec = self.spec
         total_points = len(spec['figure']['vertices'])
-        hole_indices = list(range(len(spec['hole'])))
-        random.shuffle(hole_indices)
-        for first_index in hole_indices:
-            first_hole_pt = spec['hole'][first_index]
-            point_indices = list(range(total_points))
-            random.shuffle(point_indices)
-            for index in point_indices:
-                if self.best_score == 0:
-                    break
-                print ('Trying connecting index={} to {}'.format(index, first_hole_pt))
-                solution = {index: tuple(first_hole_pt)}
 
-                self.try_solve(solution)
+        # start from some setup
+        with open('solutions/manual/59_dm_start_1625956775678') as f:
+            start = json.loads(f.read())
+        solution = {}
+        for (idx, v) in enumerate(start['vertices']):
+            if v in spec['hole']:
+                solution[idx] = v
+        print ('start with {} nodes'.format(len(solution)))
+        self.try_solve(solution)
+
+        # hole_indices = list(range(len(spec['hole'])))
+        # random.shuffle(hole_indices)
+        # for first_index in hole_indices:
+        #     first_hole_pt = spec['hole'][first_index]
+        #     point_indices = list(range(total_points))
+        #     random.shuffle(point_indices)
+        #     for index in point_indices:
+        #         if self.best_score == 0:
+        #             break
+        #         print ('Trying connecting index={} to {}'.format(index, first_hole_pt))
+        #         solution = {index: tuple(first_hole_pt)}
+
+        #         self.try_solve(solution)
+
 
 
 class GreedySolver:
@@ -371,18 +391,100 @@ def solve_and_submit(problem_id):
         js_str = write_solution(solution_file, total_points, solver.best_solution)
         submit_solution(problem_id, js_str)
     else:
-        print ('Skipping submit as this is not better')
+        print('Skipping submit as this is not better')
+
+
+def check_edge_length(spec, solution, edge):
+    a, b = edge
+    vertices = spec['figure']['vertices']
+    orig_dist = dist2(vertices[a], vertices[b])
+    new_dist = dist2(solution[a], solution[b])
+
+    return check_distance(spec, orig_dist, new_dist)
+
+
+def fix_edge(spec, solution, edge):
+    a, b = edge
+    vertices = spec['figure']['vertices']
+    orig_dist = dist2(vertices[a], vertices[b])
+
+    for dx in [0, 1, -1]:
+        for dy in [0, 1, -1]:
+            x, y = solution[b]
+            new_dist = dist2(solution[a], [x + dx, y + dy])
+            if check_distance(spec, orig_dist, new_dist):
+                solution[b] = [x + dx, y + dy]
+                return
+
+    for dx in [0, 1, -1]:
+        for dy in [0, 1, -1]:
+            x, y = solution[a]
+            new_dist = dist2([x + dx, y + dy], solution[b])
+            if check_distance(spec, orig_dist, new_dist):
+                solution[a] = [x + dx, y + dy]
+                return
+
+
+def round_coords(spec, solution):
+    # coordinates should be ints
+    for k in solution.keys():
+        x, y = solution[k]
+        solution[k] = [round(x), round(y)]
+
+
+def try_to_fix_edges(spec, solution):
+    edges = spec['figure']['edges']
+    for edge in edges:
+        if not check_edge_length(spec, solution, edge):
+            fix_edge(spec, solution, edge)
+
+
+def submit_manual(problem_id, solution_file_name):
+    print(f'=== Submitting {problem_id} ====')
+
+    spec = read_problem(problem_id)
+    adj = defaultdict(list)
+    for e in spec['figure']['edges']:
+        adj[e[0]].append(e[1])
+        adj[e[1]].append(e[0])
+
+    spec['figure']['adj'] = adj
+    hole_polygon = Polygon(spec['hole'])
+    spec['hole_poly'] = hole_polygon
+
+    if os.path.isfile(solution_file_name):
+        with open(solution_file_name, 'r') as f:
+            submission = json.loads(f.read())
+            submission = submission['vertices']
+            solution = {i: submission[i] for i in range(len(submission))}
+            round_coords(spec, solution)
+
+            solution_valid = check_full_solution(spec, solution)
+            if not solution_valid:
+                print("Trying to fix solution...")
+                for _ in range(10):
+                    try_to_fix_edges(spec, solution)
+            solution_valid = check_full_solution(spec, solution)
+            score = count_dislikes(spec, solution)
+            print("Solution valid:", solution_valid)
+            print("Score:", score)
+
+            if solution_valid:
+                vertices = len(spec['figure']['vertices'])
+                js_str = write_solution(solution_file_name, vertices, solution)
+                submit_solution(problem_id, js_str)
+    pass
+
 
 if __name__ == "__main__":
-    if len(sys.argv)==2:
+    if len(sys.argv)==3:
+        problem_id = sys.argv[1]
+        file_name = sys.argv[2]
+        submit_manual(problem_id, file_name)
+    elif len(sys.argv)==2:
         problem_id = sys.argv[1]
         solve_and_submit(problem_id)
     else:
         for i in (50, 54, 55, 67, 70, 73, 77):
             solve_and_submit(i)
-
-
-
-
-
 

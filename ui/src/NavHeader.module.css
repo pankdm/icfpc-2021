@@ -1,0 +1,18 @@
+.nav-list {
+  display: flex;
+  padding: 0;
+  margin: 1em -1em 0;
+}
+.nav-item {
+  display: block;
+}
+.nav-item-link {
+  display: block;
+  padding: .5em;
+  margin: 0 .5em;
+  text-decoration: none;
+  font-weight: 600;
+}
+.nav-item-link-active {
+  text-decoration: underline;
+}
