@@ -7,7 +7,6 @@ export default function NavHeader() {
   const routeMatch = useRouteMatch()
   const isActiveLink = (url) => url == routeMatch.url
   const linkClassName = (url) => {
-    console.log(url, isActiveLink(url))
     return cs(
       styles.navItemLink,
       isActiveLink(url) && styles.navItemLinkActive,

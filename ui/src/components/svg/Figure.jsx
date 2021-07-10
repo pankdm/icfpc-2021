@@ -102,7 +102,7 @@ export default function Figure({
         )
       })}
       {vertices.map(([x, y], idx) => {
-        const isFrozen = frozenPoints.indexOf(idx) >= 0
+        const isFrozen = frozenPoints.has(idx)
         const _animate = isFrozen ? false : animate
         const pointColor = isFrozen ? '#fa0' : '#fff'
         return (

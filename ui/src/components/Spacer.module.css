@@ -1,0 +1,19 @@
+.spacer {
+  width: var(--spacer-size);
+  height: var(--spacer-size);
+}
+.spacer-xs {
+  --spacer-size: 0.5em;
+}
+.spacer-sm {
+  --spacer-size: 1em;
+}
+.spacer-md {
+  --spacer-size: 2em;
+}
+.spacer-lg {
+  --spacer-size: 4em;
+}
+.spacer-xl {
+  --spacer-size: 8em;
+}

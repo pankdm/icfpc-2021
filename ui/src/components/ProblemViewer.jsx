@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import _ from 'lodash'
 import AspectRatioBox from './AspectRatioBox.jsx'
+import Spacer from './Spacer.jsx'
 import Bonuses from './svg/Bonuses.jsx'
 import Group from './svg/Group.jsx'
 import Grid from './svg/Grid.jsx'
@@ -15,6 +16,8 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import useDrag from '../utils/useDrag.js'
 import useBlip from '../utils/useBlip.js'
 import useLocalStorage from '../utils/useLocalStorage.js'
+import useDOMEvent from '../utils/useDOMEvent.js'
+
 
 export default function ProblemViewer({ problemId, problem, solution, onSaveSolution, ...props }) {
   const { hole, epsilon, figure, bonuses } = problem
@@ -44,10 +47,22 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   const zoomScale = 2**-zoom
   const [panDragStartPoint, setPanDragStartPoint] = useState(null)
   const [panDragStartOffset, setPanDragStartOffset] = useState(null)
+  const [multiselectMode, setMultiselectMode] = useState(false)
   const [panOffset, setPanOffset] = useState([0, 0])
   const [overriddenVerticesKey, setOverriddenVerticesKey] = useState(null)
   const [simMode, setSimMode] = useState(null)
-  const [frozenFigurePoints, setFrozenFigurePoints] = useState([])
+  const [frozenFigurePoints, setFrozenFigurePoints] = useState(new Set())
+  const addFrozenFigurePoint = (idx) => {
+    const newSet = new Set(frozenFigurePoints)
+    newSet.add(idx)
+    setFrozenFigurePoints(newSet)
+  }
+  const removeFrozenFigurePoint = (idx) => {
+    const newSet = new Set(frozenFigurePoints)
+    newSet.delete(idx)
+    setFrozenFigurePoints(newSet)
+  }
+  const clearFrozenFigurePoints = () => setFrozenFigurePoints(new Set())
   const minCoord = _.min([..._.flatten(hole), ..._.flatten(figure.vertices)])
   const maxCoord = _.max([..._.flatten(hole), ..._.flatten(figure.vertices)])
   const safePadding = 5
@@ -108,7 +123,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
           setPanOffset(newPanOffset)
         }
         setPanDragStartPoint(null)
-        setPanDragStartOffset(null)  
+        setPanDragStartOffset(null)
       }
     },
   })
@@ -219,6 +234,18 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   useHotkeys('o', () => {
     toggleSimMode('infalte')
   }, {}, [toggleSimMode])
+  useDOMEvent('keydown', (ev) => {
+    // on press Shift
+    if (ev.keyCode == 16) {
+      setMultiselectMode(true)
+    }
+  })
+  useDOMEvent('keyup', (ev) => {
+    // on release Shift
+    if (ev.keyCode == 16) {
+      setMultiselectMode(false)
+    }
+  })
   useOnChangeValues([problem, solution], () => {
     reset()
   })
@@ -243,9 +270,13 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
                 frozenPoints={frozenFigurePoints}
                 onPointGrab={(ev, idx) => {
                   ev.stopPropagation()
-                  setFrozenFigurePoints([idx])
+                  addFrozenFigurePoint(idx)
                 }}
-                onPointRelease={() => setFrozenFigurePoints([])}
+                onPointRelease={(ev, idx) => {
+                  if (!multiselectMode) {
+                    removeFrozenFigurePoint(idx)
+                  }
+                }}
                 onPointDrag={(ev, idx) => {
                   const localDelta = clientDeltaToLocalSpaceDelta([ev.movementX, ev.movementY])
                   updateVerticePosition(idx, localDelta)
@@ -276,7 +307,10 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         <button onClick={singleShake}>Shake</button>
         <button onClick={snapVertices}>Snap</button>
         <button onClick={reset}>Reset</button>
-        <button onClick={toggleDragMode}>{dragMode ? 'Disable Dragging' : 'Enable Dragging'}</button>
+        <Spacer />
+        <button onClick={() => setMultiselectMode(!multiselectMode)}>{multiselectMode ? 'Selecting...' : 'Glue Points'}</button>
+        <button onClick={() => clearFrozenFigurePoints()}>Unselect {frozenFigurePoints.size}</button>
+        <button onClick={toggleDragMode}>{dragMode ? 'Pan Enabled' : 'Pan Disabled'}</button>
       </div>
       <div className={styles.bottomRight}>
         <button onClick={() => setZoom(zoom+1)}>+</button>
