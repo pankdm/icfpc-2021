@@ -311,6 +311,7 @@ def write_solution(solution_file, total_points, solution):
     return js_str
 
 def solve_and_submit(problem_id):
+    print ('')
     print (f'=== Solving {problem_id} ====')
 
     spec = read_problem(problem_id)
@@ -359,7 +360,7 @@ if __name__ == "__main__":
         problem_id = sys.argv[1]
         solve_and_submit(problem_id)
     else:
-        for i in range(44, 64):
+        for i in range(56, 64):
             solve_and_submit(i)
 
 
