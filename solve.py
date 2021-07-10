@@ -263,7 +263,7 @@ if __name__ == "__main__":
         problem_id = sys.argv[1]
         solve_and_submit(problem_id)
     else:
-        for i in range(28, 37):
+        for i in range(44, 64):
             solve_and_submit(i)
 
 
