@@ -3,15 +3,16 @@
   height: 100%;
   background-color: rgb(153, 138, 124);
   transform: translateZ(0);
+  user-select: none;
 }
 
-.control-buttons {
+.top-right {
   position: absolute;
   top: 1rem;
   right: 1rem;
 }
 
-.control-buttons button {
+button {
   display: block;
   min-width: 7em;
   margin-bottom: .5em;
@@ -22,6 +23,19 @@
   padding: .25em .25em;
   cursor: pointer;
 }
-.control-buttons button:active {
+button:active {
   background-color: #aaa;
+}
+
+.bottom-right {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+}
+
+.score {
+  color: #fff;
+  font-size: 1.25em;
+  font-weight: bold;
+  margin: 0;
 }

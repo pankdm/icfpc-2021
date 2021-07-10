@@ -1,9 +1,12 @@
 import _ from 'lodash'
 
-export function distance(p1, p2) {
+export function distanceSq(p1, p2) {
   const [x1, y1] = p1
   const [x2, y2] = p2
-  return Math.sqrt((x1-x2)**2 + (y1-y2)**2)
+  return (x1-x2)**2 + (y1-y2)**2
+}
+export function distance(p1, p2) {
+  return Math.sqrt(distanceSq(p1, p2))
 }
 
 export class Vec {
@@ -100,4 +103,16 @@ export function getDistanceMap(points, edges) {
     }
   })
   return map
+}
+
+export function getNearest(point, vertices) {
+  return _.minBy(vertices, v => distanceSq(point, v))
+}
+
+export function distanceSqToNearest(point, vertices) {
+  return distanceSq(point, getNearest(point, vertices))
+}
+
+export function getScore(holeVertices, figureVertices) {
+  return _.sumBy(holeVertices, v => distanceSqToNearest(v, figureVertices))
 }

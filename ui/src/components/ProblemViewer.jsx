@@ -6,7 +6,7 @@ import Hole from './svg/Hole.jsx'
 import Figure from './svg/Figure.jsx'
 import styles from './ProblemViewer.module.css'
 import useBlip from '../utils/useBlip.js'
-import { getDistanceMap } from '../utils/graph.js'
+import { getDistanceMap, getScore } from '../utils/graph.js'
 import { inflateLoop, inflateSimpleRadialLoop, relaxLoop, gravityLoop, applyShake } from '../utils/physics.js'
 import { useOnChangeValues } from '../utils/useOnChange.js'
 import useAnimLoop from '../utils/useAnimLoop.js'
@@ -29,6 +29,10 @@ export default function ProblemViewer({ problem, solution, ...props }) {
   const xMean = (maxCoord - minCoord) / 2
   const yMean = (maxCoord - minCoord) / 2
   const getCurrentVertices = () => overriddenVertices.current || (solution && solution.vertices) || figure.vertices
+  const currentVertices = getCurrentVertices()
+  const score = useMemo(() => {
+    return Math.floor(getScore(hole, currentVertices))
+  }, [currentVertices, hole])
   const setOverriddenVertices = (vertices) => {
     overriddenVertices.current = vertices
     setOverriddenVerticesKey(vertices ? Math.random() : null)
@@ -65,7 +69,7 @@ export default function ProblemViewer({ problem, solution, ...props }) {
     togglePlaying()
   }, {}, [togglePlaying])
   const singleShake = () => {
-    let vertices = getCurrentVertices()
+    let vertices = currentVertices
     console.log(vertices[0])
     vertices = applyShake(vertices, { maxAmplitude: 3 })
     console.log(vertices[0])
@@ -89,14 +93,16 @@ export default function ProblemViewer({ problem, solution, ...props }) {
           <Figure hint={hint} edges={figure.edges} vertices={getCurrentVertices()} epsilon={epsilon} />
         </g>
       </svg>
-      <div className={styles.controlButtons}>
-        <button onClick={toggleHint}>Hint</button>
+      <div className={styles.topRight}>
         <button onClick={togglePlaying}>{playing ? 'Physics: on' : 'Physics: off'}</button>
         <button onClick={() => toggleSimMode('inflate')}>{simMode == 'inflate' ? 'Inflating' : 'Inflate'}</button>
         <button onClick={() => toggleSimMode('simpleInflate')}>{simMode == 'simpleInflate' ? 'Stretching' : 'Sretch'}</button>
         <button onClick={() => toggleSimMode('gravity')}>{simMode == 'gravity' ? 'Gravitating' : 'Gravity'}</button>
         <button onClick={singleShake}>Shake</button>
         <button onClick={reset}>Reset</button>
+      </div>
+      <div className={styles.bottomRight}>
+        <pre className={styles.score}>Score: {_.padStart(score, 4, ' ')}</pre>
       </div>
     </AspectRatioBox>
   )
