@@ -73,9 +73,9 @@ export default function Figure({
             <Point
               radius={0.5}
               color={pointColor}
-              onPointerDown={() => onPointGrab(idx)}
-              onRelease={() => onPointRelease(idx)}
-              onDrag={({clientX, clientY, dx, dy}) => onPointDrag(idx, {clientX, clientY, dx, dy})}
+              onDragStart={(ev) => onPointGrab(ev, idx)}
+              onDragEnd={(ev) => onPointRelease(ev, idx)}
+              onDrag={(ev) => onPointDrag(ev, idx, {clientX: ev.clientX, clientY: ev.clientY, dx: ev.movementX, dy: ev.movementY})}
             />
             <Label xOffset={0.5} yOffset={-0.5}>{idx}</Label>
           </Group>

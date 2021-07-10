@@ -1,10 +1,12 @@
 import React from 'react'
 import { useSpring, animated } from 'react-spring'
 
-export default function Group({ x, y, animate=false, springConfig, ...props }) {
-  const animatableProps = { transform: `translate(${x}, ${y})` }
+const WrappedGroup = React.forwardRef(function Group({ x, y, scale=1, animate=false, springConfig, ...props }, ref) {
+  const animatableProps = { transform: `translate(${x}, ${y}) scale(${scale}, ${scale})` }
   const animatedProps = useSpring({ to: animatableProps, config: springConfig })
   return animate
-    ? <animated.g {...animatedProps} {...props}/>
-    : <g transform={`translate(${x}, ${y})`} {...props}/>
-}
+    ? <animated.g ref={ref} {...animatedProps} {...props}/>
+    : <g ref={ref} transform={`translate(${x}, ${y}) scale(${scale}, ${scale})`} {...props}/>
+})
+
+export default WrappedGroup

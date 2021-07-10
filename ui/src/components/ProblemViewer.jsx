@@ -1,23 +1,44 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import _ from 'lodash'
 import AspectRatioBox from './AspectRatioBox.jsx'
+import Group from './svg/Group.jsx'
 import Grid from './svg/Grid.jsx'
 import Hole from './svg/Hole.jsx'
 import Figure from './svg/Figure.jsx'
 import styles from './ProblemViewer.module.css'
-import useBlip from '../utils/useBlip.js'
-import { distance, getDistanceMap, getDistances, getScore } from '../utils/graph.js'
+import { getDistanceMap, getDistances, getScore, vecAdd, vecSub } from '../utils/graph.js'
 import { inflateLoop, inflateSimpleRadialLoop, relaxLoop, gravityLoop, applyShake } from '../utils/physics.js'
 import { useOnChangeValues } from '../utils/useOnChange.js'
 import useAnimLoop from '../utils/useAnimLoop.js'
-import useToggle from '../utils/useToggle.js'
 import { useHotkeys } from 'react-hotkeys-hook'
+import useDrag from '../utils/useDrag.js'
 
 export default function ProblemViewer({ problem, solution, ...props }) {
   const { hole, epsilon, figure } = problem
   const epsilonFraction = epsilon/1e6
-  const [hint, toggleHint] = useBlip(300)
+  const zeroPointLocation = useRef()
+  const getZeroPointClientLocation = () => {
+    const zeroPoint = zeroPointLocation.current
+    if (!zeroPoint) {
+      return { clientX: 0, clientY: 0 }
+    }
+    const rect = zeroPoint.getBoundingClientRect()
+    return { clientX: rect.left, clientY: rect.top }
+  }
+  const svgRef = useRef()
+  const getSvgRect = () => {
+    const svg = svgRef.current
+    if (!svg) {
+      return null
+    }
+    return svg.getBoundingClientRect()
+  }
   const overriddenVertices = useRef(null)
+  const [zoom, setZoom] = useState(0)
+  const zoomScale = 2**-zoom
+  const [panDragStartPoint, setPanDragStartPoint] = useState(null)
+  const [panDragStartOffset, setPanDragStartOffset] = useState(null)
+  const [panOffset, setPanOffset] = useState([0, 0])
   const [overriddenVerticesKey, setOverriddenVerticesKey] = useState(null)
   const [simMode, setSimMode] = useState(null)
   const [frozenFigurePoints, setFrozenFigurePoints] = useState([])
@@ -30,6 +51,57 @@ export default function ProblemViewer({ problem, solution, ...props }) {
   const yMax = maxCoord + safePadding
   const xMean = (maxCoord - minCoord) / 2
   const yMean = (maxCoord - minCoord) / 2
+  const clientPointToLocalSpacePoint = (clientPoint, ignorePan=false) => {
+    const { clientX: zeroX, clientY: zeroY } = getZeroPointClientLocation()
+    const zeroPoint = [zeroX, zeroY]
+    const svgRect = getSvgRect()
+    const xScale = (xMax-xMin)*zoomScale/svgRect.width
+    const x = (clientPoint[0])*xScale
+    const yScale = (yMax-yMin)*zoomScale/svgRect.height
+    const y = (clientPoint[1])*yScale
+    return ignorePan ? [x, y] : vecAdd([x, y], panOffset)
+  }
+  const clientDeltaToLocalSpaceDelta = (clientDelta) => {
+    const svgRect = getSvgRect()
+    const xScale = (xMax-xMin)*zoomScale/svgRect.width
+    const dx = (clientDelta[0])*xScale
+    const yScale = (yMax-yMin)*zoomScale/svgRect.height
+    const dy = (clientDelta[1])*yScale
+    return [dx, dy]
+  }
+  useDrag(svgRef, [zoomScale, panDragStartPoint, panDragStartOffset, panOffset], {
+    onDragStart: (ev) => {
+      const x = ev.clientX
+      const y = ev.clientY
+      const localPoint = clientPointToLocalSpacePoint([x, y], true)
+      console.log(panDragStartPoint)
+      setPanDragStartPoint(localPoint)
+      setPanDragStartOffset(panOffset)
+    },
+    onDrag: (ev) => {
+      const x = ev.clientX
+      const y = ev.clientY
+      if (panDragStartPoint && panDragStartOffset) {
+        const localPoint = clientPointToLocalSpacePoint([x, y], true)
+        const panDragOffset = vecSub(localPoint, panDragStartPoint)
+        const newPanOffset = vecAdd(panDragOffset, panDragStartOffset)
+        console.log(panDragOffset)
+        setPanOffset(newPanOffset)
+      }
+    },
+    onDragEnd: (ev) => {
+      const x = ev.clientX
+      const y = ev.clientY
+      if (panDragStartPoint && panDragStartOffset) {
+        const localPoint = clientPointToLocalSpacePoint([x, y], true)
+        const panDragOffset = vecSub(localPoint, panDragStartPoint)
+        const newPanOffset = vecAdd(panDragOffset, panDragStartOffset)
+        setPanOffset(newPanOffset)
+      }
+      setPanDragStartPoint(null)
+      setPanDragStartOffset(null)
+    },
+  })
   const optimalDistancesMap = useMemo(() => {
     return getDistanceMap(figure.vertices, figure.edges)
   }, [figure])
@@ -98,6 +170,8 @@ export default function ProblemViewer({ problem, solution, ...props }) {
     setSimMode(null)
     stopPlaying()
     setOverriddenVertices(null)
+    setZoom(0)
+    setPanOffset([0, 0])
   }
   useOnChangeValues([problem, solution], () => {
     reset()
@@ -105,21 +179,33 @@ export default function ProblemViewer({ problem, solution, ...props }) {
 
   return (
     <AspectRatioBox>
-      <svg className={styles.svg} viewBox={`${0} ${0} ${xMax - xMin} ${yMax - yMin}`}>
-        <g transform={`translate(${-xMin},${-yMin})`}>
-          <Hole safePadding={safePadding} vertices={hole} />
-          <Grid xMin={xMin} yMin={yMin} xMax={xMax} yMax={yMax} color='#787' />
-          <Figure
-            vertices={getCurrentVertices()}
-            edges={figure.edges}
-            epsilon={epsilonFraction}
-            edgeStretches={edgeStretches}
-            overstretchedEdges={overstretchedEdges}
-            overshrinkedEdges={overshrinkedEdges}
-            onPointGrab={(idx) => setFrozenFigurePoints([idx])}
-            onPointRelease={() => setFrozenFigurePoints([])}
-          />
-        </g>
+      <svg ref={svgRef} className={styles.svg} viewBox={`${0} ${0} ${xMax - xMin} ${yMax - yMin}`}
+        onClick={ev => {
+          // const [x, y] = [ev.clientX, ev.clientY]
+        }}
+      >
+        <Group x={-xMin} y={-yMin}>
+          <Group x={(xMax-xMin)/2} y={(yMax-yMin)/2} scale={1/zoomScale}>
+            <Group x={-(xMax-xMin)/2+panOffset[0]} y={-(yMax-yMin)/2+panOffset[1]}>
+              <Group ref={zeroPointLocation} x={0} y={0} />
+              <Hole safePadding={safePadding} vertices={hole} />
+              <Grid xMin={xMin} yMin={yMin} xMax={xMax} yMax={yMax} color='#787' />
+              <Figure
+                vertices={getCurrentVertices()}
+                edges={figure.edges}
+                epsilon={epsilonFraction}
+                edgeStretches={edgeStretches}
+                overstretchedEdges={overstretchedEdges}
+                overshrinkedEdges={overshrinkedEdges}
+                onPointGrab={(ev, idx) => {
+                  ev.stopPropagation()
+                  setFrozenFigurePoints([idx])
+                }}
+                onPointRelease={() => setFrozenFigurePoints([])}
+              />
+            </Group>
+          </Group>
+        </Group>
       </svg>
       <div className={styles.topRight}>
         <button onClick={togglePlaying}>{playing ? 'Physics: on' : 'Physics: off'}</button>
@@ -130,6 +216,11 @@ export default function ProblemViewer({ problem, solution, ...props }) {
         <button onClick={reset}>Reset</button>
       </div>
       <div className={styles.bottomRight}>
+        <button onClick={() => setZoom(zoom+1)}>+</button>
+        <button onClick={() => setZoom(zoom-1)}>-</button>
+        <pre className={styles.score}>
+          Zoom: {zoom > 0 && '+'}{zoom < 0 && '-'}{Math.abs(zoom)}
+        </pre>
         <pre className={styles.score}>
           Epsilon: {_.round(epsilonFraction, 4)}
         </pre>

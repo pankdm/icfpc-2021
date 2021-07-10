@@ -7,8 +7,8 @@ export default function Point({
   y=0,
   radius=0.5,
   color='#fff',
-  onPointerDown=() => {},
-  onRelease=() => {},
+  onDragStart=() => {},
+  onDragEnd=() => {},
   onDrag=() => {},
   animate=false,
   springConfig,
@@ -16,8 +16,8 @@ export default function Point({
 }) {
   const ref = useRef()
   useDrag(ref, [], {
-    onPointerDown,
-    onRelease,
+    onDragStart,
+    onDragEnd,
     onDrag: (ev) => {
       onDrag({dx: ev.movementX, dy: ev.movementY, clientX: ev.clientX, clientY: ev.clientY})
     }

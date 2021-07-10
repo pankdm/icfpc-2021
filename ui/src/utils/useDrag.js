@@ -5,8 +5,9 @@ const useDrag = (ref, deps=[], options) => {
     onPointerDown = () => {},
     onPointerUp = () => {},
     onPointerMove = () => {},
+    onDragStart = () => {},
     onDrag = () => {},
-    onRelease = () => {},
+    onDragEnd = () => {},
   } = options
 
   const [isDragging, setIsDragging] = useState(false)
@@ -14,6 +15,7 @@ const useDrag = (ref, deps=[], options) => {
   const handlePointerDown = (e) => {
     setIsDragging(true)
     onPointerDown(e)
+    onDragStart(e)
   }
 
   const handlePointerUp = (e) => {
@@ -30,7 +32,7 @@ const useDrag = (ref, deps=[], options) => {
 
   const handleRelease = (e) => {
     if (isDragging) {
-      onRelease(e)
+      onDragEnd(e)
     }
     setIsDragging(false)
   }
