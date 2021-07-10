@@ -17,7 +17,7 @@ from get_problems import submit_solution
 TIMEOUT = 15 # seconds
 
 
-def is_inside(polygon, x, y):
+def is_inside(polygon: Polygon, x, y):
     pt = Point(x, y)
     return polygon.contains(pt) or polygon.touches(pt)
 
@@ -50,8 +50,6 @@ def test_intersect():
     assert not segment_intersect(a,d,a,b)
     assert not segment_intersect(a,c,a,c)
 
-polygon = None
-
 
 def point_average(A: Tuple, B: Tuple, a=0.1) -> Tuple:
     # Get a point on line AB, 'a' fraction distance from A
@@ -59,7 +57,7 @@ def point_average(A: Tuple, B: Tuple, a=0.1) -> Tuple:
 
 def is_edge_inside(spec, A: Tuple, B: Tuple):
 # Check if AB is fully within the hole
-    if not all(is_inside(polygon, *point_average(A, B, a)) for a in (0.1, 0.3, 0.5, 0.7, 0.9)):
+    if not all(is_inside(spec['hole_poly'], *point_average(A, B, a)) for a in (0.1, 0.3, 0.5, 0.7, 0.9)):
         return False
     for i, v in enumerate(spec['hole']):
         if i == 0:
@@ -72,7 +70,6 @@ def is_edge_inside(spec, A: Tuple, B: Tuple):
     return True
 
 def compute_inside_points(spec):
-    global polygon
     res = set()
 
     # compute bounding box
@@ -93,7 +90,7 @@ def compute_inside_points(spec):
         for y in range(ymin, ymax + 1):
             if is_inside(polygon, x, y):
                 res.add((x, y))
-    return res
+    return list(res), polygon
 
 
 
@@ -128,14 +125,30 @@ def check_partial_solution(spec, solution, new_vertex, new_coords):
     return True
 
 
+def check_full_solution(spec, solution):
+    if len(solution) != len(spec['figure']['vertices']):
+        return False
+    for v in range(1, len(solution)):
+        for adj_v in spec['figure']['adj'][v]:
+            orig_dist = dist2(spec['figure']['vertices'][adj_v], spec['figure']['vertices'][v]) 
+            new_dist = dist2(solution[adj_v], solution[v])
+            if not check_distance(spec, orig_dist, new_dist):
+                return False
+            if not is_edge_inside(spec, solution[adj_v], solution[v]):
+                return False
+    return True
+
+
 class TimeoutException(Exception):
     pass
 
 
 class Solver():
-    def __init__(self, spec, inside_points):
+    def __init__(self, spec):
         self.spec = spec
+        inside_points, polygon = compute_inside_points(spec)
         self.inside_points = inside_points
+        spec['hole_poly'] = polygon
         self.best_score = None
         self.best_solution = None
         self.timer = None
@@ -319,12 +332,8 @@ def solve_and_submit(problem_id):
     print ('edges:', len(spec['figure']['edges']))
     print ('vertices:', len(spec['figure']['vertices']))
 
-    inside = list(compute_inside_points(spec))
-    print ('inside points:', len(inside))
-
-    solver = Solver(spec, inside)
-    # solver = GreedySolver(spec, inside)
-
+    solver = Solver(spec)
+    print ('inside points:', len(solver.inside_points))
     try:
         solver.full_solve()
     except TimeoutException:
@@ -343,10 +352,14 @@ def solve_and_submit(problem_id):
 
     # check if some solution already exist
     old_score = None
+    old_solution_valid = None
     if os.path.isfile(solution_file):
         with open(solution_file, 'r') as f:
-            old_solution = json.loads(f.read())
-            old_score = count_dislikes_from_submitted(spec, old_solution)
+            old_submission = json.loads(f.read())
+            old_score = count_dislikes_from_submitted(spec, old_submission)
+            old_submission = old_submission['vertices']
+            old_solution = {i: old_submission[i] for i in range(len(old_submission))}
+            old_solution_valid = check_full_solution(spec, old_solution)
 
     if old_score is None or solver.best_score < old_score:
         print("[old score = {}] -> Overwriting".format(old_score))
@@ -362,6 +375,7 @@ if __name__ == "__main__":
     else:
         for i in range(56, 64):
             solve_and_submit(i)
+
 
 
 
