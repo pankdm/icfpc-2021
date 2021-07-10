@@ -88,6 +88,9 @@ export const vecRand = (abs=1) => {
 }
 export const isVecZero = (vec) => vec[0]==0&&vec[1]==0
 
+export function getDistances(points, edges) {
+  return edges.map(([p1, p2]) => distance(points[p1], points[p2]))
+}
 export function getDistanceMap(points, edges) {
   const map = {}
   edges.forEach(([p1, p2]) => {
