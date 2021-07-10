@@ -30,5 +30,11 @@ export function useSolution(problemId, solutionId, opts={}) {
 }
 
 export function saveSolution(problemId, solution) {
-  return fetch(`${API_ROOT}/solutions/${problemId}`, { method: 'POST', json: solution })
+  return fetch(`${API_ROOT}/solutions/${problemId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(solution),
+  })
 }
