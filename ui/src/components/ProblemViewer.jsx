@@ -131,8 +131,8 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     }))
     return [
       _.values(stretches),
-      _.pickBy(stretches, (v) => v > 1+epsilonFraction),
-      _.pickBy(stretches, (v) => v < 1-epsilonFraction),
+      _.pickBy(stretches, (v) => v * v > 1+epsilonFraction),
+      _.pickBy(stretches, (v) => v * v < 1-epsilonFraction),
     ]
   }, [figure, optimalDistancesMap, currentDistances, epsilon])
   const score = useMemo(() => {
