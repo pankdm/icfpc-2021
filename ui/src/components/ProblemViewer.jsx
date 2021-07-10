@@ -244,7 +244,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         <button
           disabled={saved}
           onClick={() => {
-            onSaveSolution(problemId, { vertices: getCurrentVertices() })
+            onSaveSolution(problemId, username, { vertices: getCurrentVertices() })
             toggleSaved()
           }
         }>

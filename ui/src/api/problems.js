@@ -29,8 +29,8 @@ export function useSolution(problemId, solutionId, opts={}) {
   return useQuery(`solution_${solutionId}`, () => fetchJson(`${API_ROOT}/solutions/${problemId}?solutionKey=${encodeURIComponent(solutionId)}`), finalOpts)
 }
 
-export function saveSolution(problemId, solution) {
-  return fetch(`${API_ROOT}/solutions/${problemId}`, {
+export function saveSolution(problemId, username, solution) {
+  return fetch(`${API_ROOT}/solutions/${problemId}?alias=${username}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

@@ -13,9 +13,9 @@ function App() {
   const { data: problem } = useProblem(problemId, { enabled: !!problemId })
   const { data: solutions } = useSolutions(problemId, { enabled: !!problemId, refetchInterval: 1000 })
   const { data: solution, refetch: refetchSolution } = useSolution(problemId, solutionId, { enabled: !!problemId && !!solutionId })
-  const onSaveSolution = (problemId, solution) => {
+  const onSaveSolution = (problemId, username, solution) => {
     console.log('Saving solution', problemId, solution)
-    return saveSolution(problemId, solution)
+    return saveSolution(problemId, username, solution)
   }
   return (
     <div className={styles.app}>

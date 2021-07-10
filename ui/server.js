@@ -70,8 +70,9 @@ async function createServer() {
   })
   app.post('/api/solutions/:problemId', (req, res) => {
     const { problemId } = req.params
+    const { alias='' } = req.query
     const solution = req.body
-    fs.writeFileSync(`../solutions/manual/${problemId}_${Date.now()}`, JSON.stringify(solution))
+    fs.writeFileSync(`../solutions/manual/${problemId}_${alias}_${Date.now()}`, JSON.stringify(solution))
     res.status(201)
     res.send()
   })
