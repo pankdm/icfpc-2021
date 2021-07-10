@@ -44,10 +44,10 @@ const applyForce = (vec, force) => vecAdd(vec, vecMult(force, TIME_STEP))
 export const applyConstraints = (vertices, { optimalDistancesMap, frozenPoints }) => {
   const newVertices = vertices.map((v, idx) => {
     let sumForce = [0,0]
+    if (frozenPoints.indexOf(idx) > 0) {
+      return v
+    }
     vertices.forEach((ov, ovIdx) => {
-      if (frozenPoints.indexOf(idx) > 0) {
-        return v
-      }
       if (ov == v) return
       const optimalDistance = optimalDistancesMap[idx][ovIdx] || null
       if (optimalDistance) {

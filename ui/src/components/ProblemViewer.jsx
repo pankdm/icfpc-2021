@@ -74,7 +74,6 @@ export default function ProblemViewer({ problem, solution, ...props }) {
       const x = ev.clientX
       const y = ev.clientY
       const localPoint = clientPointToLocalSpacePoint([x, y], true)
-      console.log(panDragStartPoint)
       setPanDragStartPoint(localPoint)
       setPanDragStartOffset(panOffset)
     },
@@ -85,7 +84,6 @@ export default function ProblemViewer({ problem, solution, ...props }) {
         const localPoint = clientPointToLocalSpacePoint([x, y], true)
         const panDragOffset = vecSub(localPoint, panDragStartPoint)
         const newPanOffset = vecAdd(panDragOffset, panDragStartOffset)
-        console.log(panDragOffset)
         setPanOffset(newPanOffset)
       }
     },
@@ -179,11 +177,7 @@ export default function ProblemViewer({ problem, solution, ...props }) {
 
   return (
     <AspectRatioBox>
-      <svg ref={svgRef} className={styles.svg} viewBox={`${0} ${0} ${xMax - xMin} ${yMax - yMin}`}
-        onClick={ev => {
-          // const [x, y] = [ev.clientX, ev.clientY]
-        }}
-      >
+      <svg ref={svgRef} className={styles.svg} viewBox={`${0} ${0} ${xMax - xMin} ${yMax - yMin}`}>
         <Group x={-xMin} y={-yMin}>
           <Group x={(xMax-xMin)/2} y={(yMax-yMin)/2} scale={1/zoomScale}>
             <Group x={-(xMax-xMin)/2+panOffset[0]} y={-(yMax-yMin)/2+panOffset[1]}>

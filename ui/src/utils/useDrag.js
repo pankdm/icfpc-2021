@@ -41,13 +41,11 @@ const useDrag = (ref, deps=[], options) => {
     const element = ref.current
     if (element) {
       element.addEventListener('mousedown', handlePointerDown)
-      element.addEventListener('mouseup', handlePointerUp)
       window.addEventListener('mousemove', handlePointerMove)
       window.addEventListener('mouseup', handleRelease)
 
       return () => {
         element.removeEventListener('mousedown', handlePointerDown)
-        element.removeEventListener('mouseup', handlePointerUp)
         window.removeEventListener('mousemove', handlePointerMove)
         window.removeEventListener('mouseup', handleRelease)
       }
