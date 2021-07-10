@@ -14,12 +14,21 @@ from shapely.geometry import Point, Polygon
 from utils import read_problem
 from get_problems import submit_solution
 
+<<<<<<< HEAD
 TIMEOUT = 10 # seconds
+=======
+TIMEOUT = 60 # seconds
+eps = 1e-6
+>>>>>>> 8a1817a (Fixed is_edge_inside() and pose validity check)
 
 
-def is_inside(polygon: Polygon, x, y):
-    pt = Point(x, y)
-    return polygon.contains(pt) or polygon.touches(pt)
+def is_inside(polygon: Polygon, x, y, eps = 0):
+    if eps == 0:
+        pt = Point(x, y)
+        return polygon.contains(pt) or polygon.touches(pt)
+    else:
+        # allow for floating point errors
+        return any(polygon.contains(Point(x+dx, y+dy)) for dx in (eps, -eps) for dy in (eps, -eps) )
 
 def dist2(pt1, pt2):
     x1, y1 = pt1
@@ -57,7 +66,7 @@ def point_average(A: Tuple, B: Tuple, a=0.1) -> Tuple:
 
 def is_edge_inside(spec, A: Tuple, B: Tuple):
 # Check if AB is fully within the hole
-    if not all(is_inside(spec['hole_poly'], *point_average(A, B, a)) for a in (0.1, 0.3, 0.5, 0.7, 0.9)):
+    if not all(is_inside(spec['hole_poly'], *point_average(A, B, a), eps) for a in (0.1, 0.3, 0.5, 0.7, 0.9)):
         return False
     for i, v in enumerate(spec['hole']):
         if i == 0:
