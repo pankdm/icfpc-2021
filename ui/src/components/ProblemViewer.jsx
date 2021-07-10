@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import _ from 'lodash'
 import AspectRatioBox from './AspectRatioBox.jsx'
+import Bonuses from './svg/Bonuses.jsx'
 import Group from './svg/Group.jsx'
 import Grid from './svg/Grid.jsx'
 import Hole from './svg/Hole.jsx'
@@ -16,7 +17,7 @@ import useBlip from '../utils/useBlip.js'
 import useLocalStorage from '../utils/useLocalStorage.js'
 
 export default function ProblemViewer({ problemId, problem, solution, onSaveSolution, ...props }) {
-  const { hole, epsilon, figure } = problem
+  const { hole, epsilon, figure, bonuses } = problem
   const epsilonFraction = epsilon/1e6
   const zeroPointLocation = useRef()
   const getZeroPointClientLocation = () => {
@@ -229,6 +230,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
             <Group x={-(xMax-xMin)/2+panOffset[0]} y={-(yMax-yMin)/2+panOffset[1]}>
               <Group ref={zeroPointLocation} x={0} y={0} />
               <Hole safePadding={safePadding} vertices={hole} />
+              <Bonuses vertices={bonuses}/>
               <Grid xMin={xMin} yMin={yMin} xMax={xMax} yMax={yMax} color='#787' />
               <Figure
                 animate={true}
