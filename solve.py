@@ -213,9 +213,21 @@ class Solver():
     def full_solve(self):
         # start the timer
         self.start = time.time()
+        
 
         spec = self.spec
         total_points = len(spec['figure']['vertices'])
+
+        # # start from some setup
+        # with open('38_start') as f:
+        #     start = json.loads(f.read())
+        # solution = {}
+        # for (idx, v) in enumerate(start['vertices']):
+        #     if v in spec['hole']:
+        #         solution[idx] = v
+        # print ('start with {} nodes'.format(len(solution)))
+        # self.try_solve(solution)
+
         hole_indices = list(range(len(spec['hole'])))
         random.shuffle(hole_indices)
         for first_index in hole_indices:

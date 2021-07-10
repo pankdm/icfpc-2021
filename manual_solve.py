@@ -1,8 +1,9 @@
 
 from utils import read_problem
+import sys
 
 
-problem_id = 39
+problem_id = sys.argv[1]
 spec = read_problem(problem_id)
 
 
