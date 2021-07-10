@@ -156,9 +156,6 @@ export default function ProblemViewer({ problem, solution, ...props }) {
       setSimMode(null)
     }
   }
-  useHotkeys('p', () => {
-    togglePlaying()
-  }, {}, [togglePlaying])
   const singleShake = () => {
     let vertices = currentVertices
     vertices = applyShake(vertices, { maxAmplitude: 3 })
@@ -171,6 +168,24 @@ export default function ProblemViewer({ problem, solution, ...props }) {
     setZoom(0)
     setPanOffset([0, 0])
   }
+  useHotkeys('r', () => {
+    reset()
+  }, {}, [reset])
+  useHotkeys('p', () => {
+    togglePlaying()
+  }, {}, [togglePlaying])
+  useHotkeys('g', () => {
+    toggleSimMode('gravity')
+  }, {}, [toggleSimMode])
+  useHotkeys('k', () => {
+    singleShake()
+  }, {}, [singleShake])
+  useHotkeys('i', () => {
+    toggleSimMode('simpleInflate')
+  }, {}, [singleShake])
+  useHotkeys('o', () => {
+    toggleSimMode('infalte')
+  }, {}, [toggleSimMode])
   useOnChangeValues([problem, solution], () => {
     reset()
   })
@@ -191,6 +206,7 @@ export default function ProblemViewer({ problem, solution, ...props }) {
                 edgeStretches={edgeStretches}
                 overstretchedEdges={overstretchedEdges}
                 overshrinkedEdges={overshrinkedEdges}
+                frozenPoints={frozenFigurePoints}
                 onPointGrab={(ev, idx) => {
                   ev.stopPropagation()
                   setFrozenFigurePoints([idx])
@@ -204,7 +220,7 @@ export default function ProblemViewer({ problem, solution, ...props }) {
       <div className={styles.topRight}>
         <button onClick={togglePlaying}>{playing ? 'Physics: on' : 'Physics: off'}</button>
         <button onClick={() => toggleSimMode('inflate')}>{simMode == 'inflate' ? 'Inflating' : 'Inflate'}</button>
-        <button onClick={() => toggleSimMode('simpleInflate')}>{simMode == 'simpleInflate' ? 'Stretching' : 'Sretch'}</button>
+        <button onClick={() => toggleSimMode('simpleInflate')}>{simMode == 'simpleInflate' ? 'Stretching' : 'Stretch'}</button>
         <button onClick={() => toggleSimMode('gravity')}>{simMode == 'gravity' ? 'Gravitating' : 'Gravity'}</button>
         <button onClick={singleShake}>Shake</button>
         <button onClick={reset}>Reset</button>

@@ -15,6 +15,7 @@ const springConfig={
 export default function Figure({
   vertices,
   edges,
+  frozenPoints,
   epsilon,
   edgeStretches,
   overstretchedEdges,
@@ -49,7 +50,7 @@ export default function Figure({
         return (
           <Line
             key={idx}
-            animate={true}
+            animate={frozenPoints.indexOf(idx) < 0}
             x1={x1}
             x2={x2}
             y1={y1}
@@ -69,7 +70,7 @@ export default function Figure({
       })}
       {vertices.map(([x, y], idx) => {
         return (
-          <Group key={idx} x={x} y={y} animate={true} springConfig={springConfig}>
+          <Group key={idx} x={x} y={y} animate={frozenPoints.indexOf(idx) < 0} springConfig={springConfig}>
             <Point
               radius={0.5}
               color={pointColor}
