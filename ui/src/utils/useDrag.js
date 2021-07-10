@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react'
 const useDrag = (ref, deps=[], options) => {
   const {
     onPointerDown = () => {},
-    onPointerUp = () => {},
     onPointerMove = () => {},
     onDragStart = () => {},
     onDrag = () => {},
@@ -16,11 +15,6 @@ const useDrag = (ref, deps=[], options) => {
     setIsDragging(true)
     onPointerDown(e)
     onDragStart(e)
-  }
-
-  const handlePointerUp = (e) => {
-    setIsDragging(false)
-    onPointerUp(e)
   }
 
   const handlePointerMove = (e) => {
@@ -41,18 +35,20 @@ const useDrag = (ref, deps=[], options) => {
     const element = ref.current
     if (element) {
       element.addEventListener('mousedown', handlePointerDown)
+      element.removeEventListener('mouseup', handleRelease)
       window.addEventListener('mousemove', handlePointerMove)
       window.addEventListener('mouseup', handleRelease)
 
       return () => {
         element.removeEventListener('mousedown', handlePointerDown)
+        element.removeEventListener('mouseup', handleRelease)
         window.removeEventListener('mousemove', handlePointerMove)
         window.removeEventListener('mouseup', handleRelease)
       }
     }
 
     return () => {}
-  }, [...deps, isDragging])
+  }, [...deps, ref, isDragging, handlePointerMove, handleRelease])
 
   return { isDragging }
 }

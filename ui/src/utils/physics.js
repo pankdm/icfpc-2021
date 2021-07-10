@@ -72,9 +72,7 @@ export const applyGravity = (vertices, { meanCoords, gravityCenter, frozenPoints
 }
 
 export const applyShake = (vertices, { maxAmplitude, frozenPoints }) => {
-  console.log(frozenPoints)
   const newVertices = vertices.map((v, idx) => {
-    console.log(idx, frozenPoints.indexOf(idx))
     if (frozenPoints.indexOf(idx) >= 0) {
       return v
     }

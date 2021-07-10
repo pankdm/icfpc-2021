@@ -1,20 +1,53 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import _ from 'lodash'
 import Line from './Line.jsx'
 import Point from './Point.jsx'
 import Group from './Group.jsx'
 import Label from './Label.jsx'
+import useDrag from '../../utils/useDrag.js'
 import { hexColorLerp, hexColorLerpHSL } from '../../utils/utils.js'
-import * as utils from '../../utils/utils.js'
-window.UTILS = utils
+
 const springConfig={
-  tension: 250,
-  friction: 15,
+  tension: 450,
+  friction: 45,
+}
+
+function FigurePoint({
+  idx,
+  x,
+  y,
+  pointColor,
+  pointRadius=0.5,
+  animate=false,
+  springConfig,
+  onDragStart=()=>{},
+  onDragEnd=()=>{},
+  onDrag=()=>{},
+}) {
+  const ref = useRef()
+  useDrag(ref, [], {
+    onDragStart,
+    onDragEnd,
+    onDrag,
+  })
+  return (
+    <Group ref={ref} x={x} y={y} animate={animate} springConfig={springConfig}>
+      <Point
+        radius={pointRadius}
+        color={pointColor}
+        onDragStart={(ev) => onPointGrab(ev, idx)}
+        onDragEnd={(ev) => onPointRelease(ev, idx)}
+        onDrag={(ev) => onPointDrag(ev, idx, {clientX: ev.clientX, clientY: ev.clientY, dx: ev.movementX, dy: ev.movementY})}
+      />
+      <Label xOffset={0.5} yOffset={-0.5}>{idx}</Label>
+    </Group>
+  )
 }
 
 export default function Figure({
   vertices,
   edges,
+  animate,
   frozenPoints,
   epsilon,
   edgeStretches,
@@ -50,7 +83,7 @@ export default function Figure({
         return (
           <Line
             key={idx}
-            animate={frozenPoints.indexOf(idx) < 0}
+            animate={animate}
             x1={x1}
             x2={x2}
             y1={y1}
@@ -58,7 +91,7 @@ export default function Figure({
             springConfig={springConfig}
             strokeDasharray={_.find([
               overstretchedEdges[idx] && "2,2",
-              overshrinkedEdges[idx] && "0.75,0.75",
+              overshrinkedEdges[idx] && "0.15 0.75",
               null
             ])}
             stroke={color}
@@ -69,17 +102,25 @@ export default function Figure({
         )
       })}
       {vertices.map(([x, y], idx) => {
+        const isFrozen = frozenPoints.indexOf(idx) >= 0
+        const _animate = isFrozen ? false : animate
+        const pointColor = isFrozen ? '#fa0' : '#fff'
         return (
-          <Group key={idx} x={x} y={y} animate={frozenPoints.indexOf(idx) < 0} springConfig={springConfig}>
-            <Point
-              radius={0.5}
-              color={pointColor}
-              onDragStart={(ev) => onPointGrab(ev, idx)}
-              onDragEnd={(ev) => onPointRelease(ev, idx)}
-              onDrag={(ev) => onPointDrag(ev, idx, {clientX: ev.clientX, clientY: ev.clientY, dx: ev.movementX, dy: ev.movementY})}
-            />
-            <Label xOffset={0.5} yOffset={-0.5}>{idx}</Label>
-          </Group>
+          <FigurePoint
+            key={idx}
+            idx={idx}
+            x={x}
+            y={y}
+            pointColor={pointColor}
+            animate={_animate}
+            springConfig={springConfig}
+            onDragStart={(ev) => {
+              ev.stopPropagation()
+              onPointGrab(ev, idx)
+            }}
+            onDrag={(ev) => onPointDrag(ev, idx)}
+            onDragEnd={(ev) => onPointRelease(ev, idx)}
+          />
         )
       })}
     </g>

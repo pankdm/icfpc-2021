@@ -64,9 +64,9 @@ export default function ProblemViewer({ problem, solution, ...props }) {
   const clientDeltaToLocalSpaceDelta = (clientDelta) => {
     const svgRect = getSvgRect()
     const xScale = (xMax-xMin)*zoomScale/svgRect.width
-    const dx = (clientDelta[0])*xScale
+    const dx = clientDelta[0]*xScale
     const yScale = (yMax-yMin)*zoomScale/svgRect.height
-    const dy = (clientDelta[1])*yScale
+    const dy = clientDelta[1]*yScale
     return [dx, dy]
   }
   useDrag(svgRef, [zoomScale, panDragStartPoint, panDragStartOffset, panOffset], {
@@ -130,6 +130,15 @@ export default function ProblemViewer({ problem, solution, ...props }) {
   const setOverriddenVertices = (vertices) => {
     overriddenVertices.current = vertices
     setOverriddenVerticesKey(vertices ? Math.random() : null)
+  }
+  const updateVerticePosition = (idx, newPos) => {
+    let vertices = getCurrentVertices()
+    vertices = [
+      ...vertices.slice(0, idx),
+      vecAdd(vertices[idx], newPos),
+      ...vertices.slice(idx+1),
+    ]
+    setOverriddenVertices(vertices)
   }
   const { playing, togglePlaying, stopPlaying } = useAnimLoop(() => {
     let vertices = getCurrentVertices()
@@ -200,6 +209,7 @@ export default function ProblemViewer({ problem, solution, ...props }) {
               <Hole safePadding={safePadding} vertices={hole} />
               <Grid xMin={xMin} yMin={yMin} xMax={xMax} yMax={yMax} color='#787' />
               <Figure
+                animate={true}
                 vertices={getCurrentVertices()}
                 edges={figure.edges}
                 epsilon={epsilonFraction}
@@ -212,9 +222,10 @@ export default function ProblemViewer({ problem, solution, ...props }) {
                   setFrozenFigurePoints([idx])
                 }}
                 onPointRelease={() => setFrozenFigurePoints([])}
-                // onPointDrag={() => {
-
-                // }}
+                onPointDrag={(ev, idx) => {
+                  const localDelta = clientDeltaToLocalSpaceDelta([ev.movementX, ev.movementY])
+                  updateVerticePosition(idx, localDelta)
+                }}
               />
             </Group>
           </Group>
