@@ -9,6 +9,8 @@ export API_KEY='API_KEY_FROM_SLACK'
 API_KEY=API_KEY_FROM_SLACK
 ```
 
+Or download the whole `.env` file from Slack
+
 Install libs:
 ```
 pip3 install -r requirements.txt
