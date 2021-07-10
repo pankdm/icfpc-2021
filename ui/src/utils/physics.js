@@ -44,7 +44,7 @@ const applyForce = (vec, force) => vecAdd(vec, vecMult(force, TIME_STEP))
 export const applyConstraints = (vertices, { optimalDistancesMap, frozenPoints }) => {
   const newVertices = vertices.map((v, idx) => {
     let sumForce = [0,0]
-    if (frozenPoints.indexOf(idx) > 0) {
+    if (frozenPoints.indexOf(idx) >= 0) {
       return v
     }
     vertices.forEach((ov, ovIdx) => {
@@ -63,7 +63,7 @@ export const applyConstraints = (vertices, { optimalDistancesMap, frozenPoints }
 export const applyGravity = (vertices, { meanCoords, gravityCenter, frozenPoints }) => {
   const gravity = getLinearFravityForce(meanCoords, gravityCenter)
   const newVertices = vertices.map((v, idx) => {
-    if (frozenPoints.indexOf(idx) > 0) {
+    if (frozenPoints.indexOf(idx) >= 0) {
       return v
     }
     return applyForce(v, gravity)
@@ -71,8 +71,13 @@ export const applyGravity = (vertices, { meanCoords, gravityCenter, frozenPoints
   return newVertices
 }
 
-export const applyShake = (vertices, { maxAmplitude }) => {
+export const applyShake = (vertices, { maxAmplitude, frozenPoints }) => {
+  console.log(frozenPoints)
   const newVertices = vertices.map((v, idx) => {
+    console.log(idx, frozenPoints.indexOf(idx))
+    if (frozenPoints.indexOf(idx) >= 0) {
+      return v
+    }
     const randForce = vecRand(Math.random()*maxAmplitude/TIME_STEP)
     return applyForce(v, randForce)
   })
@@ -81,7 +86,7 @@ export const applyShake = (vertices, { maxAmplitude }) => {
 
 export const inflateSimpleRadial = (vertices, { meanCoords, simpleRepelConst, frozenPoints }) => {
   const newVertices = vertices.map((v, idx) => {
-    if (frozenPoints.indexOf(idx) > 0) {
+    if (frozenPoints.indexOf(idx) >= 0) {
       return v
     }
     let repelForce = getSimpleRadialForce(v, meanCoords, simpleRepelConst)
@@ -92,7 +97,7 @@ export const inflateSimpleRadial = (vertices, { meanCoords, simpleRepelConst, fr
 
 export const inflate = (vertices, { repelConst, maxRepel, frozenPoints }) => {
   const newVertices = vertices.map((v, idx) => {
-    if (frozenPoints.indexOf(idx) > 0) {
+    if (frozenPoints.indexOf(idx) >= 0) {
       return v
     }
     let repelForce = [0, 0]

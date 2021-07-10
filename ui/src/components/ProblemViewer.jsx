@@ -158,7 +158,7 @@ export default function ProblemViewer({ problem, solution, ...props }) {
   }
   const singleShake = () => {
     let vertices = currentVertices
-    vertices = applyShake(vertices, { maxAmplitude: 3 })
+    vertices = applyShake(vertices, { maxAmplitude: 3, frozenPoints: frozenFigurePoints })
     setOverriddenVertices(vertices)
   }
   const reset = () => {
@@ -212,6 +212,9 @@ export default function ProblemViewer({ problem, solution, ...props }) {
                   setFrozenFigurePoints([idx])
                 }}
                 onPointRelease={() => setFrozenFigurePoints([])}
+                // onPointDrag={() => {
+
+                // }}
               />
             </Group>
           </Group>
