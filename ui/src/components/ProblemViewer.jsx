@@ -38,6 +38,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   const [username, setUsername] = useLocalStorage('username', 'Snake-n-Lambda')
   const overriddenVertices = useRef(null)
   const [zoom, setZoom] = useState(0)
+  const [dragMode, setDragMode] = useState(true)
   const [saved, toggleSaved] = useBlip(300)
   const zoomScale = 2**-zoom
   const [panDragStartPoint, setPanDragStartPoint] = useState(null)
@@ -73,35 +74,41 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     const dy = clientDelta[1]*yScale
     return [dx, dy]
   }
-  useDrag(svgRef, [zoomScale, panDragStartPoint, panDragStartOffset, panOffset], {
+  useDrag(svgRef, [zoomScale, panDragStartPoint, panDragStartOffset, panOffset, dragMode], {
     onDragStart: (ev) => {
-      const x = ev.clientX
-      const y = ev.clientY
-      const localPoint = clientPointToLocalSpacePoint([x, y], true)
-      setPanDragStartPoint(localPoint)
-      setPanDragStartOffset(panOffset)
+      if (dragMode) {
+        const x = ev.clientX
+        const y = ev.clientY
+        const localPoint = clientPointToLocalSpacePoint([x, y], true)
+        setPanDragStartPoint(localPoint)
+        setPanDragStartOffset(panOffset)
+      }
     },
     onDrag: (ev) => {
-      const x = ev.clientX
-      const y = ev.clientY
-      if (panDragStartPoint && panDragStartOffset) {
-        const localPoint = clientPointToLocalSpacePoint([x, y], true)
-        const panDragOffset = vecSub(localPoint, panDragStartPoint)
-        const newPanOffset = vecAdd(panDragOffset, panDragStartOffset)
-        setPanOffset(newPanOffset)
+      if (dragMode) {
+        const x = ev.clientX
+        const y = ev.clientY
+        if (panDragStartPoint && panDragStartOffset) {
+          const localPoint = clientPointToLocalSpacePoint([x, y], true)
+          const panDragOffset = vecSub(localPoint, panDragStartPoint)
+          const newPanOffset = vecAdd(panDragOffset, panDragStartOffset)
+          setPanOffset(newPanOffset)
+        }
       }
     },
     onDragEnd: (ev) => {
-      const x = ev.clientX
-      const y = ev.clientY
-      if (panDragStartPoint && panDragStartOffset) {
-        const localPoint = clientPointToLocalSpacePoint([x, y], true)
-        const panDragOffset = vecSub(localPoint, panDragStartPoint)
-        const newPanOffset = vecAdd(panDragOffset, panDragStartOffset)
-        setPanOffset(newPanOffset)
+      if (dragMode) {
+        const x = ev.clientX
+        const y = ev.clientY
+        if (panDragStartPoint && panDragStartOffset) {
+          const localPoint = clientPointToLocalSpacePoint([x, y], true)
+          const panDragOffset = vecSub(localPoint, panDragStartPoint)
+          const newPanOffset = vecAdd(panDragOffset, panDragStartOffset)
+          setPanOffset(newPanOffset)
+        }
+        setPanDragStartPoint(null)
+        setPanDragStartOffset(null)  
       }
-      setPanDragStartPoint(null)
-      setPanDragStartOffset(null)
     },
   })
   const optimalDistancesMap = useMemo(() => {
@@ -167,6 +174,13 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
       }
     } else {
       setSimMode(null)
+    }
+  }
+  const toggleDragMode = () => {
+    if (dragMode == true) {
+      setDragMode(false)
+    } else {
+      setDragMode(true)
     }
   }
   const singleShake = () => {
@@ -259,6 +273,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         <button onClick={singleShake}>Shake</button>
         <button onClick={snapVertices}>Snap</button>
         <button onClick={reset}>Reset</button>
+        <button onClick={toggleDragMode}>{dragMode ? 'Disable Dragging' : 'Enable Dragging'}</button>
       </div>
       <div className={styles.bottomRight}>
         <button onClick={() => setZoom(zoom+1)}>+</button>
