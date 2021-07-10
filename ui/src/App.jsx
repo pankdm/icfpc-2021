@@ -8,12 +8,9 @@ import styles from './App.module.css'
 import Problems from './pages/Problems.jsx'
 import Scores from './pages/Scores.jsx'
 import About from './pages/About.jsx'
-import { useRouteMatch } from "react-router-dom"
 
 
 function App() {
-  const routeMatch = useRouteMatch()
-  console.log(routeMatch)
   return (
     <Switch>
       <Route path="/scores">
