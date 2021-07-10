@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys
 from typing import Tuple
+from collections import defaultdict
 import json
 import copy
 import random
@@ -13,7 +14,7 @@ from shapely.geometry import Point, Polygon
 from utils import read_problem
 from get_problems import submit_solution
 
-TIMEOUT = 10 # seconds
+TIMEOUT = 15 # seconds
 
 
 def is_inside(polygon, x, y):
@@ -116,17 +117,16 @@ def check_distance(spec, orig_dist, new_dist):
     return False
 
 # solution = {id -> [x, y]}
-def check_partial_solution(spec, solution):
-    for edge in spec['figure']['edges']:
-        a, b = edge
-        if a in solution and b in solution:
-            pt_a = solution[a]
-            pt_b = solution[b]
-            orig_dist = dist2(spec['figure']['vertices'][a], spec['figure']['vertices'][b])    
-            new_dist = dist2(pt_a, pt_b)
-            if not check_distance(spec, orig_dist, new_dist):
-                return False
+def check_partial_solution(spec, solution, new_vertex, new_coords):
+    for adj_v in spec['figure']['adj'][new_vertex]:
+        if adj_v not in solution:
+            continue
+        orig_dist = dist2(spec['figure']['vertices'][adj_v], spec['figure']['vertices'][new_vertex]) 
+        new_dist = dist2(solution[adj_v], new_coords)
+        if not check_distance(spec, orig_dist, new_dist) or not is_edge_inside(spec, solution[adj_v], new_coords):
+            return False
     return True
+
 
 class TimeoutException(Exception):
     pass
@@ -139,12 +139,15 @@ class Solver():
         self.best_score = None
         self.best_solution = None
         self.timer = None
+        # adjacency lists
+        adj = defaultdict(list)
+        for e in spec['figure']['edges']:
+            adj[e[0]].append(e[1])
+            adj[e[1]].append(e[0])
+        spec['figure']['adj'] = adj
 
     def try_solve(self, solution):
         spec = self.spec
-        ok = check_partial_solution(spec, solution)
-        if not ok:
-            return
 
         now = time.time()
         delta = now - self.start
@@ -182,8 +185,7 @@ class Solver():
         # find next possible point for b
         orig_dist = dist2(spec['figure']['vertices'][a], spec['figure']['vertices'][b])    
         for pt in self.inside_points:
-            new_dist = dist2(solution[a], pt)
-            if check_distance(spec, orig_dist, new_dist) and is_edge_inside(spec, solution[a], pt):
+            if check_partial_solution(spec, solution, b, pt):
                 solution[b] = pt
                 self.try_solve(solution)
                 # otherwise restore previous state
