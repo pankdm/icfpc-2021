@@ -238,6 +238,9 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   useHotkeys('o', () => {
     toggleSimMode('infalte')
   }, {}, [toggleSimMode])
+  useHotkeys('s', () => {
+    snapVertices()
+  }, {}, [snapVertices])
   useDOMEvent('keydown', (ev) => {
     // on press Shift
     if (ev.keyCode == 16) {
