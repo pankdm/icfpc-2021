@@ -58,7 +58,7 @@ def point_average(A: Tuple, B: Tuple, a=0.1) -> Tuple:
 
 def is_edge_inside(spec, A: Tuple, B: Tuple):
 # Check if AB is fully within the hole
-    if not all(is_inside(polygon, *point_average(A, B, a)) for a in (0.1, 0.5, 0.9)):
+    if not all(is_inside(polygon, *point_average(A, B, a)) for a in (0.1, 0.3, 0.5, 0.7, 0.9)):
         return False
     for i, v in enumerate(spec['hole']):
         if i == 0:
@@ -263,7 +263,7 @@ if __name__ == "__main__":
         problem_id = sys.argv[1]
         solve_and_submit(problem_id)
     else:
-        for i in range(60, 79):
+        for i in range(28, 37):
             solve_and_submit(i)
 
 
