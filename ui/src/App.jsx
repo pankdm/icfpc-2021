@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import _ from 'lodash'
+import Flex from './components/Flex.jsx'
 import ProblemViewer from './components/ProblemViewer.jsx'
 import styles from './App.module.css'
 import useLocalStorage from './utils/useLocalStorage.js'
@@ -11,7 +12,7 @@ function App() {
   const { data: problems } = useProblems()
   const { data: problem } = useProblem(problemId, { enabled: !!problemId })
   const { data: solutions } = useSolutions(problemId, { enabled: !!problemId, refetchInterval: 1000 })
-  const { data: solution } = useSolution(problemId, solutionId, { enabled: !!problemId && !!solutionId })
+  const { data: solution, refetch: refetchSolution } = useSolution(problemId, solutionId, { enabled: !!problemId && !!solutionId })
   return (
     <div className={styles.app}>
       <h1>Welcome to ICFPC 2021!</h1>
@@ -50,6 +51,10 @@ function App() {
             )
           }
         </select>
+        {` `}
+        {solutionId &&
+          <span className={styles.refreshLabel} onClick={() => refetchSolution()}>Refresh</span>
+        }
       </p>
       {problem &&
         <ProblemViewer key={problemId} problem={problem} solution={solution} />

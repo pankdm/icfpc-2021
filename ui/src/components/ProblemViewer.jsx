@@ -19,8 +19,8 @@ export default function ProblemViewer({ problem, solution, ...props }) {
   }
   const { hole, epsilon, figure } = problem
   const safePadding = 5
-  const minCoord = _.min(_.flatten(hole))
-  const maxCoord = _.max(_.flatten(hole))
+  const minCoord = _.min([..._.flatten(hole), ..._.flatten(figure.vertices)])
+  const maxCoord = _.max([..._.flatten(hole), ..._.flatten(figure.vertices)])
   const xMin = minCoord - safePadding
   const yMin = minCoord - safePadding
   const xMax = maxCoord + safePadding

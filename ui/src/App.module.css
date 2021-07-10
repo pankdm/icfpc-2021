@@ -4,3 +4,11 @@
   padding-left: 2rem;
   padding-right: 2rem;
 }
+
+.refresh-label {
+  cursor: pointer;
+  margin-left: .5em;
+  opacity: 0.5;
+  font-size: .75em;
+  user-select: none;
+}
