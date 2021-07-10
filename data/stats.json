@@ -1,6 +1,6 @@
 {
     "1": {
-        "dislikes": "3997",
+        "dislikes": "1245",
         "min_dislikes": "624"
     },
     "2": {
@@ -12,7 +12,7 @@
         "min_dislikes": "186"
     },
     "4": {
-        "dislikes": "5133",
+        "dislikes": "0",
         "min_dislikes": "0"
     },
     "5": {
@@ -25,7 +25,7 @@
     },
     "7": {
         "dislikes": "6448",
-        "min_dislikes": "111"
+        "min_dislikes": "108"
     },
     "8": {
         "dislikes": "2698",
@@ -36,8 +36,8 @@
         "min_dislikes": "779"
     },
     "10": {
-        "dislikes": "14097",
-        "min_dislikes": "18"
+        "dislikes": "1184",
+        "min_dislikes": "16"
     },
     "11": {
         "dislikes": "0",
@@ -92,7 +92,7 @@
         "min_dislikes": "0"
     },
     "24": {
-        "dislikes": "633",
+        "dislikes": "0",
         "min_dislikes": "0"
     },
     "25": {
@@ -100,7 +100,7 @@
         "min_dislikes": "0"
     },
     "26": {
-        "dislikes": null,
+        "dislikes": "0",
         "min_dislikes": "0"
     },
     "27": {
@@ -136,7 +136,7 @@
         "min_dislikes": "0"
     },
     "35": {
-        "dislikes": "1209",
+        "dislikes": "0",
         "min_dislikes": "0"
     },
     "36": {
@@ -148,11 +148,11 @@
         "min_dislikes": "1683"
     },
     "38": {
-        "dislikes": "944",
+        "dislikes": "0",
         "min_dislikes": "0"
     },
     "39": {
-        "dislikes": "3545",
+        "dislikes": "0",
         "min_dislikes": "0"
     },
     "40": {
@@ -200,7 +200,7 @@
         "min_dislikes": "3299"
     },
     "51": {
-        "dislikes": "2378",
+        "dislikes": "0",
         "min_dislikes": "0"
     },
     "52": {
@@ -232,7 +232,7 @@
         "min_dislikes": "2171"
     },
     "59": {
-        "dislikes": "11904",
+        "dislikes": "0",
         "min_dislikes": "0"
     },
     "60": {
@@ -309,7 +309,7 @@
     },
     "78": {
         "dislikes": null,
-        "min_dislikes": "193"
+        "min_dislikes": "179"
     },
     "79": {
         "dislikes": null,
@@ -337,7 +337,7 @@
     },
     "85": {
         "dislikes": null,
-        "min_dislikes": "1716"
+        "min_dislikes": "42"
     },
     "86": {
         "dislikes": null,
