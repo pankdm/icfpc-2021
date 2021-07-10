@@ -49,8 +49,8 @@ export default function Figure({
       })}
       {_vertices.map(([x, y], idx) => {
         return (
-          <Group key={idx} x={x} y={y} animate={true}>
-            <Point radius={0.5} color={pointColor} springConfig={springConfig} />
+          <Group key={idx} x={x} y={y} animate={true} springConfig={springConfig}>
+            <Point radius={0.5} color={pointColor}/>
             <Label xOffset={0.5} yOffset={-0.5}>{idx}</Label>
           </Group>
         )
