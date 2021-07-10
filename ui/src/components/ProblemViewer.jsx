@@ -16,7 +16,7 @@ export default function ProblemViewer({ problem, solution, ...props }) {
   const _overriddenVertices = useRef(null)
   const [overriddenVertices, setOverriddenVertices] = useState(null)
   const { playing, togglePlaying, stopPlaying } = useAnimLoop(() => {
-    let _vertices = _overriddenVertices.current || figure.vertices
+    let _vertices = _overriddenVertices.current || (solution ? solution.vertices : figure.vertices)
     _vertices = relaxVertices(_vertices, optimalDistancesMap, [xMean, yMean])
     _overriddenVertices.current = _vertices
     setOverriddenVertices(_vertices)
