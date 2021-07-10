@@ -13,6 +13,7 @@ import useAnimLoop from '../utils/useAnimLoop.js'
 import { useHotkeys } from 'react-hotkeys-hook'
 import useDrag from '../utils/useDrag.js'
 import useBlip from '../utils/useBlip.js'
+import useLocalStorage from '../utils/useLocalStorage.js'
 
 export default function ProblemViewer({ problemId, problem, solution, onSaveSolution, ...props }) {
   const { hole, epsilon, figure } = problem
@@ -34,6 +35,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     }
     return svg.getBoundingClientRect()
   }
+  const [username, setUsername] = useLocalStorage('username', 'Snake-n-Lambda')
   const overriddenVertices = useRef(null)
   const [zoom, setZoom] = useState(0)
   const [saved, toggleSaved] = useBlip(300)
@@ -238,6 +240,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         </Group>
       </svg>
       <div className={styles.topLeft}>
+        <input placeholder='username / manual solutions alias' value={username} onChange={ev => setUsername(ev.target.value)} />
         <button
           disabled={saved}
           onClick={() => {

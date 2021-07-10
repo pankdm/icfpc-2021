@@ -17,8 +17,18 @@
   top: 1rem;
   right: 1rem;
 }
-
+input {
+  width: 10em;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  text-align: center;
+  font-size: 100%;
+  min-width: 7em;
+  outline: none;
+  padding: .25em;
+}
 button {
+  width: 100%;
   display: block;
   min-width: 7em;
   margin-bottom: .5em;
