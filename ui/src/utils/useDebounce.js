@@ -1,8 +1,12 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
-export default function useInterval(callback, intervalMs=1000) {
+export default function useDebounce(value, delayMs=300, callback=() => {}) {
+  const [_value, setValue] = useState(value)
   useEffect(() => {
-    const interval = setInterval(callback, intervalMs)
-    return () => clearInterval(interval)
-  }, [callback])
+    const timeoutId = setTimeout(() => {
+      setValue(value)
+      callback(value, _value)
+    }, delayMs)
+    return () => clearTimeout(timeoutId)
+  }, [value, delayMs])
 }

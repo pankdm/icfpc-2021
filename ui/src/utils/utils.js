@@ -2,7 +2,10 @@ export const sleep = (delayMs=1000) => new Promise(res => setTimeout(res, delayM
 
 export const shakeCoord = (coord, amplitude=1) => coord + amplitude*(Math.random()-0.5)/0.5
 
-export const shakePoint = (point, amplitude=1) => point.map(c => shakeCoord(c, amplitude))
+export const shakePoint = ([x, y], amplitude=1) => {
+  const randAngle = Math.random() * 2*Math.PI
+  return [x + amplitude*Math.cos(randAngle), y + amplitude*Math.sin(randAngle)]
+}
 
 export function naturalSort(a, b) {
   const numA = parseInt(a)

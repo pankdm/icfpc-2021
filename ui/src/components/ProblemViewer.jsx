@@ -8,7 +8,7 @@ import RenderDebugger from './RenderDebugger.jsx'
 import styles from './ProblemViewer.module.css'
 import useBlip from '../utils/useBlip.js'
 
-export default function ProblemViewer({ problem, ...props }) {
+export default function ProblemViewer({ problem, solution, ...props }) {
   const [shake, toggleShake] = useBlip(300)
   if (!problem) {
     return (
@@ -25,6 +25,7 @@ export default function ProblemViewer({ problem, ...props }) {
   const yMin = minCoord - safePadding
   const xMax = maxCoord + safePadding
   const yMax = maxCoord + safePadding
+  const _figure = solution ? {...figure, ...solution} : figure
 
   return (
     <AspectRatioBox>
@@ -33,7 +34,7 @@ export default function ProblemViewer({ problem, ...props }) {
           <RenderDebugger name='ProblemViewer'/>
           <Hole safePadding={safePadding} vertices={hole} />
           <Grid xMin={xMin} yMin={yMin} xMax={xMax} yMax={yMax} color='#787' />
-          <Figure shake={shake} figure={figure} epsilon={epsilon} />
+          <Figure shake={shake} figure={_figure} epsilon={epsilon} />
         </g>
       </svg>
       <button className={styles.shakeButton} onClick={toggleShake}>Shake</button>

@@ -1,17 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import _ from 'lodash'
 import ProblemViewer from './components/ProblemViewer.jsx'
 import styles from './App.module.css'
 import useLocalStorage from './utils/useLocalStorage.js'
-import { useProblems, useProblem } from './api/problems'
+import { useProblems, useProblem, useSolutions, useSolution } from './api/problems'
 
 function App() {
   const [problemId, setProblemId] = useLocalStorage('problemId', 1)
+  const [solutionId, setSolutionId] = useState(null)
   const { data: problems } = useProblems()
-  const { isLoading, error, data: problem } = useProblem(problemId, { enabled: !!problemId })
-  // if (problem) {
-  //   problem.figure.vertices[0][0] = 2
-  // }
+  const { data: problem } = useProblem(problemId, { enabled: !!problemId })
+  const { data: solutions } = useSolutions(problemId, { enabled: !!problemId, refetchInterval: 1000 })
+  const { data: solution } = useSolution(problemId, solutionId, { enabled: !!problemId && !!solutionId })
   return (
     <div className={styles.app}>
       <h1>Welcome to ICFPC 2021!</h1>
@@ -21,7 +21,10 @@ function App() {
         {problems &&
           <select
             value={problemId}
-            onChange={e => setProblemId(e.target.value)}
+            onChange={e => {
+              setProblemId(e.target.value)
+              setSolutionId(null)
+            }}
           >
             {_.map(
               problems,
@@ -29,9 +32,27 @@ function App() {
             )}
           </select>
         }
+        {` `}
+        Display solution:
+        {` `}
+        <select
+          value={solutionId || 'NONE'}
+          onChange={e => {
+            const { value } = e.target
+            setSolutionId(value == 'NONE' ? null : value)
+          }}
+        >
+          <option value='NONE'>None</option>
+          {solutions &&
+            _.map(
+              solutions,
+              (id) => <option key={id} value={id.toString()}>{id}</option>
+            )
+          }
+        </select>
       </p>
       {problem &&
-        <ProblemViewer key={problemId} problem={problem} />
+        <ProblemViewer key={problemId} problem={problem} solution={solution} />
       }
     </div>
   )
