@@ -29,6 +29,9 @@ export default function Figure({
   shrinkedLines=null,
   stretchColor='gold',
   shrinkColor='orange',
+  onPointGrab=()=>{},
+  onPointRelease=()=>{},
+  onPointDrag=()=>{},
   ...props
 }) {
   return (
@@ -67,7 +70,13 @@ export default function Figure({
       {vertices.map(([x, y], idx) => {
         return (
           <Group key={idx} x={x} y={y} animate={true} springConfig={springConfig}>
-            <Point radius={0.5} color={pointColor}/>
+            <Point
+              radius={0.5}
+              color={pointColor}
+              onPointerDown={() => onPointGrab(idx)}
+              onRelease={() => onPointRelease(idx)}
+              onDrag={({clientX, clientY, dx, dy}) => onPointDrag(idx, {clientX, clientY, dx, dy})}
+            />
             <Label xOffset={0.5} yOffset={-0.5}>{idx}</Label>
           </Group>
         )

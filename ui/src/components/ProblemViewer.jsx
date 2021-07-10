@@ -20,6 +20,7 @@ export default function ProblemViewer({ problem, solution, ...props }) {
   const overriddenVertices = useRef(null)
   const [overriddenVerticesKey, setOverriddenVerticesKey] = useState(null)
   const [simMode, setSimMode] = useState(null)
+  const [frozenFigurePoints, setFrozenFigurePoints] = useState([])
   const minCoord = _.min([..._.flatten(hole), ..._.flatten(figure.vertices)])
   const maxCoord = _.max([..._.flatten(hole), ..._.flatten(figure.vertices)])
   const safePadding = 5
@@ -62,18 +63,19 @@ export default function ProblemViewer({ problem, solution, ...props }) {
   }
   const { playing, togglePlaying, stopPlaying } = useAnimLoop(() => {
     let vertices = getCurrentVertices()
+    const frozenPoints = frozenFigurePoints
     if (simMode == 'inflate') {
       vertices = inflateLoop(vertices, { optimalDistancesMap })
     }
     if (simMode == 'simpleInflate') {
-      vertices = inflateSimpleRadialLoop(vertices, { optimalDistancesMap })
+      vertices = inflateSimpleRadialLoop(vertices, { optimalDistancesMap, frozenPoints })
     }
     if (simMode == 'gravity') {
-      vertices = gravityLoop(vertices, { gravityCenter: [xMean, yMean] })
+      vertices = gravityLoop(vertices, { gravityCenter: [xMean, yMean], frozenPoints })
     }
-    vertices = relaxLoop(vertices, { optimalDistancesMap })
+    vertices = relaxLoop(vertices, { optimalDistancesMap, frozenPoints })
     setOverriddenVertices(vertices)
-  }, {}, [simMode, optimalDistancesMap, xMean, yMean])
+  }, {}, [frozenFigurePoints, simMode, optimalDistancesMap, xMean, yMean])
   const toggleSimMode = (mode) => {
     if (mode != simMode) {
       setSimMode(mode)
@@ -114,6 +116,8 @@ export default function ProblemViewer({ problem, solution, ...props }) {
             edgeStretches={edgeStretches}
             overstretchedEdges={overstretchedEdges}
             overshrinkedEdges={overshrinkedEdges}
+            onPointGrab={(idx) => setFrozenFigurePoints([idx])}
+            onPointRelease={() => setFrozenFigurePoints([])}
           />
         </g>
       </svg>

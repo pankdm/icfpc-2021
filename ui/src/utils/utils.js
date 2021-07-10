@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 export const sleep = (delayMs=1000) => new Promise(res => setTimeout(res, delayMs))
 
 export const shakeCoord = (coord, amplitude=1) => coord + amplitude*(Math.random()-0.5)/0.5
@@ -30,11 +32,17 @@ export function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max)
 }
 
+export function hexToColorHex(color) {
+  return '#' + color.toString(16).padStart(6, '0')
+}
+
 export function hexColorToRGB(hexColor) {
-  if (hexColor[0] == '#') {
-    hexColor = hexColor.slice(1)
+  if (_.isString(hexColor)) {
+    if (hexColor[0] == '#') {
+      hexColor = hexColor.slice(1)
+    }
+    hexColor = parseInt(hexColor, 16)
   }
-  hexColor = parseInt(hexColor, 16)
   const r = (hexColor >> 16 & 255) / 255
   const g = (hexColor >> 8 & 255) / 255
   const b = (hexColor & 255) / 255
