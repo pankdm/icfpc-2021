@@ -17,7 +17,7 @@ export const getRepelForce = (point, otherPoint, repelConst=3000, maxRepel=1000)
 }
 const getSpringForce = (point, otherPoint, optimalDistance, springConst=50) => vecMult(vecNorm(vecSub(point, otherPoint)), springConst * (1 - distance(point, otherPoint) / optimalDistance))
 
-export const relaxVertices = (vertices, optimalDistancesMap, gravityCenter, timeStep=0.1) => {
+export const relaxVertices = (vertices, optimalDistancesMap, gravityCenter, timeStep=0.01) => {
   const meanCoords = vecMean(vertices)
   const gravity = getLinearFravityForce(meanCoords, gravityCenter)
   const newVertices = vertices.map((v, idx) => {

@@ -2,6 +2,8 @@ import React from 'react'
 import _ from 'lodash'
 import Line from './Line.jsx'
 import Point from './Point.jsx'
+import Group from './Group.jsx'
+import Label from './Label.jsx'
 import { shakePoint } from '../../utils/utils.js'
 
 const springConfig={
@@ -32,6 +34,7 @@ export default function Figure({
         return (
           <Line
             key={idx}
+            animate={true}
             x1={x1}
             x2={x2}
             y1={y1}
@@ -46,7 +49,10 @@ export default function Figure({
       })}
       {_vertices.map(([x, y], idx) => {
         return (
-          <Point key={idx} x={x} y={y} radius={0.5} color={pointColor} springConfig={springConfig} />
+          <Group key={idx} x={x} y={y} animate={true}>
+            <Point radius={0.5} color={pointColor} springConfig={springConfig} />
+            <Label xOffset={0.5} yOffset={-0.5}>{idx}</Label>
+          </Group>
         )
       })}
     </g>

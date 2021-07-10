@@ -1,5 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
+import Label from './Label.jsx'
 
 export default function Hole({
   vertices,
@@ -42,6 +43,9 @@ export default function Hole({
         `}
         {...props}
       />
+      {vertices.map(([x, y], idx) => (
+        <Label key={idx} x={x} y={y} textAnchor='right' color='#000'>{idx}</Label>
+      ))}
     </g>
   )
 }
