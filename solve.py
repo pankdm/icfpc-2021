@@ -190,8 +190,8 @@ class Solver():
             if self.best_score is None or score < self.best_score:
                 self.best_score = score
                 self.best_solution = copy.copy(solution)
-                print ("Found better score = {}, best solution = {}, solution = {}".format(
-                    score, self.best_solution, solution
+                print ("Found better score = {}".format(
+                    score,
                 ))
             return
 
@@ -212,7 +212,9 @@ class Solver():
 
         spec = self.spec
         total_points = len(spec['figure']['vertices'])
-        for first_index in range(len(spec['hole'])):
+        hole_indices = list(range(len(spec['hole'])))
+        random.shuffle(hole_indices)
+        for first_index in hole_indices:
             first_hole_pt = spec['hole'][first_index]
             point_indices = list(range(total_points))
             random.shuffle(point_indices)
@@ -328,7 +330,7 @@ def solve_and_submit(problem_id):
     print (f'=== Solving {problem_id} ====')
 
     spec = read_problem(problem_id)
-    print (spec)
+    # print (spec)
     print ('edges:', len(spec['figure']['edges']))
     print ('vertices:', len(spec['figure']['vertices']))
 
@@ -373,7 +375,7 @@ if __name__ == "__main__":
         problem_id = sys.argv[1]
         solve_and_submit(problem_id)
     else:
-        for i in range(56, 64):
+        for i in range(1, 11):
             solve_and_submit(i)
 
 
