@@ -212,6 +212,104 @@ class Solver():
                 self.try_solve(solution)
 
 
+class GreedySolver:
+    def __init__(self, spec, inside_points):
+        self.spec = spec
+        self.inside_points = inside_points
+        self.best_score = None
+        self.best_solution = None
+        self.timer = None
+
+        self.partial_solution = None
+
+        # adjacency lists
+        adj = defaultdict(list)
+        for e in spec['figure']['edges']:
+            adj[e[0]].append(e[1])
+            adj[e[1]].append(e[0])
+        spec['figure']['adj'] = adj
+
+    def full_solve(self):
+        # start the timer
+        self.start = time.time()
+
+        inside_pt = random.choice(self.inside_points)
+        total_points = len(self.spec['figure']['vertices'])
+        start_idx = random.choice(range(total_points))
+
+        solution = {start_idx: inside_pt}
+        self.try_solve(solution)
+
+    def try_solve(self, solution):
+        spec = self.spec
+
+        now = time.time()
+        delta = now - self.start
+        if delta > TIMEOUT:
+            print ('timeout after {} seconds'.format(delta))
+            raise TimeoutException()
+
+        # find next edge to add
+        edge_to_add = None
+        for edge in spec['figure']['edges']:
+            a, b = edge
+            # swap to always treat as a in solution
+            if b in solution:
+                a, b = b, a
+            if a not in solution:
+                continue
+            assert (a in solution)
+            if b in solution:
+                continue
+            assert (b not in solution)
+            edge_to_add = a, b
+            break
+            
+        # nothing to add - this is final answer
+        if edge_to_add is None:
+            score = count_dislikes(spec, solution)
+            if self.best_score is None or score < self.best_score:
+                self.best_score = score
+                self.best_solution = copy.copy(solution)
+                print ("Found better score = {}, best solution = {}, solution = {}".format(
+                    score, self.best_solution, solution
+                ))
+            return
+
+        # find next possible point for b
+        orig_dist = dist2(spec['figure']['vertices'][a], spec['figure']['vertices'][b])
+        min_edge_score = None
+        min_pt = None
+
+        for pt in self.inside_points:
+            if check_partial_solution(spec, solution, b, pt):
+                solution[b] = pt
+                score = count_dislikes(spec, solution)
+                if min_edge_score is None or score < min_edge_score:
+                    min_edge_score = score
+                    min_pt = pt
+                del solution[b]
+
+        self.partial_solution = copy.copy(solution)
+        if min_pt is None:
+            print ('At nodes={} -> nothing found'.format(len(solution)))                   
+        else:
+            print ('At nodes={} -> score = {}, solution = {}'.format(len(solution), min_edge_score, solution))
+            solution[b] = min_pt
+            self.try_solve(solution)
+
+
+def write_solution(solution_file, total_points, solution):
+    vertices = []
+    for index in range(total_points):
+        vertices.append(solution.get(index, [0, 0]))
+
+    res = {'vertices' : vertices}
+    js_str = json.dumps(res)
+    with open(solution_file, 'w') as f:
+        f.write(js_str)
+    return js_str
+
 def solve_and_submit(problem_id):
     print (f'=== Solving {problem_id} ====')
 
@@ -220,16 +318,20 @@ def solve_and_submit(problem_id):
     print ('edges:', len(spec['figure']['edges']))
     print ('vertices:', len(spec['figure']['vertices']))
 
-    inside = list(sorted(compute_inside_points(spec)))
+    inside = list(compute_inside_points(spec))
     print ('inside points:', len(inside))
 
     solver = Solver(spec, inside)
+    # solver = GreedySolver(spec, inside)
+
     try:
         solver.full_solve()
     except TimeoutException:
         pass
 
     total_points = len(spec['figure']['vertices'])
+    # write_solution(f'solutions/debug/{problem_id}', total_points, solver.partial_solution)
+
     print ('[score = {}], best solution {}'.format(solver.best_score, solver.best_solution))
     if solver.best_score is None:
         return
@@ -247,15 +349,7 @@ def solve_and_submit(problem_id):
 
     if old_score is None or solver.best_score < old_score:
         print("[old score = {}] -> Overwriting".format(old_score))
-        vertices = []
-        for index in range(total_points):
-            vertices.append(solver.best_solution[index])
-
-        res = {'vertices' : vertices}
-        js_str = json.dumps(res)
-        with open(solution_file, 'w') as f:
-            f.write(js_str)
-        
+        js_str = write_solution(solution_file, total_points, solver.best_solution)
         submit_solution(problem_id, js_str)
     else:
         print ('Skipping submit as this is not better')
