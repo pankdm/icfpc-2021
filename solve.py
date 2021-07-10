@@ -219,7 +219,7 @@ class Solver():
         total_points = len(spec['figure']['vertices'])
 
         # start from some setup
-        # with open('solutions/manual/35_dm_start_1625954779909') as f:
+        # with open('solutions/manual/51_dm_start_1625955629376') as f:
         #     start = json.loads(f.read())
         # solution = {}
         # for (idx, v) in enumerate(start['vertices']):
