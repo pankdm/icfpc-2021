@@ -492,8 +492,3 @@ if __name__ == "__main__":
         for i in (50, 54, 55, 67, 70, 73, 77):
             solve_and_submit(i)
 
-
-
-
-
-

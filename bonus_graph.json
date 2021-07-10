@@ -1,0 +1,1234 @@
+{
+ "1": {
+  "enables": [
+   [
+    35,
+    "GLOBALIST"
+   ]
+  ],
+  "needs": [
+   [
+    79,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "35": {
+  "needs": [
+   [
+    1,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    47,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "2": {
+  "enables": [
+   [
+    39,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "needs": [
+   [
+    82,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "39": {
+  "needs": [
+   [
+    2,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    37,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "3": {
+  "enables": [
+   [
+    60,
+    "GLOBALIST"
+   ]
+  ],
+  "needs": [
+   [
+    59,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "60": {
+  "needs": [
+   [
+    3,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    80,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "4": {
+  "enables": [
+   [
+    63,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "needs": [
+   [
+    34,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "63": {
+  "needs": [
+   [
+    4,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    21,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "5": {
+  "enables": [
+   [
+    78,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "needs": [
+   [
+    67,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "78": {
+  "needs": [
+   [
+    5,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    56,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "6": {
+  "enables": [
+   [
+    16,
+    "GLOBALIST"
+   ]
+  ],
+  "needs": [
+   [
+    8,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "16": {
+  "needs": [
+   [
+    6,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    8,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "7": {
+  "enables": [
+   [
+    12,
+    "GLOBALIST"
+   ]
+  ],
+  "needs": [
+   [
+    55,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "12": {
+  "needs": [
+   [
+    7,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    67,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "8": {
+  "enables": [
+   [
+    6,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "needs": [
+   [
+    16,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "9": {
+  "enables": [
+   [
+    14,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "needs": [
+   [
+    50,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "14": {
+  "needs": [
+   [
+    9,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    57,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "10": {
+  "enables": [
+   [
+    62,
+    "GLOBALIST"
+   ]
+  ],
+  "needs": [
+   [
+    30,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "62": {
+  "needs": [
+   [
+    10,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    22,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "11": {
+  "enables": [
+   [
+    31,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "needs": [
+   [
+    48,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "31": {
+  "needs": [
+   [
+    11,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    75,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "67": {
+  "needs": [
+   [
+    12,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    5,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "13": {
+  "enables": [
+   [
+    46,
+    "GLOBALIST"
+   ]
+  ],
+  "needs": [
+   [
+    80,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "46": {
+  "needs": [
+   [
+    13,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    28,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "57": {
+  "needs": [
+   [
+    14,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    33,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "15": {
+  "enables": [
+   [
+    41,
+    "GLOBALIST"
+   ]
+  ],
+  "needs": [
+   [
+    37,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "41": {
+  "needs": [
+   [
+    15,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    54,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "17": {
+  "enables": [
+   [
+    84,
+    "GLOBALIST"
+   ]
+  ],
+  "needs": [
+   [
+    21,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "84": {
+  "needs": [
+   [
+    17,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    52,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "18": {
+  "enables": [
+   [
+    72,
+    "GLOBALIST"
+   ]
+  ],
+  "needs": [
+   [
+    23,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "72": {
+  "needs": [
+   [
+    18,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    40,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "19": {
+  "enables": [
+   [
+    32,
+    "GLOBALIST"
+   ]
+  ],
+  "needs": [
+   [
+    26,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "32": {
+  "needs": [
+   [
+    19,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    29,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "20": {
+  "enables": [
+   [
+    49,
+    "GLOBALIST"
+   ]
+  ],
+  "needs": [
+   [
+    61,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "49": {
+  "needs": [
+   [
+    20,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    36,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "21": {
+  "enables": [
+   [
+    17,
+    "GLOBALIST"
+   ]
+  ],
+  "needs": [
+   [
+    63,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "22": {
+  "enables": [
+   [
+    74,
+    "GLOBALIST"
+   ]
+  ],
+  "needs": [
+   [
+    62,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "74": {
+  "needs": [
+   [
+    22,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    77,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "23": {
+  "enables": [
+   [
+    18,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "needs": [
+   [
+    27,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "24": {
+  "enables": [
+   [
+    73,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "needs": [
+   [
+    54,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "73": {
+  "needs": [
+   [
+    24,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    86,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "25": {
+  "enables": [
+   [
+    30,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "needs": [
+   [
+    45,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "30": {
+  "needs": [
+   [
+    25,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    10,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "26": {
+  "enables": [
+   [
+    19,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "needs": [
+   [
+    87,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "27": {
+  "enables": [
+   [
+    23,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "needs": [
+   [
+    81,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "28": {
+  "enables": [
+   [
+    65,
+    "GLOBALIST"
+   ]
+  ],
+  "needs": [
+   [
+    46,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "65": {
+  "needs": [
+   [
+    28,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    42,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "29": {
+  "enables": [
+   [
+    58,
+    "GLOBALIST"
+   ]
+  ],
+  "needs": [
+   [
+    32,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "58": {
+  "needs": [
+   [
+    29,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    68,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "75": {
+  "needs": [
+   [
+    31,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    81,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "33": {
+  "enables": [
+   [
+    53,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "needs": [
+   [
+    57,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "53": {
+  "needs": [
+   [
+    33,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    38,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "34": {
+  "enables": [
+   [
+    4,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "needs": [
+   [
+    66,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "47": {
+  "needs": [
+   [
+    35,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    43,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "36": {
+  "enables": [
+   [
+    82,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "needs": [
+   [
+    49,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "82": {
+  "needs": [
+   [
+    36,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    2,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "37": {
+  "enables": [
+   [
+    15,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "needs": [
+   [
+    39,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "38": {
+  "enables": [
+   [
+    76,
+    "GLOBALIST"
+   ]
+  ],
+  "needs": [
+   [
+    53,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "76": {
+  "needs": [
+   [
+    38,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    64,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "40": {
+  "enables": [
+   [
+    45,
+    "GLOBALIST"
+   ]
+  ],
+  "needs": [
+   [
+    72,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "45": {
+  "needs": [
+   [
+    40,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    25,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "54": {
+  "needs": [
+   [
+    41,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    24,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "42": {
+  "enables": [
+   [
+    79,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "needs": [
+   [
+    65,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "79": {
+  "needs": [
+   [
+    42,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    1,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "43": {
+  "enables": [
+   [
+    66,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "needs": [
+   [
+    47,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "66": {
+  "needs": [
+   [
+    43,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    34,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "44": {
+  "enables": [
+   [
+    88,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "needs": [
+   [
+    83,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "88": {
+  "needs": [
+   [
+    44,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    59,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "48": {
+  "enables": [
+   [
+    11,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "needs": [
+   [
+    85,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "50": {
+  "enables": [
+   [
+    9,
+    "GLOBALIST"
+   ]
+  ],
+  "needs": [
+   [
+    56,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "51": {
+  "enables": [
+   [
+    71,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "needs": [
+   [
+    86,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "71": {
+  "needs": [
+   [
+    51,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    87,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "52": {
+  "enables": [
+   [
+    55,
+    "GLOBALIST"
+   ]
+  ],
+  "needs": [
+   [
+    84,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "55": {
+  "needs": [
+   [
+    52,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    7,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "56": {
+  "enables": [
+   [
+    50,
+    "GLOBALIST"
+   ]
+  ],
+  "needs": [
+   [
+    78,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "68": {
+  "needs": [
+   [
+    58,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    69,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "59": {
+  "enables": [
+   [
+    3,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "needs": [
+   [
+    88,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "80": {
+  "needs": [
+   [
+    60,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    13,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "61": {
+  "enables": [
+   [
+    20,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "needs": [
+   [
+    70,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "64": {
+  "enables": [
+   [
+    85,
+    "GLOBALIST"
+   ]
+  ],
+  "needs": [
+   [
+    76,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "85": {
+  "needs": [
+   [
+    64,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    48,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "69": {
+  "needs": [
+   [
+    68,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    70,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "70": {
+  "needs": [
+   [
+    69,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    61,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "87": {
+  "needs": [
+   [
+    71,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    26,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "86": {
+  "needs": [
+   [
+    73,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    51,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "77": {
+  "needs": [
+   [
+    74,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    83,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "81": {
+  "needs": [
+   [
+    75,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    27,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "83": {
+  "needs": [
+   [
+    77,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    44,
+    "GLOBALIST"
+   ]
+  ]
+ }
+}

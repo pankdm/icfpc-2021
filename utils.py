@@ -1,5 +1,7 @@
 import json
 from pydash import _
+import os, os.path
+from collections import defaultdict
 
 class JSLikeObject():
     def __init__(self, data):
@@ -21,3 +23,21 @@ class JSLikeObject():
 def read_problem(problem_id):
     with open(f'problems/{problem_id}') as f:
         return json.loads(f.read())
+
+
+def bonus_graph():
+    num_problems = len([name for name in os.listdir('problems')])
+    res = defaultdict(dict)
+    for i in range(1, num_problems+1):
+        spec = read_problem(i)
+        res[i]["enables"] = []
+        for b in spec["bonuses"]:
+            prob = b["problem"]
+            bonus = b["bonus"]
+            res[i]["enables"].append((prob, bonus))
+            if "needs" not in res[prob]:
+                res[prob]["needs"] = []
+            res[prob]["needs"].append((i, bonus))    
+    with open("bonus_graph.json", 'w') as f:
+        json.dump(res, f, indent=1)
+
