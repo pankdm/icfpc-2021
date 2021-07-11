@@ -11,7 +11,7 @@ from pymunk.vec2d import Vec2d
 
 import sys
 
-p_number = sys.argv[1]
+p_number = sys.argv[1] if len(sys.argv) > 1 else 106
 
 # Read input.
 with open(f"../problems/{p_number}", "r") as json_file:
