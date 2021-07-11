@@ -295,6 +295,12 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   useHotkeys('s', () => {
     snapVertices()
   }, {}, [snapVertices])
+  useHotkeys('=', () => {
+    setZoom(zoom+0.5)
+  }, {}, [zoom])
+  useHotkeys('-', () => {
+    setZoom(zoom-0.5)
+  }, {}, [zoom])
   useDOMEvent('keydown', (ev) => {
     // on press Shift
     if (ev.keyCode == 16) {
