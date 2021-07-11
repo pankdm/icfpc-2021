@@ -405,10 +405,19 @@ class Solution:
         result_json = f"{{\"vertices\":{result}}}"
         print(result_json)
 
+    def write_to_file(self, file_name):
+        result = [list(pt) if pt is not None else [0,0] for pt in self.vertices]
+        result_json = f"{{\"vertices\":{result}}}"
+        with open(file_name, 'wt') as f:
+            f.write(result_json)
+
+
+
 
 class IntegralSolver:
-    def __init__(self, spec, initial_solution):
+    def __init__(self, spec, initial_solution, problem_id):
         self.spec = spec
+        self.problem_id = problem_id
 
         self.partial_solution = None
         self.initial_solution = initial_solution
@@ -418,7 +427,7 @@ class IntegralSolver:
         self.inside_points_set = set(inside_points)
 
 
-        if not initial_solution.placed:
+        if initial_solution and not initial_solution.placed:
             new_placed = set()
             for vi, v in enumerate(initial_solution.vertices):
                 if v in self.inside_points_set:
@@ -520,6 +529,7 @@ class IntegralSolver:
             if self.best_score is None or score > self.best_score:
                 self.best_score = score
                 self.best_solution = solution
+                solution.write_to_file(f"solutions/solver/{self.problem_id}")
                 print("NEW BEST")
 
             return
@@ -617,7 +627,7 @@ def solve_and_win(problem_id):
     if FLAGS.init_path:
         initial_solution = load_initial_solution(spec, FLAGS.init_path)
 
-    solver = IntegralSolver(spec =spec, initial_solution =initial_solution)
+    solver = IntegralSolver(spec =spec, initial_solution =initial_solution, problem_id=problem_id)
     print ('inside points:', len(solver.inside_points))
     try:
         solver.full_solve()
