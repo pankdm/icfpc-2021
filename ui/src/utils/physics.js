@@ -37,7 +37,10 @@ export const getRepelForce = (point, otherPoint, repelConst=50, maxRepel=100) =>
 }
 const getSpringForce = (point, otherPoint, optimalDistance, springConst=FORCE_DEFAULTS.springConst) => {
   const dist = distance(point, otherPoint)
-  return vecMult(vecSub(point, otherPoint), springConst * (1 / dist - 1 / optimalDistance))
+  let mult = springConst * (1 / dist - 1 / optimalDistance)
+  // HACK: cap spring force, to avoid small edges oscillating
+  mult = Math.sign(mult) * Math.min(Math.abs(mult), dist*0.75)
+  return vecMult(vecSub(point, otherPoint), mult)
 }
 
 // immutable apply force
