@@ -391,6 +391,11 @@ class Solution:
         self.vertices[i] = pt
         self.placed.add(i)
 
+    def print(self):
+        result = [list(pt) if pt is not None else [0,0] for pt in self.vertices]
+        result_json = f"{{\"vertices\":{result}}}"
+        print(result_json)
+
 
 class IntegralSolver:
     def __init__(self, spec):
@@ -425,23 +430,49 @@ class IntegralSolver:
         # print(f"initial_points = {self.initial_points}")
         # exit()
 
+    def get_placement_order_by_placed_neibs(self, i):
+        result = [i]
+        placed = {i}
+        while len(result) < len(self.vertices):
+            best_num_placed = 0
+            best_n = -1
+            for n in self.graph:
+                if n in placed:
+                    continue
+                num_placed = 0
+                for n2 in self.graph[n]:
+                    if n2 in placed:
+                        num_placed += 1
+                if num_placed > best_num_placed:
+                    best_num_placed = num_placed
+                    best_n = n
+            assert best_n != -1
+            result.append(best_n)
+            placed.add(best_n)
+        return result
+
+
     def full_solve(self):
         solution = Solution(len(self.vertices))
         for i in range(len(self.vertices)):
             print(f"Starting from figure vertex {i}")
             # solution.placement_order = [i] + list(itertools.chain.from_iterable(t[1] for t in nx.bfs_successors(self.graph, i)))
-            solution.placement_order = list(nx.dfs_preorder_nodes(self.graph, i))
+            # solution.placement_order = list(nx.dfs_preorder_nodes(self.graph, i))
+            solution.placement_order = self.get_placement_order_by_placed_neibs(i)
             print(f"placement_order = {solution.placement_order}")
             solution.next = 0
             assert(len(solution.placement_order) == solution.num_vertices)
-            self.try_solve(solution)
+
+            try:
+                self.try_solve(solution)
+            except KeyboardInterrupt:
+                solution.print()
+
 
     def try_solve(self, solution):
         if len(solution.placed) == solution.num_vertices:
             # Done.
-            result = [list(pt) for pt in solution.vertices]
-            result_json = f"{{\"vertices\":{result}}}"
-            print(result_json)
+            solution.print()
             print(f"Found solution!")
             exit()
 
@@ -460,10 +491,10 @@ class IntegralSolver:
         else:
             # some neighbors already placed
             viable_points = None
-            num_neibs = 0
+            neibs = []
             for neib in self.graph[next_to_place]:
                 if neib in solution.placed:
-                    num_neibs += 1
+                    neibs.append(neib)
                     neib_dist = self.graph[neib][next_to_place]["dist"]
 
                     viable_points = viable_adj_points_with_candidates(
@@ -473,27 +504,8 @@ class IntegralSolver:
                             is_edge_inside(self.spec, solution.vertices[neib], pt)  # slow
                         ))
 
-                    # viable_points = set(viable_points) & self.inside_points_set
-                    
-                    # viable_points = []
 
-                    # print(f"viable_points for next_to_place={next_to_place} with neib={neib} at {self.vertices[neib]} dist={neib_dist} eps={self.epsilon}: {viable_points}")
-                    # print(f"self.inside_points_set = {self.inside_points_set}")
-                    # viable_points = filter_bad_edges(self.spec, self.vertices[neib], viable_points)
-
-                    # viable_points = [
-                    #     pt
-                    #     for pt in viable_points
-                    #     if (
-                    #         pt in self.inside_points_set and  # fast
-                    #         is_edge_inside(self.spec, self.vertices[neib], pt)  # slow
-                    #     )
-                    # ]
-                    # # print(f"filtered viable_points for next_to_place={next_to_place} with neib={neib}: {viable_points}")
-
-            # print(f"Checked {num_neibs} neibs for {next_to_place}: {viable_points}")
-
-            print(f"viable_points for {next_to_place} (len neibs {num_neibs}): {viable_points}\nplaced={solution.placed}")
+            print(f"viable_points for {next_to_place} (neibs {neibs}): {viable_points}\nplaced={solution.placed}")
 
             # Must have at least one neib that's placed already.
             assert viable_points is not None
@@ -501,6 +513,18 @@ class IntegralSolver:
             if viable_points:
                 for pt in viable_points:
                     solution.place(next_to_place, pt)
+
+                    # # validation (optional)
+                    # for neib in self.graph[next_to_place]:
+                    #     if neib in solution.placed:
+                    #         neib_dist = self.graph[neib][next_to_place]["dist"]
+                    #         if not check_edge_length(self.spec, solution.vertices, (neib, next_to_place)):
+                    #             print(f"check_edge_length failed for {neib} with dist {neib_dist}")
+                    #             assert False
+                    #         if not is_edge_inside(self.spec, solution.vertices[neib], pt):
+                    #             print(f"is_edge_inside failed for {neib}")
+                    #             assert False
+
                     self.try_solve(solution)
 
         # Backoff.
@@ -589,6 +613,7 @@ def check_edge_length(spec, solution, edge):
     vertices = spec['figure']['vertices']
     orig_dist = dist2(vertices[a], vertices[b])
     new_dist = dist2(solution[a], solution[b])
+    print(f"orig_dist {orig_dist} new_dist {new_dist}")
 
     return check_distance(spec, orig_dist, new_dist)
 
@@ -653,7 +678,7 @@ def viable_adj_points(origin, len2, epsilon, bounds_check_fn=None):
 
 def viable_adj_points_with_candidates(origin, dist_2, epsilon, viable_points = None, bounds_check_fn = None):
     """Returns a list of int points within dist and eps, with some candidates."""
-    if viable_points:
+    if viable_points is not None:
         result = [
             pt 
             for pt in viable_points
@@ -681,7 +706,8 @@ def viable_vectors(len2, epsilon):
             high -= 1
         y = high
         while y >= 0 and x2 + y * y >= low2:
-            vectors.append((x, y))
+            if check_distance_with_eps(orig_dist=len2, new_dist=dist2((0, 0), (x, y)), epsilon=epsilon):
+                vectors.append((x, y))
             y -= 1
         x += 1
         x2 = x * x
