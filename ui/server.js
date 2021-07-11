@@ -83,6 +83,7 @@ async function createServer() {
     const { alias='' } = req.query
     const solution = req.body
     fs.writeFileSync(`../solutions/manual/${problemId}_${alias}_${Date.now()}`, JSON.stringify(solution))
+    fs.writeFileSync(`../solutions/current`, JSON.stringify(solution))
     res.status(201)
     res.send()
   })
