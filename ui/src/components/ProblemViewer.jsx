@@ -247,6 +247,13 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     })
     setOverriddenVertices(vertices)
   }
+  const randomize = () => {
+    let vertices = getCurrentVertices()
+    vertices = vertices.map(([x, y]) => {
+      return [xMin + Math.random() * (xMax - xMin), yMin + Math.random() * (yMax - yMin)]
+    })
+    setOverriddenVertices(vertices)
+  }
   const move = (dx, dy) => {
     let vertices = getCurrentVertices()
     vertices = vertices.map(([x, y]) => ([x + dx, y + dy]))
@@ -450,6 +457,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         <button onClick={() => toggleSimMode('gravity')}>{simMode == 'gravity' ? '(G) Gravitating' : '(G) Gravity'}</button>
         <button onClick={singleShake}>(K) Shake</button>
         <button onClick={snapVertices}>(S) Snap</button>
+        <button onClick={randomize}>Randomize</button>
         <button onClick={reset}>Reset</button>
         <Spacer />
         <button style={{ height: '2.5em' }} onClick={() => setMultiselectMode(!multiselectMode)}>{multiselectMode ? 'Selecting...' : '⬆️ Glue Points'}</button>
