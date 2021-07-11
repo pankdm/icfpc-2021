@@ -396,9 +396,9 @@
         "max_score": 12246
     },
     "67": {
-        "dislikes": null,
+        "dislikes": "0",
         "min_dislikes": 0,
-        "score": 0,
+        "score": 13036,
         "max_score": 13036
     },
     "68": {
@@ -541,8 +541,8 @@
     },
     "91": {
         "dislikes": "51774",
-        "min_dislikes": 13372,
-        "score": 8731,
+        "min_dislikes": 12882,
+        "score": 8570,
         "max_score": 17181
     },
     "92": {
@@ -619,7 +619,7 @@
     },
     "104": {
         "dislikes": null,
-        "min_dislikes": 16663,
+        "min_dislikes": 16538,
         "score": 0,
         "max_score": 16372
     },
