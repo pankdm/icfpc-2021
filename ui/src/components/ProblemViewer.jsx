@@ -444,7 +444,6 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         </Group>
       </svg>
     </AspectRatioBox>
-    <AspectRatioBox className={styles.svgMarkupPlaceholder}/>
     <div className={styles.topRight}>
       <button onClick={togglePlaying}>{playing ? '(_) Physics: on' : '(_) Physics: off'}</button>
       <button onClick={() => toggleSimMode('inflate')}>{simMode == 'inflate' ? '(I) Inflating' : '(I) Inflate'}</button>

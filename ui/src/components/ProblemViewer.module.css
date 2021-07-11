@@ -1,9 +1,6 @@
 .viewer {
   position: relative;
 }
-.svg-markup-placeholder {
-  user-select: none;
-}
 .svg-wrapper {
   position: relative;
 }
@@ -72,9 +69,8 @@ pre {
 
 .bottom-right {
   position: absolute;
-  bottom: 1rem;
   right: 1rem;
-  color: #fff;
+  margin-top: 1rem;
 }
 .bottom-right pre {
   display: block;
@@ -105,9 +101,6 @@ pre {
   .viewer {
     display: flex;
     flex-direction: column;
-  }
-  .svg-markup-placeholder {
-    display: none;
   }
   .svg {
     position: relative;
