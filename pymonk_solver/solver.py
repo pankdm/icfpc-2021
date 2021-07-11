@@ -20,6 +20,7 @@ flags.DEFINE_string('init_path', None, 'Path to a solution file to seed initial 
 flags.DEFINE_float('world_scale', 1.0, 'World scale')
 flags.DEFINE_float('scale', None, 'Scale for initial vertices (rel. to mid point).')
 flags.DEFINE_string('move', None, 'Translation "dx, dy" for initial vertices.')
+flags.DEFINE_float('speed', 1.0, 'Speed multiplier.')
 
 
 DEFAULT_PROBLEM = 106
@@ -216,7 +217,7 @@ class World:
 
             for i in range(20):
                 self.apply_forces()
-                self.space.step(1.0 / 60)
+                self.space.step((1.0 / 60) * FLAGS.speed)
 
             self.space.debug_draw(self.draw_options)
             pygame.display.flip()
