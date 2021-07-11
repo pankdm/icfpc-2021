@@ -388,17 +388,27 @@ class GreedySolver:
             self.try_solve(solution)
 
 class Solution:
-    def __init__(self, num_vertices):
+    def __init__(self, spec, num_vertices):
         self.vertices = [None] * num_vertices
         self.num_vertices = num_vertices
         self.placed = set()
         self.placement_order = []
         self.next = 0
+        self.hole = [tuple(v) for v in spec["hole"]]
+        self.hole_dict = {v:i for i, v in enumerate(self.hole)}
+        self.hole_status = {i:False for i in range(len(self.hole))}
 
     def place(self, i, pt):
         print(f"Placing {i} at {pt} (already placed {len(self.placed)})")
         self.vertices[i] = pt
         self.placed.add(i)
+
+        if pt in self.hole_dict:
+            self.hole_status[self.hole_dict[pt]] = True
+
+    def unplace(self, i, pt):
+        if pt in self.hole_dict:
+            self.hole_status[self.hole_dict[pt]] = False            
 
     def print(self):
         result = [list(pt) if pt is not None else [0,0] for pt in self.vertices]
@@ -423,9 +433,9 @@ class IntegralSolver:
         self.initial_solution = initial_solution
 
         inside_points, polygon = compute_inside_points(spec)
-        self.inside_points = inside_points
+        self.polygon = polygon
+        self.inside_points = [tuple(v) for v in inside_points]
         self.inside_points_set = set(inside_points)
-
 
         if initial_solution and not initial_solution.placed:
             new_placed = set()
@@ -444,7 +454,7 @@ class IntegralSolver:
         figure = spec["figure"]
         edges, vtx = figure["edges"], figure["vertices"]
         self.edges = edges
-        self.vertices = vtx
+        self.vertices = [tuple(v) for v in vtx]
         print(f"self.vertices = {self.vertices}")
         self.epsilon = spec["epsilon"] / 1000000.0
 
@@ -455,7 +465,7 @@ class IntegralSolver:
         self.graph = graph
 
         self.initial_points = [
-            pt for pt in spec['hole']
+            tuple(pt) for pt in spec['hole']
         ] + self.inside_points
         # print(f"initial_points = {self.initial_points}")
         # exit()
@@ -503,7 +513,7 @@ class IntegralSolver:
 
         else:
             # Try all initial positions.
-            solution = Solution(len(self.vertices))
+            solution = Solution(self.spec, len(self.vertices))
             for i in range(len(self.vertices)):
                 print(f"Starting from figure vertex {i}")
                 # solution.placement_order = [i] + list(itertools.chain.from_iterable(t[1] for t in nx.bfs_successors(self.graph, i)))
@@ -546,6 +556,7 @@ class IntegralSolver:
             for pt in self.initial_points:
                 solution.place(next_to_place, pt)
                 self.try_solve(solution)
+                solution.unplace(next_to_place, pt)
         else:
             # some neighbors already placed
             viable_points = None
@@ -562,6 +573,9 @@ class IntegralSolver:
                             is_edge_inside(self.spec, solution.vertices[neib], pt)  # slow
                         ))
 
+            
+            
+
 
             # print(f"viable_points for {next_to_place} (neibs {neibs}): {viable_points}\nplaced={solution.placed}")
 
@@ -569,6 +583,17 @@ class IntegralSolver:
             assert viable_points is not None
 
             if viable_points:
+
+                def metric(pt):
+                    total_dislikes = 0
+                    for hole_pt, i in solution.hole_dict.items():
+                        if solution.hole_status[i]:
+                            continue
+                        total_dislikes += dist2(hole_pt, pt)
+                    return total_dislikes
+
+                viable_points.sort(key=lambda p: metric(p), reverse=True)
+
                 for pt in viable_points:
                     solution.place(next_to_place, pt)
 
@@ -584,6 +609,7 @@ class IntegralSolver:
                     #             assert False
 
                     self.try_solve(solution)
+                    solution.unplace(next_to_place, pt)
 
         # Backoff.
         if solution.vertices[next_to_place] is not None:
@@ -609,7 +635,7 @@ def load_initial_solution(spec, path):
 
     vertices = solution_json["vertices"]
 
-    solution = Solution(len(vertices))
+    solution = Solution(spec, len(vertices))
     solution.vertices = [tuple(v) for v in vertices]
 
     return solution
