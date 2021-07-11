@@ -265,10 +265,10 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   useHotkeys('shift+a', () => {
     move(-1, 0)
   }, {}, [move])
-  useHotkeys('e', () => {
+  useHotkeys('shift+e', () => {
     rotateCw(Math.PI/12)
   }, {}, [rotateCw])
-  useHotkeys('q', () => {
+  useHotkeys('shift+q', () => {
     rotateCw(-Math.PI/12)
   }, {}, [rotateCw])
   useHotkeys('a', () => {
@@ -379,8 +379,14 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         <button disabled={!frozenFigurePoints.size} onClick={() => unselectAllGluedPoints()}>Unselect {frozenFigurePoints.size}</button>
         <button onClick={toggleDragMode}>{dragMode ? 'Pan Enabled' : 'Pan Disabled'}</button>
         <Spacer />
-        <button onClick={() => rotateCw(Math.PI/12)}>(E) Rotate +CW</button>
-        <button onClick={() => rotateCw(-Math.PI/12)}>(Q) Rotate -CW</button>
+        <div className={styles.moveActions}>
+          <button onClick={() => rotateCw(Math.PI/12)}>⬆️+E Rotate +CW</button>
+          <button onClick={() => rotateCw(-Math.PI/12)}>⬆️+Q Rotate -CW</button>
+          <button onClick={() => rotateCw(-Math.PI/12)}>⬆️+W Move Up</button>
+          <button onClick={() => rotateCw(-Math.PI/12)}>⬆️+S Move Down</button>
+          <button onClick={() => rotateCw(-Math.PI/12)}>⬆️+A Move Left</button>
+          <button onClick={() => rotateCw(-Math.PI/12)}>⬆️+D Move Right</button>
+        </div>
       </div>
       <div className={styles.bottomRight}>
         <button onClick={() => setZoom(zoom+1)}>+</button>

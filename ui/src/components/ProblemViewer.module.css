@@ -17,6 +17,10 @@
   top: 1rem;
   right: 1rem;
 }
+.move-actions button {
+  text-align: left;
+}
+
 input {
   width: 10em;
   font-family: 'Courier New', Courier, monospace;
