@@ -2,7 +2,7 @@ import requests
 import os
 from dotenv import load_dotenv
 
-LAST_PROBLEM = 88
+LAST_PROBLEM = 106
 
 load_dotenv()
 api_key = os.getenv('API_KEY')

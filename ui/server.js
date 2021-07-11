@@ -77,6 +77,11 @@ async function createServer() {
     res.send()
   })
 
+  app.get('/api/stats', (req, res) => {
+    const stats = JSON.parse(fs.readFileSync('../data/stats.json'))
+    res.send(stats)
+  })
+
   // UI frontend server Vite.js
   app.use(vite.middlewares)
 
