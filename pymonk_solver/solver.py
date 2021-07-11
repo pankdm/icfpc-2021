@@ -9,11 +9,19 @@ import pymunk
 import pymunk.pygame_util
 from pymunk.vec2d import Vec2d
 
-p_number= 106
+import sys
+
+p_number = sys.argv[1]
 
 # Read input.
 with open(f"../problems/{p_number}", "r") as json_file:
     input = json.load(json_file)
+
+# # read starting
+# with open(f"../solutions/manual/75_dm_1625974946342", "r") as json_file:
+#     start = json.load(json_file)
+#     input["figure"]["vertices"] = start["vertices"]
+
 
 print(input)
 hole =  input["hole"]

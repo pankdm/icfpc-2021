@@ -72,8 +72,9 @@ export default function Scores(props) {
           {_.map(
             sortedStats,
             (value) => {
-              return <tr key={value['id']}>
-                <td><div className={styles.idCell}>{value['id']}</div></td>
+              const id = value['id']
+              return <tr key={id}>
+                <td><a href={`http://poses.live/problems/${id}`}><div className={styles.idCell}>{id}</div></a></td>
                 <td> {value['dislikes']}</td>
                 <td> {value['min_dislikes']}</td>
                 <td> {value['score']}</td>
