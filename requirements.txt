@@ -13,3 +13,4 @@ shapely==1.7.1
 beautifulsoup4==4.9.3
 pygame==2.0.1
 pymunk==6.0.0
+networkx
