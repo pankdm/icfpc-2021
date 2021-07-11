@@ -259,13 +259,16 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     vertices = vertices.map(([x, y]) => ([x + dx, y + dy]))
     setOverriddenVertices(vertices)
   }
+  const getNeighbors = (idx) => {
+    return figure.edges
+        .filter(([v1, v2]) => v1 === idx || v2 === idx)
+        .map(([v1, v2]) => (v1 === idx? v2: v1));
+  }
   const powerClick = (idx) => {
     let vertices = _.cloneDeep(getCurrentVertices())
     let currPt = vertices[idx]
 
-    figure.edges
-        .filter(([v1, v2]) => v1 === idx || v2 === idx)
-        .map(([v1, v2]) => (v1 === idx? v2: v1))
+    getNeighbors(idx)
         .filter(v => !frozenFigurePoints.has(v))
         .map(v => {
             const originalDistance = optimalDistancesMap[idx][v];
@@ -277,6 +280,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
 
             vertices[v] = newPt
         });
+    addFrozenFigurePoint(idx);
 
     setOverriddenVertices(vertices);
   }
