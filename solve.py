@@ -162,7 +162,7 @@ def compute_edge_lens(spec):
     edges, vtx = figure["edges"], figure["vertices"]
     fig_edges = [dist2(vtx[edges[i][0]], vtx[edges[i][1]]) for i in range(len(edges))]
     epsilon = spec["epsilon"]
-    fig_edges_min_max = [(edge*(1-epsilon/1e6), edge*(1+epsilon/1e6)) for edge in fig_edges]
+    fig_edges_min_max = [(edge*(1-epsilon/1e6/5), edge*(1+epsilon/1e6/5)) for edge in fig_edges]
     figure["edges_min_max_lens"] = fig_edges_min_max
 
     fig_vtx_lens = [set() for i in range(len(vtx))]
@@ -186,6 +186,7 @@ class Solver():
             adj[e[0]].append(e[1])
             adj[e[1]].append(e[0])
         spec['figure']['adj'] = adj
+
         self.len_matching = len_matching
         if len_matching:
             compute_edge_lens(spec)
@@ -232,7 +233,7 @@ class Solver():
             if check_partial_solution(spec, solution, b, pt):
                 solution[b] = pt
                 self.try_solve(solution)
-                if time.time() - self.start_fig_vtx > 1: # 1 sec timeout per start fig vtx
+                if time.time() - self.start_fig_vtx > 2: # 2 sec timeout per start fig vtx
                     return False
                 # otherwise restore previous state
                 if self.best_score == 0: break
