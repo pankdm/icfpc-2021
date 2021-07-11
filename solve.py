@@ -97,6 +97,8 @@ def compute_inside_points(spec):
                 res.add((x, y))
     res = list(res)
     random.shuffle(res)
+    boundary = polygon.boundary
+    res.sort(key=lambda p: boundary.distance(Point(p)))
     return res, polygon
 
 
