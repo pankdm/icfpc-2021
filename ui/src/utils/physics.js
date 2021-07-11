@@ -27,6 +27,14 @@ export const getSimpleRadialForce = (point, meanPoint, simpleRepelConst=FORCE_DE
   const radialUnitVec = vecMult(radialVec, 1/dist)
   return vecClampAbs(vecMult(radialUnitVec, simpleRepelConst), 0, simpleRepelConst)
 }
+export const getAttractForce = (point, otherPoint, attractConst=50, maxAttract=100) => {
+  const toOtherPoint = vecSub(otherPoint, point)
+  if (isVecZero(toOtherPoint)) {
+    return vecRand(maxAttract)
+  }
+  const dist = distance(point, otherPoint)
+  return vecClampAbs(vecMult(toOtherPoint, attractConst/dist**2), 0, Math.min(dist, maxAttract))
+}
 export const getRepelForce = (point, otherPoint, repelConst=50, maxRepel=100) => {
   const fromOtherPoint = vecSub(point, otherPoint)
   if (isVecZero(fromOtherPoint)) {
@@ -82,6 +90,20 @@ export const applyGravity = (vertices, { meanCoords, gravityCenter, frozenPoints
   return mapApplyForce(vertices, getGravityForce)
 }
 
+export const applyMultiGravity = (vertices, { gravityPoints, gravityConst, maxGravity, frozenPoints }) => {
+  const getMultiGravityForce = (v, idx) => {
+    if (frozenPoints && frozenPoints.has(idx)) {
+      return ZERO_VEC
+    }
+    let sumForce = [0,0]
+    gravityPoints.forEach((g) => {
+      sumForce = vecAdd_(sumForce, getAttractForce(v, g, gravityConst, maxGravity))
+    })
+    return sumForce
+  }
+  return mapApplyForce(vertices, getMultiGravityForce)
+}
+
 export const applyShake = (vertices, { maxAmplitude, frozenPoints }) => {
   const newVertices = vertices.map((v, idx) => {
     if (frozenPoints && frozenPoints.has(idx)) {
@@ -113,7 +135,7 @@ export const inflate = (vertices, { repelConst, maxRepel, frozenPoints }) => {
     vertices.forEach((ov, ovIdx) => {
       if (ov == v) return
       const _repelForce = getRepelForce(v, ov, repelConst, maxRepel)
-      repelForce = vecAdd(repelForce, _repelForce)
+      repelForce = vecAdd_(repelForce, _repelForce)
     })
     return repelForce
   }
@@ -141,4 +163,8 @@ export const relaxLoop = (vertices, { optimalDistancesMap, frozenPoints }) => {
 export const gravityLoop = (vertices, { gravityCenter, frozenPoints }) => {
   const meanCoords = vecMean(vertices)
   return applyGravity(vertices, { meanCoords, gravityCenter, frozenPoints })
+}
+
+export const winningGraityLoop = (vertices, { holeVertcies, frozenPoints }) => {
+  return applyMultiGravity(vertices, { gravityPoints: holeVertcies, frozenPoints })
 }

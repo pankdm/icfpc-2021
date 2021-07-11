@@ -11,7 +11,7 @@ import Hole from './svg/Hole.jsx'
 import Figure from './svg/Figure.jsx'
 import styles from './ProblemViewer.module.css'
 import { getDistanceMap, getDistances, getScore, snapVecs, vecAdd, vecSub, vecMult, vecNorm, vecEquals, distance } from '../utils/graph.js'
-import { inflateLoop, inflateSimpleRadialLoop, relaxLoop, gravityLoop, applyShake } from '../utils/physics.js'
+import { inflateLoop, inflateSimpleRadialLoop, relaxLoop, gravityLoop, applyShake, winningGraityLoop } from '../utils/physics.js'
 import useOnChange, { useOnChangeValues } from '../utils/useOnChange.js'
 import useAnimLoop from '../utils/useAnimLoop.js'
 import { useHotkeys } from 'react-hotkeys-hook'
@@ -210,6 +210,9 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     if (simMode == 'gravity') {
       vertices = gravityLoop(vertices, { gravityCenter: [xMean, yMean], frozenPoints })
     }
+    if (simMode == 'winningGravity') {
+      vertices = winningGraityLoop(vertices, { holeVertcies: hole, frozenPoints })
+    }
     vertices = relaxLoop(vertices, { optimalDistancesMap, frozenPoints })
     })
     setOverriddenVertices(vertices)
@@ -397,6 +400,9 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   useHotkeys('i', () => {
     toggleSimMode('inflate')
   }, {}, [toggleSimMode])
+  useHotkeys('u', () => {
+    toggleSimMode('winningGravity')
+  }, {}, [toggleSimMode])
   useHotkeys('s', () => {
     snapVertices()
   }, {}, [snapVertices])
@@ -524,6 +530,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
       <button onClick={() => toggleSimMode('inflate')}>{simMode == 'inflate' ? '(I) Inflating' : '(I) Inflate'}</button>
       <button onClick={() => toggleSimMode('simpleInflate')}>{simMode == 'simpleInflate' ? '(O) Stretching' : '(O) Stretch'}</button>
       <button onClick={() => toggleSimMode('gravity')}>{simMode == 'gravity' ? '(G) Gravitating' : '(G) Gravity'}</button>
+      <button onClick={() => toggleSimMode('winningGravity')}>{simMode == 'holeVertcies' ? '(U) Holing...' : '(U) Hole It'}</button>
       <button onClick={singleShake}>(K) Shake</button>
       <button onClick={snapVertices}>(S) Snap</button>
       <button onClick={randomize}>Randomize</button>
