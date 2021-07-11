@@ -421,7 +421,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
               <Bonuses vertices={bonuses}/>
               <Grid xMin={xMin} yMin={yMin} xMax={xMax} yMax={yMax} color='#787' />
               <Figure
-                animate={true}
+                animate={false}
                 vertices={getCurrentVertices()}
                 edges={figure.edges}
                 epsilon={epsilonFraction}
