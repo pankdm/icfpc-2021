@@ -387,6 +387,9 @@ class GreedySolver:
             solution[b] = min_pt
             self.try_solve(solution)
 
+class TrySomethingNew(Exception):
+    pass
+
 class Solution:
     def __init__(self, spec, num_vertices):
         self.vertices = [None] * num_vertices
@@ -421,6 +424,19 @@ class Solution:
         with open(file_name, 'wt') as f:
             f.write(result_json)
 
+    def stash(self):
+        return {
+            "placed": set(self.placed),
+            "next": self.next,
+            "hole_status": dict(self.hole_status),
+            "vertices": list(self.vertices),
+        }
+
+    def recover_stash(self, s):
+        self.placed = s["placed"]
+        self.next = s["next"]
+        self.hole_status = s["hole_status"]
+        self.vertices = s["vertices"]
 
 
 
@@ -449,6 +465,7 @@ class IntegralSolver:
         spec['hole_poly'] = polygon
         self.best_score = None
         self.best_solution = None
+        self.num_solutions_after_best = 0
         self.timer = None
 
         figure = spec["figure"]
@@ -466,7 +483,7 @@ class IntegralSolver:
 
         self.initial_points = [
             tuple(pt) for pt in spec['hole']
-        ] + self.inside_points
+        ] # + self.inside_points
         # print(f"initial_points = {self.initial_points}")
         # exit()
 
@@ -515,11 +532,11 @@ class IntegralSolver:
             # Try all initial positions.
             solution = Solution(self.spec, len(self.vertices))
             for i in range(len(self.vertices)):
-                print(f"Starting from figure vertex {i}")
+                print(f"\n\n# Starting from figure vertex {i}")
                 # solution.placement_order = [i] + list(itertools.chain.from_iterable(t[1] for t in nx.bfs_successors(self.graph, i)))
                 # solution.placement_order = list(nx.dfs_preorder_nodes(self.graph, i))
                 solution.placement_order = self.get_placement_order_by_placed_neibs(i)
-                print(f"placement_order = {solution.placement_order}")
+                print(f"new placement_order = {solution.placement_order}")
                 solution.next = 0
                 assert(len(solution.placement_order) == solution.num_vertices)
 
@@ -536,11 +553,17 @@ class IntegralSolver:
             score = count_dislikes_impl(self.spec, solution.vertices)
             print(f"Found solution! score = {score}")
 
-            if self.best_score is None or score > self.best_score:
+            if self.best_score is None or score < self.best_score:
                 self.best_score = score
                 self.best_solution = solution
+                self.num_solutions_after_best = 0
                 solution.write_to_file(f"solutions/solver/{self.problem_id}")
                 print("NEW BEST")
+            elif self.best_score:
+                self.num_solutions_after_best += 1
+                if self.num_solutions_after_best > 10:
+                    self.num_solutions_after_best = 0
+                    raise TrySomethingNew()
 
             return
 
@@ -555,7 +578,12 @@ class IntegralSolver:
             # first the first one
             for pt in self.initial_points:
                 solution.place(next_to_place, pt)
-                self.try_solve(solution)
+                stash = solution.stash()
+                try:
+                    self.try_solve(solution)
+                except TrySomethingNew:
+                    solution.recover_stash(stash)
+                    print("Trying anothing initial position.")
                 solution.unplace(next_to_place, pt)
         else:
             # some neighbors already placed
@@ -573,9 +601,6 @@ class IntegralSolver:
                             is_edge_inside(self.spec, solution.vertices[neib], pt)  # slow
                         ))
 
-            
-            
-
 
             # print(f"viable_points for {next_to_place} (neibs {neibs}): {viable_points}\nplaced={solution.placed}")
 
@@ -585,6 +610,10 @@ class IntegralSolver:
             if viable_points:
 
                 def metric(pt):
+                    if pt in solution.hole_dict:
+                        print(f"{pt} is a HOLE")
+                        return 1000000
+
                     total_dislikes = 0
                     for hole_pt, i in solution.hole_dict.items():
                         if solution.hole_status[i]:
