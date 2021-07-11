@@ -17,6 +17,10 @@
   top: 1rem;
   right: 1rem;
 }
+.move-actions button {
+  text-align: left;
+}
+
 input {
   width: 10em;
   font-family: 'Courier New', Courier, monospace;
@@ -43,15 +47,23 @@ button:active {
   background-color: #aaa;
 }
 
+.hotkeys-instruction {
+  margin: 1em 0;
+}
+
+pre {
+  color: #222;
+  font-size: 1.25em;
+  font-weight: bold;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
 .bottom-right {
   position: absolute;
   bottom: 1rem;
   right: 1rem;
 }
-
-pre {
+.bottom-right pre {
   color: #fff;
-  font-size: 1.25em;
-  font-weight: bold;
-  margin: 0;
 }
