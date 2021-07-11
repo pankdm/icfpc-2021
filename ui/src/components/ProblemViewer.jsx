@@ -329,6 +329,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     reset()
   })
   return (
+    <div>
     <AspectRatioBox>
       <svg ref={svgRef} className={styles.svg} viewBox={`${0} ${0} ${xMax - xMin} ${yMax - yMin}`}>
         <Group x={-xMin} y={-yMin}>
@@ -390,17 +391,6 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         <button style={{ height: '2.5em' }} onClick={() => setMultiselectMode(!multiselectMode)}>{multiselectMode ? 'Selecting...' : '⬆️ Glue Points'}</button>
         <button disabled={!frozenFigurePoints.size} onClick={() => unselectAllGluedPoints()}>Unselect {frozenFigurePoints.size}</button>
         <button onClick={toggleDragMode}>{dragMode ? 'Pan Enabled' : 'Pan Disabled'}</button>
-        <Spacer />
-        <div className={styles.moveActions}>
-          <button onClick={() => rotateCw(Math.PI/12)}>(E) Rotate +CW</button>
-          <button onClick={() => rotateCw(-Math.PI/12)}>(Q) Rotate -CW</button>
-          <button onClick={() => flipVert()}>(D) Flip</button>
-          <button onClick={() => flipHz()}>(A) Mirror</button>
-          <button onClick={() => move(0, -5)}>⬆️+W Move Up</button>
-          <button onClick={() => move(0, 5)}>⬆️+S Move Down</button>
-          <button onClick={() => move(-5, 0)}>⬆️+A Move Left</button>
-          <button onClick={() => move(5, 0)}>⬆️+D Move Right</button>
-        </div>
       </div>
       <div className={styles.bottomRight}>
         <button onClick={() => setZoom(zoom+1)}>+</button>
@@ -419,5 +409,21 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         </pre>
       </div>
     </AspectRatioBox>
+    <pre className={styles.hotkeysInstruction}>
+    {`
+Extra hotkeys:
+
+     E  - rotate +CW
+     Q  - rotate -CW
+     D  - flip vertical
+     A  - mirror horiztl
+
+shft+W  - move up          ctrl+shft+W  - power move up
+shft+S  - move down        ctrl+shft+S  - power move down
+shft+A  - move left        ctrl+shft+A  - power move left
+shft+D  - move right       ctrl+shft+D  - power move right
+    `.trim()}
+    </pre>
+    </div>
   )
 }
