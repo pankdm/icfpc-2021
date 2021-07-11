@@ -280,7 +280,6 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
 
             vertices[v] = newPt
         });
-    addFrozenFigurePoint(idx);
 
     setOverriddenVertices(vertices);
   }
@@ -438,11 +437,13 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
                   addFrozenFigurePoint(idx)
                 }}
                 onPointRelease={(ev, idx) => {
+                  let wasFrozen = frozenFigurePoints.has(idx);
                   if (!multiselectMode) {
                     removeFrozenFigurePoint(idx)
                   }
                   if (powerClickMode) {
                     powerClick(idx);
+                    addFrozenFigurePoint(idx);
                   }
                 }}
                 onPointDrag={(ev, idx) => {
