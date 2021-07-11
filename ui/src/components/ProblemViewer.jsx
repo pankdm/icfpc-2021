@@ -474,6 +474,21 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
               ? (saved ? 'Okay...' : 'Save?')
               : (saved ? 'Saved' : 'Save')}
           </button>
+        <pre style={{overflowX: 'scroll'}}>
+{`
+Stretched Edges:
+${_.keys(overstretchedEdges).length
+  ? _.keys(overstretchedEdges).map((k) => `(${figure.edges[k].join(',')})`).join(', ')
+  : 'None'
+}
+
+Shrinked Edges:
+${_.keys(overshrinkedEdges).length
+  ? _.keys(overshrinkedEdges).map((k) => `(${figure.edges[k].join(',')})`).join(', ')
+  : 'None'
+}
+`}
+        </pre>
         </div>
       </Flex>
     </div>
