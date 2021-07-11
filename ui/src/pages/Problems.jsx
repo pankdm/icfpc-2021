@@ -4,7 +4,7 @@ import NavHeader from '../NavHeader.jsx'
 import styles from './Problems.module.css'
 import ProblemViewer from '../components/ProblemViewer.jsx'
 import useLocalStorage from '../utils/useLocalStorage.js'
-import { useProblems, useProblem, useSolutions, useSolution, saveSolution } from '../api/problems'
+import { useProblems, useProblem, useSolutions, useSolution, saveSolution, useStats } from '../api/problems'
 
 function Problems() {
   const [problemId, setProblemId] = useLocalStorage('problemId', 1)
@@ -13,6 +13,7 @@ function Problems() {
   const { data: problem } = useProblem(problemId, { enabled: !!problemId })
   const { data: solutions } = useSolutions(problemId, { enabled: !!problemId, refetchInterval: 1000 })
   const { data: solution, refetch: refetchSolution } = useSolution(problemId, solutionId, { enabled: !!problemId && !!solutionId })
+  const { data: stats } = useStats()
   const onSaveSolution = (problemId, username, solution) => {
     console.log('Saving solution', problemId, solution)
     return saveSolution(problemId, username, solution)
@@ -67,6 +68,7 @@ function Problems() {
           problemId={problemId}
           problem={problem}
           solution={solution}
+          stats={stats[problemId]}
           onSaveSolution={onSaveSolution}
         />
       }

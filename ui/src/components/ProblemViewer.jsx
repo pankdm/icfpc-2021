@@ -19,7 +19,7 @@ import useLocalStorage from '../utils/useLocalStorage.js'
 import useDOMEvent from '../utils/useDOMEvent.js'
 
 
-export default function ProblemViewer({ problemId, problem, solution, onSaveSolution, ...props }) {
+export default function ProblemViewer({ problemId, problem, solution, onSaveSolution, stats, ...props }) {
   const { hole, epsilon, figure, bonuses } = problem
   const epsilonFraction = epsilon/1e6
   const zeroPointLocation = useRef()
@@ -393,6 +393,9 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         </pre>
         <pre className={styles.score}>
           Score: {_.padStart(score, 4, ' ')}
+        </pre>
+        <pre className={styles.score}>
+          Best: {_.padStart(stats.min_dislikes, 4, ' ')}
         </pre>
       </div>
     </AspectRatioBox>
