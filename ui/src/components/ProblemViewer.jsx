@@ -290,28 +290,36 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     setZoom(0)
     setPanOffset([0, 0])
   }
-  useHotkeys('shift+w', () => {
+  useHotkeys('up', (ev) => {
+    ev.preventDefault()
     move(0, -1)
   }, {}, [move])
-  useHotkeys("shift+s", () => {
+  useHotkeys("down", (ev) => {
+    ev.preventDefault()
     move(0, 1)
   }, {}, [move])
-  useHotkeys('shift+d', () => {
+  useHotkeys('right', (ev) => {
+    ev.preventDefault()
     move(1, 0)
   }, {}, [move])
-  useHotkeys('shift+a', () => {
+  useHotkeys('left', (ev) => {
+    ev.preventDefault()
     move(-1, 0)
   }, {}, [move])
-  useHotkeys('ctrl+shift+w', () => {
+  useHotkeys('shift+up', (ev) => {
+    ev.preventDefault()
     move(0, -10)
   }, {}, [move])
-  useHotkeys("ctrl+shift+s", () => {
+  useHotkeys("shift+down", (ev) => {
+    ev.preventDefault()
     move(0, 10)
   }, {}, [move])
-  useHotkeys('ctrl+shift+d', () => {
+  useHotkeys('shift+right', (ev) => {
+    ev.preventDefault()
     move(10, 0)
   }, {}, [move])
-  useHotkeys('ctrl+shift+a', () => {
+  useHotkeys('shift+left', (ev) => {
+    ev.preventDefault()
     move(-10, 0)
   }, {}, [move])
   useHotkeys('e', () => {
@@ -490,15 +498,20 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     {`
 Extra hotkeys:
 
-     E  - rotate +CW
-     Q  - rotate -CW
-     D  - flip vertical
-     A  - mirror horiztl
+          E  - rotate +CW
+          Q  - rotate -CW
+          D  - flip vertical
+          A  - mirror horiztl
 
-shft+W  - move up          ctrl+shft+W  - power move up
-shft+S  - move down        ctrl+shft+S  - power move down
-shft+A  - move left        ctrl+shft+A  - power move left
-shft+D  - move right       ctrl+shft+D  - power move right
+         up  - move up
+       down  - move down
+      right  - move left
+       left  - move right
+
+   shift+up  - power move up
+ shift+down  - power move down
+shift+right  - power move left
+ shift+left  - power move right
     `.trim()}
     </pre>
     </div>
