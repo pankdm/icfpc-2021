@@ -8,6 +8,7 @@
 
 .top-left {
   position: absolute;
+  z-index: 10;
   top: 1rem;
   left: 1rem;
 }
@@ -17,6 +18,7 @@
   top: 1rem;
   right: 1rem;
 }
+
 .move-actions button {
   text-align: left;
 }
@@ -52,7 +54,6 @@ button:active {
 }
 
 pre {
-  color: #222;
   font-size: 1.25em;
   font-weight: bold;
   margin: 0;
@@ -63,7 +64,26 @@ pre {
   position: absolute;
   bottom: 1rem;
   right: 1rem;
-}
-.bottom-right pre {
   color: #fff;
+}
+
+@media screen and (min-width: 1200px) {
+  .top-left {
+    top: 0;
+    left: unset;
+    right: calc(100% + 1rem);
+  }
+  .top-right {
+    top: 0;
+    min-width: 8rem;
+    right: unset;
+    left: calc(100% + 1rem);
+  }
+  .bottom-right {
+    bottom: 0;
+    min-width: 8rem;
+    right: unset;
+    left: calc(100% + 1rem);
+    color: #222;
+  }
 }

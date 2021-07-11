@@ -160,8 +160,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     ]
   }, [figure, optimalDistancesMap, currentDistances, epsilon])
   const hasBrokenEdges = _.size(overstretchedEdges) > 0 || _.size(overshrinkedEdges) > 0
-  const _debouncedHasBrokenEdges = useDebounce(hasBrokenEdges, 1000)
-  const debncHasBrokenEdges = hasBrokenEdges ? true : _debouncedHasBrokenEdges
+  const debncHasBrokenEdges = useDebounce(hasBrokenEdges, hasBrokenEdges ? 0 : 500)
   const score = useMemo(() => {
     return Math.floor(getScore(hole, currentVertices))
   }, [currentVertices, hole])
@@ -371,7 +370,40 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     reset()
   })
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
+      <div className={styles.topLeft}>
+        <TrafficLight
+          size='14em'
+          red={debncHasBrokenEdges}
+          yellow={false}
+          green={!debncHasBrokenEdges}
+        />
+      <Flex>
+        {/* <TrafficLight
+          size='4em'
+          red={hasBrokenEdges}
+          yellow={false}
+          green={!hasBrokenEdges}
+        /> */}
+        <div>
+          <input placeholder='username / manual solutions alias' value={username} onChange={ev => setUsername(ev.target.value)} />
+          <button
+            disabled={saved}
+            style={_.merge({}, debncHasBrokenEdges && { opacity: 0.75 })}
+            onClick={() => {
+              stopPlaying()
+              snapVertices()
+              onSaveSolution(problemId, username, { vertices: getCurrentVertices() })
+              toggleSaved()
+            }
+          }>
+            {debncHasBrokenEdges
+              ? (saved ? 'Okay...' : 'Save?')
+              : (saved ? 'Saved' : 'Save')}
+          </button>
+        </div>
+      </Flex>
+    </div>
     <AspectRatioBox>
       <svg ref={svgRef} className={styles.svg} viewBox={`${0} ${0} ${xMax - xMin} ${yMax - yMin}`}>
         <Group x={-xMin} y={-yMin}>
@@ -411,39 +443,6 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
           </Group>
         </Group>
       </svg>
-      <div className={styles.topLeft}>
-          <TrafficLight
-            size='14em'
-            red={debncHasBrokenEdges}
-            yellow={false}
-            green={!debncHasBrokenEdges}
-          />
-        <Flex>
-          {/* <TrafficLight
-            size='4em'
-            red={hasBrokenEdges}
-            yellow={false}
-            green={!hasBrokenEdges}
-          /> */}
-          <div>
-            <input placeholder='username / manual solutions alias' value={username} onChange={ev => setUsername(ev.target.value)} />
-            <button
-              disabled={saved}
-              style={_.merge({}, hasBrokenEdges && { opacity: 0.75 })}
-              onClick={() => {
-                stopPlaying()
-                snapVertices()
-                onSaveSolution(problemId, username, { vertices: getCurrentVertices() })
-                toggleSaved()
-              }
-            }>
-              {hasBrokenEdges
-                ? (saved ? 'Okay...' : 'Save?')
-                : (saved ? 'Saved' : 'Save')}
-            </button>
-          </div>
-        </Flex>
-      </div>
       <div className={styles.topRight}>
         <button onClick={togglePlaying}>{playing ? '(_) Physics: on' : '(_) Physics: off'}</button>
         <button onClick={() => toggleSimMode('inflate')}>{simMode == 'inflate' ? '(I) Inflating' : '(I) Inflate'}</button>

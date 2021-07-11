@@ -1,6 +1,6 @@
 .box {
   height: 0;
-  overflow: hidden;
+  /* overflow: hidden; */
   padding-top: 591.44px / 1127.34px * 100%;
   position: relative;
 }
