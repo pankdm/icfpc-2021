@@ -514,8 +514,15 @@ class IntegralSolver:
         if len(solution.placed) == solution.num_vertices:
             # Done.
             solution.print()
-            print(f"Found solution!")
-            exit()
+            score = count_dislikes_impl(self.spec, solution.vertices)
+            print(f"Found solution! score = {score}")
+
+            if self.best_score is None or score > self.best_score:
+                self.best_score = score
+                self.best_solution = solution
+                print("NEW BEST")
+
+            return
 
         next_to_place = solution.placement_order[solution.next]
         assert next_to_place not in solution.placed
@@ -546,7 +553,7 @@ class IntegralSolver:
                         ))
 
 
-            print(f"viable_points for {next_to_place} (neibs {neibs}): {viable_points}\nplaced={solution.placed}")
+            # print(f"viable_points for {next_to_place} (neibs {neibs}): {viable_points}\nplaced={solution.placed}")
 
             # Must have at least one neib that's placed already.
             assert viable_points is not None
