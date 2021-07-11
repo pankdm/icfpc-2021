@@ -42,3 +42,7 @@ export function saveSolution(problemId, username, solution) {
 export function useStats(opts={}) {
   return useQuery('stats', () => fetchJson(`${API_ROOT}/stats`), opts)
 }
+
+export function useProblemsAll(opts={}) {
+  return useQuery('propblems/all', () => fetchJson(`${API_ROOT}/problems/all`), opts)
+}
