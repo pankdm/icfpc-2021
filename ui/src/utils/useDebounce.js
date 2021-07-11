@@ -9,4 +9,5 @@ export default function useDebounce(value, delayMs=300, callback=() => {}) {
     }, delayMs)
     return () => clearTimeout(timeoutId)
   }, [value, delayMs])
+  return _value
 }

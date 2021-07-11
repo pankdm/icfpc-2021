@@ -2,6 +2,8 @@ import React, { useCallback, useMemo, useRef, useState } from 'react'
 import _ from 'lodash'
 import AspectRatioBox from './AspectRatioBox.jsx'
 import Spacer from './Spacer.jsx'
+import Flex from './Flex.jsx'
+import TrafficLight from './TrafficLight.jsx'
 import Bonuses from './svg/Bonuses.jsx'
 import Group from './svg/Group.jsx'
 import Grid from './svg/Grid.jsx'
@@ -15,6 +17,7 @@ import useAnimLoop from '../utils/useAnimLoop.js'
 import { useHotkeys } from 'react-hotkeys-hook'
 import useDrag from '../utils/useDrag.js'
 import useBlip from '../utils/useBlip.js'
+import useDebounce from '../utils/useDebounce.js'
 import useLocalStorage from '../utils/useLocalStorage.js'
 import useDOMEvent from '../utils/useDOMEvent.js'
 
@@ -156,6 +159,9 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
       _.pickBy(stretches, (v) => v * v < 1-epsilonFraction),
     ]
   }, [figure, optimalDistancesMap, currentDistances, epsilon])
+  const hasBrokenEdges = _.size(overstretchedEdges) > 0 || _.size(overshrinkedEdges) > 0
+  const _debouncedHasBrokenEdges = useDebounce(hasBrokenEdges, 1000)
+  const debncHasBrokenEdges = hasBrokenEdges ? true : _debouncedHasBrokenEdges
   const score = useMemo(() => {
     return Math.floor(getScore(hole, currentVertices))
   }, [currentVertices, hole])
@@ -406,17 +412,37 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         </Group>
       </svg>
       <div className={styles.topLeft}>
-        <input placeholder='username / manual solutions alias' value={username} onChange={ev => setUsername(ev.target.value)} />
-        <button
-          disabled={saved}
-          onClick={() => {
-            snapVertices()
-            onSaveSolution(problemId, username, { vertices: getCurrentVertices() })
-            toggleSaved()
-          }
-        }>
-          {saved ? 'Saved' : 'Save'}
-        </button>
+          <TrafficLight
+            size='14em'
+            red={debncHasBrokenEdges}
+            yellow={false}
+            green={!debncHasBrokenEdges}
+          />
+        <Flex>
+          {/* <TrafficLight
+            size='4em'
+            red={hasBrokenEdges}
+            yellow={false}
+            green={!hasBrokenEdges}
+          /> */}
+          <div>
+            <input placeholder='username / manual solutions alias' value={username} onChange={ev => setUsername(ev.target.value)} />
+            <button
+              disabled={saved}
+              style={_.merge({}, hasBrokenEdges && { opacity: 0.75 })}
+              onClick={() => {
+                stopPlaying()
+                snapVertices()
+                onSaveSolution(problemId, username, { vertices: getCurrentVertices() })
+                toggleSaved()
+              }
+            }>
+              {hasBrokenEdges
+                ? (saved ? 'Okay...' : 'Save?')
+                : (saved ? 'Saved' : 'Save')}
+            </button>
+          </div>
+        </Flex>
       </div>
       <div className={styles.topRight}>
         <button onClick={togglePlaying}>{playing ? '(_) Physics: on' : '(_) Physics: off'}</button>
