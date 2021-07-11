@@ -511,7 +511,7 @@
     },
     "86": {
         "dislikes": null,
-        "min_dislikes": 5360,
+        "min_dislikes": 5354,
         "score": 0,
         "max_score": 17498
     },
@@ -559,7 +559,7 @@
     },
     "94": {
         "dislikes": null,
-        "min_dislikes": 1508,
+        "min_dislikes": 1506,
         "score": 0,
         "max_score": 16842
     },
@@ -625,8 +625,8 @@
     },
     "105": {
         "dislikes": "5593754",
-        "min_dislikes": 10099,
-        "score": 958,
+        "min_dislikes": 914,
+        "score": 288,
         "max_score": 22546
     },
     "106": {
