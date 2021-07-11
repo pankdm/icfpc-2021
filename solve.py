@@ -19,6 +19,15 @@ from get_problems import submit_solution
 
 from networkx import nx
 
+
+from absl import app
+from absl import flags
+
+FLAGS = flags.FLAGS
+
+flags.DEFINE_string('init_path', None, 'Path to a solution file to seed initial vertices.')
+
+
 TIMEOUT = 60 # seconds
 eps = 1e-6
 
@@ -396,16 +405,37 @@ class Solution:
         result_json = f"{{\"vertices\":{result}}}"
         print(result_json)
 
+    def write_to_file(self, file_name):
+        result = [list(pt) if pt is not None else [0,0] for pt in self.vertices]
+        result_json = f"{{\"vertices\":{result}}}"
+        with open(file_name, 'wt') as f:
+            f.write(result_json)
+
+
+
 
 class IntegralSolver:
-    def __init__(self, spec):
+    def __init__(self, spec, initial_solution, problem_id):
         self.spec = spec
+        self.problem_id = problem_id
 
         self.partial_solution = None
+        self.initial_solution = initial_solution
 
         inside_points, polygon = compute_inside_points(spec)
         self.inside_points = inside_points
         self.inside_points_set = set(inside_points)
+
+
+        if initial_solution and not initial_solution.placed:
+            new_placed = set()
+            for vi, v in enumerate(initial_solution.vertices):
+                if v in self.inside_points_set:
+                    new_placed.add(vi)
+                else:
+                    initial_solution.vertices[vi] = None
+            initial_solution.placed = new_placed
+
         spec['hole_poly'] = polygon
         self.best_score = None
         self.best_solution = None
@@ -431,9 +461,14 @@ class IntegralSolver:
         # exit()
 
     def get_placement_order_by_placed_neibs(self, i):
-        result = [i]
-        placed = {i}
-        while len(result) < len(self.vertices):
+        if self.initial_solution:
+            result = []
+            placed = set(self.initial_solution.placed)
+        else:
+            result = [i]
+            placed = {i}
+
+        while len(placed) < len(self.vertices):
             best_num_placed = 0
             best_n = -1
             for n in self.graph:
@@ -446,6 +481,8 @@ class IntegralSolver:
                 if num_placed > best_num_placed:
                     best_num_placed = num_placed
                     best_n = n
+            if best_n == -1:
+                print(f"placed = {placed} {len(placed)} {len(self.vertices)}")
             assert best_n != -1
             result.append(best_n)
             placed.add(best_n)
@@ -453,26 +490,40 @@ class IntegralSolver:
 
 
     def full_solve(self):
-        solution = Solution(len(self.vertices))
-        for i in range(len(self.vertices)):
-            print(f"Starting from figure vertex {i}")
-            # solution.placement_order = [i] + list(itertools.chain.from_iterable(t[1] for t in nx.bfs_successors(self.graph, i)))
-            # solution.placement_order = list(nx.dfs_preorder_nodes(self.graph, i))
-            solution.placement_order = self.get_placement_order_by_placed_neibs(i)
+        if self.initial_solution:
+            solution = self.initial_solution
+            solution.placement_order = self.get_placement_order_by_placed_neibs(0)  # 0 is ignored
             print(f"placement_order = {solution.placement_order}")
             solution.next = 0
-            assert(len(solution.placement_order) == solution.num_vertices)
 
             try:
                 self.try_solve(solution)
             except KeyboardInterrupt:
                 solution.print()
 
+        else:
+            # Try all initial positions.
+            solution = Solution(len(self.vertices))
+            for i in range(len(self.vertices)):
+                print(f"Starting from figure vertex {i}")
+                # solution.placement_order = [i] + list(itertools.chain.from_iterable(t[1] for t in nx.bfs_successors(self.graph, i)))
+                # solution.placement_order = list(nx.dfs_preorder_nodes(self.graph, i))
+                solution.placement_order = self.get_placement_order_by_placed_neibs(i)
+                print(f"placement_order = {solution.placement_order}")
+                solution.next = 0
+                assert(len(solution.placement_order) == solution.num_vertices)
+
+                try:
+                    self.try_solve(solution)
+                except KeyboardInterrupt:
+                    solution.print()
+
 
     def try_solve(self, solution):
         if len(solution.placed) == solution.num_vertices:
             # Done.
             solution.print()
+            solution.write_to_file(f"solutions/solver/{self.problem_id}")
             print(f"Found solution!")
             exit()
 
@@ -481,7 +532,7 @@ class IntegralSolver:
 
         # Advance.
         solution.next += 1
-        assert solution.next >= solution.num_vertices or solution.placement_order[solution.next] not in solution.placed
+        assert solution.next >= len(solution.placement_order) or solution.placement_order[solution.next] not in solution.placed
 
         if not solution.placed:
             # first the first one
@@ -545,6 +596,17 @@ def write_solution(solution_file, total_points, solution):
         f.write(js_str)
     return js_str
 
+def load_initial_solution(spec, path):
+    with open(path) as f:
+        solution_json = json.loads(f.read())
+
+    vertices = solution_json["vertices"]
+
+    solution = Solution(len(vertices))
+    solution.vertices = [tuple(v) for v in vertices]
+
+    return solution
+
 def solve_and_win(problem_id):
     print ('')
     print (f'=== Solving {problem_id} ====')
@@ -554,7 +616,11 @@ def solve_and_win(problem_id):
     print ('edges:', len(spec['figure']['edges']))
     print ('vertices:', len(spec['figure']['vertices']))
 
-    solver = IntegralSolver(spec)
+    initial_solution = None
+    if FLAGS.init_path:
+        initial_solution = load_initial_solution(spec, FLAGS.init_path)
+
+    solver = IntegralSolver(spec =spec, initial_solution =initial_solution, problem_id=problem_id)
     print ('inside points:', len(solver.inside_points))
     try:
         solver.full_solve()
@@ -754,15 +820,22 @@ def submit_manual(problem_id, solution_file_name):
     pass
 
 
-if __name__ == "__main__":
-    # if len(sys.argv)==3:
-    #     problem_id = sys.argv[1]
-    #     file_name = sys.argv[2]
-    #     submit_manual(problem_id, file_name)
-    # elif len(sys.argv)==2:
-        problem_id = sys.argv[1]
-        solve_and_win(problem_id)
-    # else:
-    #     for i in (50, 54, 55, 67, 70, 73, 77):
-    #         solve_and_submit(i)
+def main(argv):
+    problem_id = sys.argv[1]
+    solve_and_win(problem_id)
+
+if __name__ == '__main__':
+  app.run(main)
+
+# if __name__ == "__main__":
+#     # if len(sys.argv)==3:
+#     #     problem_id = sys.argv[1]
+#     #     file_name = sys.argv[2]
+#     #     submit_manual(problem_id, file_name)
+#     # elif len(sys.argv)==2:
+#         problem_id = sys.argv[1]
+#         solve_and_win(problem_id)
+#     # else:
+#     #     for i in (50, 54, 55, 67, 70, 73, 77):
+#     #         solve_and_submit(i)
 

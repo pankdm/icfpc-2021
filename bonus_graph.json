@@ -8,12 +8,24 @@
    [
     50,
     "WALLHACK"
+   ],
+   [
+    38,
+    "BREAK_A_LEG"
    ]
   ],
   "needs": [
    [
+    37,
+    "SUPERFLEX"
+   ],
+   [
     79,
     "GLOBALIST"
+   ],
+   [
+    97,
+    "WALLHACK"
    ]
   ]
  },
@@ -22,6 +34,14 @@
    [
     1,
     "GLOBALIST"
+   ],
+   [
+    75,
+    "SUPERFLEX"
+   ],
+   [
+    78,
+    "BREAK_A_LEG"
    ]
   ],
   "enables": [
@@ -32,6 +52,10 @@
    [
     14,
     "WALLHACK"
+   ],
+   [
+    126,
+    "WALLHACK"
    ]
   ]
  },
@@ -40,6 +64,10 @@
    [
     1,
     "WALLHACK"
+   ],
+   [
+    6,
+    "SUPERFLEX"
    ],
    [
     56,
@@ -54,6 +82,40 @@
    [
     70,
     "GLOBALIST"
+   ],
+   [
+    91,
+    "WALLHACK"
+   ]
+  ]
+ },
+ "38": {
+  "needs": [
+   [
+    1,
+    "BREAK_A_LEG"
+   ],
+   [
+    53,
+    "GLOBALIST"
+   ],
+   [
+    63,
+    "WALLHACK"
+   ]
+  ],
+  "enables": [
+   [
+    76,
+    "GLOBALIST"
+   ],
+   [
+    101,
+    "SUPERFLEX"
+   ],
+   [
+    84,
+    "WALLHACK"
    ]
   ]
  },
@@ -66,12 +128,20 @@
    [
     87,
     "GLOBALIST"
+   ],
+   [
+    81,
+    "BREAK_A_LEG"
    ]
   ],
   "needs": [
    [
     82,
     "GLOBALIST"
+   ],
+   [
+    95,
+    "BREAK_A_LEG"
    ],
    [
     96,
@@ -88,6 +158,10 @@
    [
     77,
     "GLOBALIST"
+   ],
+   [
+    93,
+    "BREAK_A_LEG"
    ]
   ],
   "enables": [
@@ -97,6 +171,10 @@
    ],
    [
     100,
+    "BREAK_A_LEG"
+   ],
+   [
+    29,
     "BREAK_A_LEG"
    ]
   ]
@@ -110,57 +188,33 @@
    [
     71,
     "BREAK_A_LEG"
+   ],
+   [
+    85,
+    "GLOBALIST"
    ]
   ],
   "enables": [
    [
     26,
     "GLOBALIST"
-   ]
-  ]
- },
- "3": {
-  "enables": [
-   [
-    60,
-    "GLOBALIST"
    ],
    [
-    81,
-    "GLOBALIST"
-   ]
-  ],
-  "needs": [
+    106,
+    "SUPERFLEX"
+   ],
    [
-    59,
+    100,
     "BREAK_A_LEG"
-   ],
-   [
-    103,
-    "BREAK_A_LEG"
-   ]
-  ]
- },
- "60": {
-  "needs": [
-   [
-    3,
-    "GLOBALIST"
-   ]
-  ],
-  "enables": [
-   [
-    80,
-    "GLOBALIST"
-   ],
-   [
-    41,
-    "GLOBALIST"
    ]
   ]
  },
  "81": {
   "needs": [
+   [
+    2,
+    "BREAK_A_LEG"
+   ],
    [
     3,
     "GLOBALIST"
@@ -178,6 +232,100 @@
    [
     43,
     "WALLHACK"
+   ],
+   [
+    69,
+    "SUPERFLEX"
+   ]
+  ]
+ },
+ "3": {
+  "enables": [
+   [
+    60,
+    "GLOBALIST"
+   ],
+   [
+    81,
+    "GLOBALIST"
+   ],
+   [
+    59,
+    "WALLHACK"
+   ]
+  ],
+  "needs": [
+   [
+    59,
+    "BREAK_A_LEG"
+   ],
+   [
+    69,
+    "WALLHACK"
+   ],
+   [
+    103,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "60": {
+  "needs": [
+   [
+    3,
+    "GLOBALIST"
+   ],
+   [
+    9,
+    "SUPERFLEX"
+   ],
+   [
+    59,
+    "WALLHACK"
+   ]
+  ],
+  "enables": [
+   [
+    80,
+    "GLOBALIST"
+   ],
+   [
+    41,
+    "GLOBALIST"
+   ],
+   [
+    79,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "59": {
+  "needs": [
+   [
+    3,
+    "WALLHACK"
+   ],
+   [
+    88,
+    "GLOBALIST"
+   ],
+   [
+    100,
+    "SUPERFLEX"
+   ]
+  ],
+  "enables": [
+   [
+    3,
+    "BREAK_A_LEG"
+   ],
+   [
+    55,
+    "SUPERFLEX"
+   ],
+   [
+    60,
+    "WALLHACK"
    ]
   ]
  },
@@ -190,6 +338,10 @@
    [
     92,
     "BREAK_A_LEG"
+   ],
+   [
+    17,
+    "BREAK_A_LEG"
    ]
   ],
   "needs": [
@@ -200,6 +352,10 @@
    [
     57,
     "GLOBALIST"
+   ],
+   [
+    64,
+    "WALLHACK"
    ]
   ]
  },
@@ -208,6 +364,14 @@
    [
     4,
     "BREAK_A_LEG"
+   ],
+   [
+    83,
+    "SUPERFLEX"
+   ],
+   [
+    120,
+    "WALLHACK"
    ]
   ],
   "enables": [
@@ -218,6 +382,10 @@
    [
     38,
     "WALLHACK"
+   ],
+   [
+    18,
+    "GLOBALIST"
    ]
   ]
  },
@@ -228,6 +396,10 @@
     "BREAK_A_LEG"
    ],
    [
+    41,
+    "WALLHACK"
+   ],
+   [
     102,
     "GLOBALIST"
    ]
@@ -236,6 +408,44 @@
    [
     99,
     "BREAK_A_LEG"
+   ],
+   [
+    30,
+    "SUPERFLEX"
+   ],
+   [
+    7,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "17": {
+  "needs": [
+   [
+    4,
+    "BREAK_A_LEG"
+   ],
+   [
+    21,
+    "GLOBALIST"
+   ],
+   [
+    40,
+    "SUPERFLEX"
+   ]
+  ],
+  "enables": [
+   [
+    84,
+    "GLOBALIST"
+   ],
+   [
+    67,
+    "BREAK_A_LEG"
+   ],
+   [
+    68,
+    "SUPERFLEX"
    ]
   ]
  },
@@ -248,9 +458,17 @@
    [
     10,
     "WALLHACK"
+   ],
+   [
+    110,
+    "BREAK_A_LEG"
    ]
   ],
   "needs": [
+   [
+    32,
+    "BREAK_A_LEG"
+   ],
    [
     44,
     "WALLHACK"
@@ -266,11 +484,27 @@
    [
     5,
     "BREAK_A_LEG"
+   ],
+   [
+    15,
+    "SUPERFLEX"
+   ],
+   [
+    26,
+    "WALLHACK"
    ]
   ],
   "enables": [
    [
     56,
+    "BREAK_A_LEG"
+   ],
+   [
+    24,
+    "SUPERFLEX"
+   ],
+   [
+    35,
     "BREAK_A_LEG"
    ]
   ]
@@ -284,12 +518,54 @@
    [
     30,
     "BREAK_A_LEG"
+   ],
+   [
+    107,
+    "WALLHACK"
    ]
   ],
   "enables": [
    [
     62,
     "GLOBALIST"
+   ],
+   [
+    85,
+    "SUPERFLEX"
+   ],
+   [
+    76,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "110": {
+  "needs": [
+   [
+    5,
+    "BREAK_A_LEG"
+   ],
+   [
+    108,
+    "BREAK_A_LEG"
+   ],
+   [
+    129,
+    "SUPERFLEX"
+   ]
+  ],
+  "enables": [
+   [
+    131,
+    "GLOBALIST"
+   ],
+   [
+    128,
+    "WALLHACK"
+   ],
+   [
+    102,
+    "SUPERFLEX"
    ]
   ]
  },
@@ -298,12 +574,24 @@
    [
     16,
     "GLOBALIST"
+   ],
+   [
+    26,
+    "SUPERFLEX"
+   ],
+   [
+    50,
+    "SUPERFLEX"
    ]
   ],
   "needs": [
    [
     8,
     "BREAK_A_LEG"
+   ],
+   [
+    20,
+    "WALLHACK"
    ],
    [
     90,
@@ -320,6 +608,10 @@
    [
     25,
     "WALLHACK"
+   ],
+   [
+    46,
+    "GLOBALIST"
    ]
   ],
   "enables": [
@@ -330,6 +622,40 @@
    [
     74,
     "BREAK_A_LEG"
+   ],
+   [
+    32,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "26": {
+  "needs": [
+   [
+    6,
+    "SUPERFLEX"
+   ],
+   [
+    87,
+    "GLOBALIST"
+   ],
+   [
+    111,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    19,
+    "BREAK_A_LEG"
+   ],
+   [
+    77,
+    "SUPERFLEX"
+   ],
+   [
+    78,
+    "WALLHACK"
    ]
   ]
  },
@@ -342,12 +668,24 @@
    [
     95,
     "BREAK_A_LEG"
+   ],
+   [
+    115,
+    "WALLHACK"
    ]
   ],
   "needs": [
    [
     55,
     "GLOBALIST"
+   ],
+   [
+    92,
+    "GLOBALIST"
+   ],
+   [
+    104,
+    "SUPERFLEX"
    ]
   ]
  },
@@ -356,6 +694,14 @@
    [
     7,
     "GLOBALIST"
+   ],
+   [
+    34,
+    "GLOBALIST"
+   ],
+   [
+    54,
+    "SUPERFLEX"
    ]
   ],
   "enables": [
@@ -366,6 +712,10 @@
    [
     69,
     "WALLHACK"
+   ],
+   [
+    30,
+    "SUPERFLEX"
    ]
   ]
  },
@@ -376,6 +726,10 @@
     "BREAK_A_LEG"
    ],
    [
+    89,
+    "SUPERFLEX"
+   ],
+   [
     96,
     "BREAK_A_LEG"
    ]
@@ -384,6 +738,44 @@
    [
     101,
     "BREAK_A_LEG"
+   ],
+   [
+    45,
+    "SUPERFLEX"
+   ],
+   [
+    2,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "115": {
+  "needs": [
+   [
+    7,
+    "WALLHACK"
+   ],
+   [
+    109,
+    "GLOBALIST"
+   ],
+   [
+    122,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    122,
+    "BREAK_A_LEG"
+   ],
+   [
+    131,
+    "SUPERFLEX"
+   ],
+   [
+    19,
+    "GLOBALIST"
    ]
   ]
  },
@@ -396,6 +788,10 @@
    [
     79,
     "WALLHACK"
+   ],
+   [
+    105,
+    "BREAK_A_LEG"
    ]
   ],
   "needs": [
@@ -406,6 +802,10 @@
    [
     31,
     "WALLHACK"
+   ],
+   [
+    77,
+    "SUPERFLEX"
    ]
   ]
  },
@@ -418,6 +818,10 @@
    [
     42,
     "BREAK_A_LEG"
+   ],
+   [
+    60,
+    "GLOBALIST"
    ]
   ],
   "enables": [
@@ -428,6 +832,40 @@
    [
     62,
     "BREAK_A_LEG"
+   ],
+   [
+    83,
+    "WALLHACK"
+   ]
+  ]
+ },
+ "105": {
+  "needs": [
+   [
+    8,
+    "BREAK_A_LEG"
+   ],
+   [
+    30,
+    "SUPERFLEX"
+   ],
+   [
+    104,
+    "SUPERFLEX"
+   ]
+  ],
+  "enables": [
+   [
+    89,
+    "SUPERFLEX"
+   ],
+   [
+    68,
+    "SUPERFLEX"
+   ],
+   [
+    37,
+    "GLOBALIST"
    ]
   ]
  },
@@ -436,6 +874,14 @@
    [
     14,
     "BREAK_A_LEG"
+   ],
+   [
+    60,
+    "SUPERFLEX"
+   ],
+   [
+    64,
+    "GLOBALIST"
    ]
   ],
   "needs": [
@@ -446,6 +892,10 @@
    [
     50,
     "GLOBALIST"
+   ],
+   [
+    122,
+    "WALLHACK"
    ]
   ]
  },
@@ -458,6 +908,10 @@
    [
     35,
     "WALLHACK"
+   ],
+   [
+    57,
+    "SUPERFLEX"
    ]
   ],
   "enables": [
@@ -468,6 +922,40 @@
    [
     53,
     "GLOBALIST"
+   ],
+   [
+    118,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "64": {
+  "needs": [
+   [
+    9,
+    "GLOBALIST"
+   ],
+   [
+    22,
+    "WALLHACK"
+   ],
+   [
+    76,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    85,
+    "GLOBALIST"
+   ],
+   [
+    83,
+    "WALLHACK"
+   ],
+   [
+    4,
+    "WALLHACK"
    ]
   ]
  },
@@ -475,6 +963,10 @@
   "needs": [
    [
     10,
+    "GLOBALIST"
+   ],
+   [
+    65,
     "GLOBALIST"
    ],
    [
@@ -490,6 +982,70 @@
    [
     22,
     "WALLHACK"
+   ],
+   [
+    74,
+    "SUPERFLEX"
+   ]
+  ]
+ },
+ "85": {
+  "needs": [
+   [
+    10,
+    "SUPERFLEX"
+   ],
+   [
+    64,
+    "GLOBALIST"
+   ],
+   [
+    100,
+    "SUPERFLEX"
+   ]
+  ],
+  "enables": [
+   [
+    48,
+    "BREAK_A_LEG"
+   ],
+   [
+    57,
+    "SUPERFLEX"
+   ],
+   [
+    87,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "76": {
+  "needs": [
+   [
+    10,
+    "GLOBALIST"
+   ],
+   [
+    38,
+    "GLOBALIST"
+   ],
+   [
+    48,
+    "SUPERFLEX"
+   ]
+  ],
+  "enables": [
+   [
+    64,
+    "BREAK_A_LEG"
+   ],
+   [
+    46,
+    "SUPERFLEX"
+   ],
+   [
+    15,
+    "SUPERFLEX"
    ]
   ]
  },
@@ -502,12 +1058,20 @@
    [
     20,
     "GLOBALIST"
+   ],
+   [
+    49,
+    "GLOBALIST"
    ]
   ],
   "needs": [
    [
     48,
     "BREAK_A_LEG"
+   ],
+   [
+    56,
+    "SUPERFLEX"
    ],
    [
     73,
@@ -524,6 +1088,10 @@
    [
     46,
     "WALLHACK"
+   ],
+   [
+    66,
+    "GLOBALIST"
    ]
   ],
   "enables": [
@@ -534,6 +1102,10 @@
    [
     8,
     "WALLHACK"
+   ],
+   [
+    130,
+    "SUPERFLEX"
    ]
   ]
  },
@@ -541,6 +1113,10 @@
   "needs": [
    [
     11,
+    "GLOBALIST"
+   ],
+   [
+    13,
     "GLOBALIST"
    ],
    [
@@ -556,6 +1132,40 @@
    [
     97,
     "GLOBALIST"
+   ],
+   [
+    6,
+    "WALLHACK"
+   ]
+  ]
+ },
+ "49": {
+  "needs": [
+   [
+    11,
+    "GLOBALIST"
+   ],
+   [
+    20,
+    "GLOBALIST"
+   ],
+   [
+    65,
+    "WALLHACK"
+   ]
+  ],
+  "enables": [
+   [
+    36,
+    "BREAK_A_LEG"
+   ],
+   [
+    104,
+    "BREAK_A_LEG"
+   ],
+   [
+    66,
+    "WALLHACK"
    ]
   ]
  },
@@ -568,11 +1178,23 @@
    [
     17,
     "BREAK_A_LEG"
+   ],
+   [
+    22,
+    "GLOBALIST"
    ]
   ],
   "enables": [
    [
     5,
+    "GLOBALIST"
+   ],
+   [
+    42,
+    "SUPERFLEX"
+   ],
+   [
+    45,
     "GLOBALIST"
    ]
   ]
@@ -586,6 +1208,10 @@
    [
     68,
     "BREAK_A_LEG"
+   ],
+   [
+    81,
+    "SUPERFLEX"
    ]
   ],
   "enables": [
@@ -596,6 +1222,40 @@
    [
     28,
     "WALLHACK"
+   ],
+   [
+    3,
+    "WALLHACK"
+   ]
+  ]
+ },
+ "30": {
+  "needs": [
+   [
+    12,
+    "SUPERFLEX"
+   ],
+   [
+    25,
+    "BREAK_A_LEG"
+   ],
+   [
+    92,
+    "SUPERFLEX"
+   ]
+  ],
+  "enables": [
+   [
+    10,
+    "BREAK_A_LEG"
+   ],
+   [
+    105,
+    "SUPERFLEX"
+   ],
+   [
+    34,
+    "GLOBALIST"
    ]
   ]
  },
@@ -608,12 +1268,20 @@
    [
     88,
     "BREAK_A_LEG"
+   ],
+   [
+    20,
+    "GLOBALIST"
    ]
   ],
   "needs": [
    [
     34,
     "GLOBALIST"
+   ],
+   [
+    48,
+    "SUPERFLEX"
    ],
    [
     80,
@@ -626,6 +1294,14 @@
    [
     13,
     "GLOBALIST"
+   ],
+   [
+    76,
+    "SUPERFLEX"
+   ],
+   [
+    84,
+    "BREAK_A_LEG"
    ]
   ],
   "enables": [
@@ -636,6 +1312,10 @@
    [
     31,
     "WALLHACK"
+   ],
+   [
+    16,
+    "GLOBALIST"
    ]
   ]
  },
@@ -643,6 +1323,10 @@
   "needs": [
    [
     13,
+    "BREAK_A_LEG"
+   ],
+   [
+    43,
     "BREAK_A_LEG"
    ],
    [
@@ -658,6 +1342,10 @@
    [
     27,
     "BREAK_A_LEG"
+   ],
+   [
+    123,
+    "BREAK_A_LEG"
    ]
   ]
  },
@@ -666,6 +1354,14 @@
    [
     14,
     "BREAK_A_LEG"
+   ],
+   [
+    85,
+    "SUPERFLEX"
+   ],
+   [
+    117,
+    "GLOBALIST"
    ]
   ],
   "enables": [
@@ -676,6 +1372,10 @@
    [
     4,
     "GLOBALIST"
+   ],
+   [
+    14,
+    "SUPERFLEX"
    ]
   ]
  },
@@ -688,6 +1388,10 @@
    [
     33,
     "BREAK_A_LEG"
+   ],
+   [
+    90,
+    "GLOBALIST"
    ]
   ],
   "enables": [
@@ -698,6 +1402,40 @@
    [
     44,
     "BREAK_A_LEG"
+   ],
+   [
+    116,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "118": {
+  "needs": [
+   [
+    14,
+    "GLOBALIST"
+   ],
+   [
+    117,
+    "WALLHACK"
+   ],
+   [
+    119,
+    "WALLHACK"
+   ]
+  ],
+  "enables": [
+   [
+    116,
+    "GLOBALIST"
+   ],
+   [
+    132,
+    "BREAK_A_LEG"
+   ],
+   [
+    97,
+    "GLOBALIST"
    ]
   ]
  },
@@ -705,6 +1443,14 @@
   "enables": [
    [
     41,
+    "GLOBALIST"
+   ],
+   [
+    78,
+    "SUPERFLEX"
+   ],
+   [
+    94,
     "GLOBALIST"
    ]
   ],
@@ -716,6 +1462,10 @@
    [
     58,
     "WALLHACK"
+   ],
+   [
+    76,
+    "SUPERFLEX"
    ]
   ]
  },
@@ -728,12 +1478,54 @@
    [
     60,
     "GLOBALIST"
+   ],
+   [
+    73,
+    "GLOBALIST"
    ]
   ],
   "enables": [
    [
     54,
     "GLOBALIST"
+   ],
+   [
+    82,
+    "SUPERFLEX"
+   ],
+   [
+    92,
+    "WALLHACK"
+   ]
+  ]
+ },
+ "94": {
+  "needs": [
+   [
+    15,
+    "GLOBALIST"
+   ],
+   [
+    86,
+    "SUPERFLEX"
+   ],
+   [
+    106,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    102,
+    "BREAK_A_LEG"
+   ],
+   [
+    91,
+    "WALLHACK"
+   ],
+   [
+    122,
+    "SUPERFLEX"
    ]
   ]
  },
@@ -746,30 +1538,54 @@
    [
     22,
     "GLOBALIST"
+   ],
+   [
+    62,
+    "SUPERFLEX"
    ]
   ],
   "enables": [
    [
     77,
     "BREAK_A_LEG"
+   ],
+   [
+    56,
+    "SUPERFLEX"
+   ],
+   [
+    121,
+    "WALLHACK"
    ]
   ]
  },
- "17": {
-  "enables": [
+ "32": {
+  "needs": [
    [
-    84,
+    16,
     "GLOBALIST"
    ],
    [
-    67,
-    "BREAK_A_LEG"
+    19,
+    "GLOBALIST"
+   ],
+   [
+    72,
+    "SUPERFLEX"
    ]
   ],
-  "needs": [
+  "enables": [
    [
-    21,
-    "GLOBALIST"
+    29,
+    "BREAK_A_LEG"
+   ],
+   [
+    72,
+    "BREAK_A_LEG"
+   ],
+   [
+    5,
+    "BREAK_A_LEG"
    ]
   ]
  },
@@ -780,6 +1596,10 @@
     "GLOBALIST"
    ],
    [
+    38,
+    "WALLHACK"
+   ],
+   [
     101,
     "BREAK_A_LEG"
    ]
@@ -788,6 +1608,44 @@
    [
     52,
     "GLOBALIST"
+   ],
+   [
+    99,
+    "SUPERFLEX"
+   ],
+   [
+    46,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "68": {
+  "needs": [
+   [
+    17,
+    "SUPERFLEX"
+   ],
+   [
+    58,
+    "GLOBALIST"
+   ],
+   [
+    105,
+    "SUPERFLEX"
+   ]
+  ],
+  "enables": [
+   [
+    69,
+    "BREAK_A_LEG"
+   ],
+   [
+    102,
+    "WALLHACK"
+   ],
+   [
+    99,
+    "SUPERFLEX"
    ]
   ]
  },
@@ -800,12 +1658,20 @@
    [
     65,
     "GLOBALIST"
+   ],
+   [
+    129,
+    "GLOBALIST"
    ]
   ],
   "needs": [
    [
     23,
     "BREAK_A_LEG"
+   ],
+   [
+    63,
+    "GLOBALIST"
    ],
    [
     89,
@@ -822,12 +1688,24 @@
    [
     32,
     "BREAK_A_LEG"
+   ],
+   [
+    51,
+    "GLOBALIST"
    ]
   ],
   "enables": [
    [
     40,
     "GLOBALIST"
+   ],
+   [
+    32,
+    "SUPERFLEX"
+   ],
+   [
+    117,
+    "SUPERFLEX"
    ]
   ]
  },
@@ -840,6 +1718,10 @@
    [
     28,
     "GLOBALIST"
+   ],
+   [
+    54,
+    "BREAK_A_LEG"
    ]
   ],
   "enables": [
@@ -849,6 +1731,40 @@
    ],
    [
     49,
+    "WALLHACK"
+   ],
+   [
+    62,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "129": {
+  "needs": [
+   [
+    18,
+    "GLOBALIST"
+   ],
+   [
+    126,
+    "SUPERFLEX"
+   ],
+   [
+    132,
+    "WALLHACK"
+   ]
+  ],
+  "enables": [
+   [
+    110,
+    "SUPERFLEX"
+   ],
+   [
+    125,
+    "BREAK_A_LEG"
+   ],
+   [
+    98,
     "WALLHACK"
    ]
   ]
@@ -862,6 +1778,10 @@
    [
     33,
     "WALLHACK"
+   ],
+   [
+    71,
+    "SUPERFLEX"
    ]
   ],
   "needs": [
@@ -872,24 +1792,10 @@
    [
     55,
     "GLOBALIST"
-   ]
-  ]
- },
- "32": {
-  "needs": [
-   [
-    19,
-    "GLOBALIST"
-   ]
-  ],
-  "enables": [
-   [
-    29,
-    "BREAK_A_LEG"
    ],
    [
-    72,
-    "BREAK_A_LEG"
+    115,
+    "GLOBALIST"
    ]
   ]
  },
@@ -902,6 +1808,10 @@
    [
     57,
     "GLOBALIST"
+   ],
+   [
+    102,
+    "WALLHACK"
    ]
   ],
   "enables": [
@@ -912,28 +1822,40 @@
    [
     71,
     "BREAK_A_LEG"
+   ],
+   [
+    131,
+    "GLOBALIST"
    ]
   ]
  },
- "49": {
+ "71": {
   "needs": [
    [
-    20,
-    "GLOBALIST"
+    19,
+    "SUPERFLEX"
    ],
    [
-    65,
-    "WALLHACK"
+    33,
+    "BREAK_A_LEG"
+   ],
+   [
+    51,
+    "BREAK_A_LEG"
    ]
   ],
   "enables": [
    [
-    36,
+    87,
     "BREAK_A_LEG"
    ],
    [
-    104,
-    "BREAK_A_LEG"
+    89,
+    "GLOBALIST"
+   ],
+   [
+    120,
+    "WALLHACK"
    ]
   ]
  },
@@ -946,6 +1868,10 @@
    [
     98,
     "GLOBALIST"
+   ],
+   [
+    118,
+    "GLOBALIST"
    ]
   ],
   "enables": [
@@ -955,6 +1881,10 @@
    ],
    [
     61,
+    "WALLHACK"
+   ],
+   [
+    1,
     "WALLHACK"
    ]
   ]
@@ -968,12 +1898,24 @@
    [
     73,
     "BREAK_A_LEG"
+   ],
+   [
+    111,
+    "BREAK_A_LEG"
    ]
   ],
   "needs": [
    [
+    51,
+    "SUPERFLEX"
+   ],
+   [
     63,
     "BREAK_A_LEG"
+   ],
+   [
+    121,
+    "GLOBALIST"
    ]
   ]
  },
@@ -986,6 +1928,10 @@
    [
     24,
     "BREAK_A_LEG"
+   ],
+   [
+    44,
+    "WALLHACK"
    ]
   ],
   "enables": [
@@ -996,6 +1942,40 @@
    [
     11,
     "BREAK_A_LEG"
+   ],
+   [
+    41,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "111": {
+  "needs": [
+   [
+    21,
+    "BREAK_A_LEG"
+   ],
+   [
+    117,
+    "WALLHACK"
+   ],
+   [
+    119,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    126,
+    "WALLHACK"
+   ],
+   [
+    117,
+    "BREAK_A_LEG"
+   ],
+   [
+    26,
+    "GLOBALIST"
    ]
   ]
  },
@@ -1008,6 +1988,10 @@
    [
     64,
     "WALLHACK"
+   ],
+   [
+    67,
+    "GLOBALIST"
    ]
   ],
   "needs": [
@@ -1018,28 +2002,10 @@
    [
     62,
     "WALLHACK"
-   ]
-  ]
- },
- "64": {
-  "needs": [
-   [
-    22,
-    "WALLHACK"
    ],
    [
-    76,
-    "BREAK_A_LEG"
-   ]
-  ],
-  "enables": [
-   [
-    85,
+    99,
     "GLOBALIST"
-   ],
-   [
-    83,
-    "WALLHACK"
    ]
   ]
  },
@@ -1048,12 +2014,88 @@
    [
     18,
     "BREAK_A_LEG"
+   ],
+   [
+    37,
+    "SUPERFLEX"
+   ],
+   [
+    124,
+    "BREAK_A_LEG"
    ]
   ],
   "needs": [
    [
     27,
     "BREAK_A_LEG"
+   ],
+   [
+    91,
+    "SUPERFLEX"
+   ],
+   [
+    131,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "37": {
+  "needs": [
+   [
+    23,
+    "SUPERFLEX"
+   ],
+   [
+    39,
+    "GLOBALIST"
+   ],
+   [
+    105,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    15,
+    "BREAK_A_LEG"
+   ],
+   [
+    1,
+    "SUPERFLEX"
+   ],
+   [
+    119,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "124": {
+  "needs": [
+   [
+    23,
+    "BREAK_A_LEG"
+   ],
+   [
+    128,
+    "BREAK_A_LEG"
+   ],
+   [
+    131,
+    "SUPERFLEX"
+   ]
+  ],
+  "enables": [
+   [
+    120,
+    "BREAK_A_LEG"
+   ],
+   [
+    107,
+    "GLOBALIST"
+   ],
+   [
+    56,
+    "WALLHACK"
    ]
   ]
  },
@@ -1066,11 +2108,23 @@
    [
     80,
     "WALLHACK"
+   ],
+   [
+    128,
+    "GLOBALIST"
    ]
   ],
   "needs": [
    [
     54,
+    "GLOBALIST"
+   ],
+   [
+    78,
+    "SUPERFLEX"
+   ],
+   [
+    123,
     "GLOBALIST"
    ]
   ]
@@ -1080,6 +2134,10 @@
    [
     24,
     "WALLHACK"
+   ],
+   [
+    28,
+    "SUPERFLEX"
    ],
    [
     60,
@@ -1094,6 +2152,40 @@
    [
     93,
     "WALLHACK"
+   ],
+   [
+    112,
+    "SUPERFLEX"
+   ]
+  ]
+ },
+ "128": {
+  "needs": [
+   [
+    24,
+    "GLOBALIST"
+   ],
+   [
+    110,
+    "WALLHACK"
+   ],
+   [
+    114,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    124,
+    "BREAK_A_LEG"
+   ],
+   [
+    119,
+    "GLOBALIST"
+   ],
+   [
+    25,
+    "BREAK_A_LEG"
    ]
   ]
  },
@@ -1106,6 +2198,10 @@
    [
     16,
     "WALLHACK"
+   ],
+   [
+    82,
+    "GLOBALIST"
    ]
   ],
   "needs": [
@@ -1116,34 +2212,70 @@
    [
     99,
     "GLOBALIST"
+   ],
+   [
+    128,
+    "BREAK_A_LEG"
    ]
   ]
  },
- "30": {
+ "82": {
   "needs": [
    [
     25,
+    "GLOBALIST"
+   ],
+   [
+    36,
     "BREAK_A_LEG"
+   ],
+   [
+    41,
+    "SUPERFLEX"
    ]
   ],
   "enables": [
    [
-    10,
+    2,
+    "GLOBALIST"
+   ],
+   [
+    75,
+    "SUPERFLEX"
+   ],
+   [
+    108,
     "BREAK_A_LEG"
    ]
   ]
  },
- "26": {
-  "enables": [
-   [
-    19,
-    "BREAK_A_LEG"
-   ]
-  ],
+ "77": {
   "needs": [
    [
-    87,
+    26,
+    "SUPERFLEX"
+   ],
+   [
+    74,
+    "BREAK_A_LEG"
+   ],
+   [
+    112,
     "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    83,
+    "GLOBALIST"
+   ],
+   [
+    39,
+    "GLOBALIST"
+   ],
+   [
+    8,
+    "SUPERFLEX"
    ]
   ]
  },
@@ -1152,9 +2284,21 @@
    [
     23,
     "BREAK_A_LEG"
+   ],
+   [
+    47,
+    "SUPERFLEX"
+   ],
+   [
+    107,
+    "WALLHACK"
    ]
   ],
   "needs": [
+   [
+    47,
+    "SUPERFLEX"
+   ],
    [
     81,
     "BREAK_A_LEG"
@@ -1162,6 +2306,66 @@
    [
     88,
     "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "47": {
+  "needs": [
+   [
+    27,
+    "SUPERFLEX"
+   ],
+   [
+    35,
+    "GLOBALIST"
+   ],
+   [
+    55,
+    "WALLHACK"
+   ]
+  ],
+  "enables": [
+   [
+    43,
+    "BREAK_A_LEG"
+   ],
+   [
+    58,
+    "SUPERFLEX"
+   ],
+   [
+    27,
+    "SUPERFLEX"
+   ]
+  ]
+ },
+ "107": {
+  "needs": [
+   [
+    27,
+    "WALLHACK"
+   ],
+   [
+    112,
+    "SUPERFLEX"
+   ],
+   [
+    124,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    125,
+    "SUPERFLEX"
+   ],
+   [
+    130,
+    "BREAK_A_LEG"
+   ],
+   [
+    10,
+    "WALLHACK"
    ]
   ]
  },
@@ -1174,6 +2378,10 @@
    [
     36,
     "GLOBALIST"
+   ],
+   [
+    80,
+    "SUPERFLEX"
    ]
   ],
   "needs": [
@@ -1183,6 +2391,10 @@
    ],
    [
     69,
+    "WALLHACK"
+   ],
+   [
+    103,
     "WALLHACK"
    ]
   ]
@@ -1196,6 +2408,10 @@
    [
     49,
     "BREAK_A_LEG"
+   ],
+   [
+    96,
+    "SUPERFLEX"
    ]
   ],
   "enables": [
@@ -1206,6 +2422,10 @@
    [
     96,
     "BREAK_A_LEG"
+   ],
+   [
+    75,
+    "GLOBALIST"
    ]
   ]
  },
@@ -1218,11 +2438,19 @@
    [
     9,
     "GLOBALIST"
+   ],
+   [
+    114,
+    "BREAK_A_LEG"
    ]
   ],
   "needs": [
    [
     32,
+    "BREAK_A_LEG"
+   ],
+   [
+    39,
     "BREAK_A_LEG"
    ],
    [
@@ -1236,6 +2464,14 @@
    [
     29,
     "GLOBALIST"
+   ],
+   [
+    47,
+    "SUPERFLEX"
+   ],
+   [
+    104,
+    "BREAK_A_LEG"
    ]
   ],
   "enables": [
@@ -1246,57 +2482,49 @@
    [
     15,
     "WALLHACK"
-   ]
-  ]
- },
- "75": {
-  "needs": [
+   ],
    [
-    31,
-    "GLOBALIST"
-   ]
-  ],
-  "enables": [
-   [
-    81,
+    106,
     "BREAK_A_LEG"
    ]
   ]
  },
- "71": {
+ "114": {
   "needs": [
    [
-    33,
+    29,
     "BREAK_A_LEG"
    ],
    [
-    51,
+    122,
+    "BREAK_A_LEG"
+   ],
+   [
+    123,
     "BREAK_A_LEG"
    ]
   ],
   "enables": [
    [
-    87,
-    "BREAK_A_LEG"
+    128,
+    "GLOBALIST"
    ],
    [
-    89,
-    "GLOBALIST"
+    116,
+    "WALLHACK"
+   ],
+   [
+    86,
+    "BREAK_A_LEG"
    ]
   ]
  },
  "34": {
-  "enables": [
-   [
-    4,
-    "BREAK_A_LEG"
-   ],
-   [
-    13,
-    "GLOBALIST"
-   ]
-  ],
   "needs": [
+   [
+    30,
+    "GLOBALIST"
+   ],
    [
     66,
     "GLOBALIST"
@@ -1305,33 +2533,139 @@
     98,
     "WALLHACK"
    ]
+  ],
+  "enables": [
+   [
+    4,
+    "BREAK_A_LEG"
+   ],
+   [
+    13,
+    "GLOBALIST"
+   ],
+   [
+    12,
+    "GLOBALIST"
+   ]
   ]
  },
- "47": {
+ "75": {
+  "needs": [
+   [
+    31,
+    "GLOBALIST"
+   ],
+   [
+    36,
+    "GLOBALIST"
+   ],
+   [
+    82,
+    "SUPERFLEX"
+   ]
+  ],
+  "enables": [
+   [
+    81,
+    "BREAK_A_LEG"
+   ],
+   [
+    35,
+    "SUPERFLEX"
+   ],
+   [
+    51,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "130": {
+  "needs": [
+   [
+    31,
+    "SUPERFLEX"
+   ],
+   [
+    107,
+    "BREAK_A_LEG"
+   ],
+   [
+    125,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    119,
+    "BREAK_A_LEG"
+   ],
+   [
+    127,
+    "GLOBALIST"
+   ],
+   [
+    70,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "131": {
+  "needs": [
+   [
+    33,
+    "GLOBALIST"
+   ],
+   [
+    110,
+    "GLOBALIST"
+   ],
+   [
+    115,
+    "SUPERFLEX"
+   ]
+  ],
+  "enables": [
+   [
+    109,
+    "SUPERFLEX"
+   ],
+   [
+    124,
+    "SUPERFLEX"
+   ],
+   [
+    23,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "126": {
   "needs": [
    [
     35,
+    "WALLHACK"
+   ],
+   [
+    111,
+    "WALLHACK"
+   ],
+   [
+    125,
     "GLOBALIST"
    ]
   ],
   "enables": [
    [
-    43,
-    "BREAK_A_LEG"
-   ]
-  ]
- },
- "82": {
-  "needs": [
+    129,
+    "SUPERFLEX"
+   ],
    [
-    36,
-    "BREAK_A_LEG"
-   ]
-  ],
-  "enables": [
+    122,
+    "WALLHACK"
+   ],
    [
-    2,
-    "GLOBALIST"
+    61,
+    "BREAK_A_LEG"
    ]
   ]
  },
@@ -1344,6 +2678,10 @@
    [
     100,
     "WALLHACK"
+   ],
+   [
+    132,
+    "WALLHACK"
    ]
   ],
   "enables": [
@@ -1354,52 +2692,70 @@
    [
     2,
     "WALLHACK"
+   ],
+   [
+    36,
+    "SUPERFLEX"
    ]
   ]
  },
- "37": {
-  "enables": [
+ "119": {
+  "needs": [
    [
-    15,
+    37,
     "BREAK_A_LEG"
-   ]
-  ],
-  "needs": [
+   ],
    [
-    39,
-    "GLOBALIST"
-   ]
-  ]
- },
- "38": {
-  "enables": [
-   [
-    76,
-    "GLOBALIST"
-   ]
-  ],
-  "needs": [
-   [
-    53,
+    128,
     "GLOBALIST"
    ],
    [
-    63,
-    "WALLHACK"
-   ]
-  ]
- },
- "76": {
-  "needs": [
-   [
-    38,
-    "GLOBALIST"
+    130,
+    "BREAK_A_LEG"
    ]
   ],
   "enables": [
    [
-    64,
+    111,
     "BREAK_A_LEG"
+   ],
+   [
+    118,
+    "WALLHACK"
+   ],
+   [
+    42,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "101": {
+  "needs": [
+   [
+    38,
+    "SUPERFLEX"
+   ],
+   [
+    83,
+    "SUPERFLEX"
+   ],
+   [
+    95,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    98,
+    "SUPERFLEX"
+   ],
+   [
+    84,
+    "BREAK_A_LEG"
+   ],
+   [
+    40,
+    "WALLHACK"
    ]
   ]
  },
@@ -1407,6 +2763,10 @@
   "needs": [
    [
     39,
+    "BREAK_A_LEG"
+   ],
+   [
+    87,
     "BREAK_A_LEG"
    ],
    [
@@ -1418,6 +2778,14 @@
    [
     96,
     "WALLHACK"
+   ],
+   [
+    59,
+    "SUPERFLEX"
+   ],
+   [
+    85,
+    "SUPERFLEX"
    ]
   ]
  },
@@ -1426,6 +2794,14 @@
    [
     45,
     "GLOBALIST"
+   ],
+   [
+    17,
+    "SUPERFLEX"
+   ],
+   [
+    109,
+    "WALLHACK"
    ]
   ],
   "needs": [
@@ -1436,6 +2812,10 @@
    [
     72,
     "GLOBALIST"
+   ],
+   [
+    101,
+    "WALLHACK"
    ]
   ]
  },
@@ -1444,6 +2824,14 @@
    [
     40,
     "GLOBALIST"
+   ],
+   [
+    67,
+    "GLOBALIST"
+   ],
+   [
+    95,
+    "SUPERFLEX"
    ]
   ],
   "enables": [
@@ -1454,6 +2842,40 @@
    [
     52,
     "WALLHACK"
+   ],
+   [
+    48,
+    "SUPERFLEX"
+   ]
+  ]
+ },
+ "109": {
+  "needs": [
+   [
+    40,
+    "WALLHACK"
+   ],
+   [
+    121,
+    "GLOBALIST"
+   ],
+   [
+    131,
+    "SUPERFLEX"
+   ]
+  ],
+  "enables": [
+   [
+    108,
+    "BREAK_A_LEG"
+   ],
+   [
+    115,
+    "GLOBALIST"
+   ],
+   [
+    43,
+    "SUPERFLEX"
    ]
   ]
  },
@@ -1466,12 +2888,24 @@
    [
     70,
     "WALLHACK"
+   ],
+   [
+    91,
+    "SUPERFLEX"
    ]
   ],
   "enables": [
    [
     24,
     "GLOBALIST"
+   ],
+   [
+    12,
+    "SUPERFLEX"
+   ],
+   [
+    65,
+    "BREAK_A_LEG"
    ]
   ]
  },
@@ -1484,12 +2918,24 @@
    [
     48,
     "WALLHACK"
+   ],
+   [
+    127,
+    "SUPERFLEX"
    ]
   ],
   "needs": [
    [
     65,
     "BREAK_A_LEG"
+   ],
+   [
+    67,
+    "SUPERFLEX"
+   ],
+   [
+    119,
+    "GLOBALIST"
    ]
   ]
  },
@@ -1500,6 +2946,10 @@
     "WALLHACK"
    ],
    [
+    45,
+    "SUPERFLEX"
+   ],
+   [
     85,
     "BREAK_A_LEG"
    ]
@@ -1508,6 +2958,44 @@
    [
     11,
     "BREAK_A_LEG"
+   ],
+   [
+    76,
+    "SUPERFLEX"
+   ],
+   [
+    13,
+    "SUPERFLEX"
+   ]
+  ]
+ },
+ "127": {
+  "needs": [
+   [
+    42,
+    "SUPERFLEX"
+   ],
+   [
+    121,
+    "SUPERFLEX"
+   ],
+   [
+    130,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    113,
+    "SUPERFLEX"
+   ],
+   [
+    112,
+    "BREAK_A_LEG"
+   ],
+   [
+    44,
+    "GLOBALIST"
    ]
   ]
  },
@@ -1520,6 +3008,10 @@
    [
     40,
     "WALLHACK"
+   ],
+   [
+    88,
+    "BREAK_A_LEG"
    ]
   ],
   "needs": [
@@ -1530,6 +3022,10 @@
    [
     81,
     "WALLHACK"
+   ],
+   [
+    109,
+    "SUPERFLEX"
    ]
   ]
  },
@@ -1540,6 +3036,10 @@
     "BREAK_A_LEG"
    ],
    [
+    49,
+    "WALLHACK"
+   ],
+   [
     102,
     "WALLHACK"
    ]
@@ -1547,6 +3047,14 @@
   "enables": [
    [
     34,
+    "GLOBALIST"
+   ],
+   [
+    103,
+    "SUPERFLEX"
+   ],
+   [
+    31,
     "GLOBALIST"
    ]
   ]
@@ -1560,6 +3068,10 @@
    [
     5,
     "WALLHACK"
+   ],
+   [
+    73,
+    "WALLHACK"
    ]
   ],
   "needs": [
@@ -1569,6 +3081,10 @@
    ],
    [
     83,
+    "GLOBALIST"
+   ],
+   [
+    127,
     "GLOBALIST"
    ]
   ]
@@ -1582,6 +3098,10 @@
    [
     84,
     "GLOBALIST"
+   ],
+   [
+    125,
+    "WALLHACK"
    ]
   ],
   "enables": [
@@ -1592,6 +3112,10 @@
    [
     29,
     "WALLHACK"
+   ],
+   [
+    113,
+    "SUPERFLEX"
    ]
   ]
  },
@@ -1604,9 +3128,26 @@
    [
     103,
     "GLOBALIST"
+   ],
+   [
+    106,
+    "BREAK_A_LEG"
    ]
   ],
-  "enables": []
+  "enables": [
+   [
+    105,
+    "SUPERFLEX"
+   ],
+   [
+    7,
+    "SUPERFLEX"
+   ],
+   [
+    58,
+    "BREAK_A_LEG"
+   ]
+  ]
  },
  "70": {
   "needs": [
@@ -1617,6 +3158,10 @@
    [
     69,
     "GLOBALIST"
+   ],
+   [
+    130,
+    "BREAK_A_LEG"
    ]
   ],
   "enables": [
@@ -1627,6 +3172,40 @@
    [
     54,
     "WALLHACK"
+   ],
+   [
+    103,
+    "WALLHACK"
+   ]
+  ]
+ },
+ "91": {
+  "needs": [
+   [
+    50,
+    "WALLHACK"
+   ],
+   [
+    94,
+    "WALLHACK"
+   ],
+   [
+    99,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    93,
+    "GLOBALIST"
+   ],
+   [
+    23,
+    "SUPERFLEX"
+   ],
+   [
+    54,
+    "SUPERFLEX"
    ]
   ]
  },
@@ -1635,12 +3214,28 @@
    [
     71,
     "BREAK_A_LEG"
+   ],
+   [
+    21,
+    "SUPERFLEX"
+   ],
+   [
+    72,
+    "GLOBALIST"
    ]
   ],
   "needs": [
    [
+    75,
+    "BREAK_A_LEG"
+   ],
+   [
     86,
     "BREAK_A_LEG"
+   ],
+   [
+    106,
+    "SUPERFLEX"
    ]
   ]
  },
@@ -1649,6 +3244,14 @@
    [
     52,
     "GLOBALIST"
+   ],
+   [
+    59,
+    "SUPERFLEX"
+   ],
+   [
+    86,
+    "SUPERFLEX"
    ]
   ],
   "enables": [
@@ -1659,6 +3262,70 @@
    [
     19,
     "GLOBALIST"
+   ],
+   [
+    47,
+    "WALLHACK"
+   ]
+  ]
+ },
+ "113": {
+  "needs": [
+   [
+    52,
+    "SUPERFLEX"
+   ],
+   [
+    123,
+    "SUPERFLEX"
+   ],
+   [
+    127,
+    "SUPERFLEX"
+   ]
+  ],
+  "enables": [
+   [
+    112,
+    "GLOBALIST"
+   ],
+   [
+    123,
+    "SUPERFLEX"
+   ],
+   [
+    90,
+    "SUPERFLEX"
+   ]
+  ]
+ },
+ "116": {
+  "needs": [
+   [
+    53,
+    "GLOBALIST"
+   ],
+   [
+    114,
+    "WALLHACK"
+   ],
+   [
+    118,
+    "GLOBALIST"
+   ]
+  ],
+  "enables": [
+   [
+    117,
+    "SUPERFLEX"
+   ],
+   [
+    120,
+    "GLOBALIST"
+   ],
+   [
+    89,
+    "BREAK_A_LEG"
    ]
   ]
  },
@@ -1671,12 +3338,24 @@
    [
     90,
     "WALLHACK"
+   ],
+   [
+    11,
+    "SUPERFLEX"
    ]
   ],
   "needs": [
    [
+    74,
+    "SUPERFLEX"
+   ],
+   [
     78,
     "BREAK_A_LEG"
+   ],
+   [
+    124,
+    "WALLHACK"
    ]
   ]
  },
@@ -1689,44 +3368,54 @@
    [
     93,
     "GLOBALIST"
+   ],
+   [
+    113,
+    "SUPERFLEX"
    ]
   ],
   "enables": [
+   [
+    106,
+    "SUPERFLEX"
+   ],
    [
     6,
     "WALLHACK"
+   ],
+   [
+    53,
+    "GLOBALIST"
    ]
   ]
  },
- "68": {
+ "106": {
   "needs": [
    [
     58,
-    "GLOBALIST"
-   ]
-  ],
-  "enables": [
-   [
-    69,
     "BREAK_A_LEG"
    ],
    [
-    102,
-    "WALLHACK"
-   ]
-  ]
- },
- "59": {
-  "enables": [
+    87,
+    "SUPERFLEX"
+   ],
    [
-    3,
-    "BREAK_A_LEG"
+    90,
+    "SUPERFLEX"
    ]
   ],
-  "needs": [
+  "enables": [
    [
-    88,
-    "GLOBALIST"
+    94,
+    "BREAK_A_LEG"
+   ],
+   [
+    51,
+    "SUPERFLEX"
+   ],
+   [
+    104,
+    "BREAK_A_LEG"
    ]
   ]
  },
@@ -1735,6 +3424,14 @@
    [
     20,
     "BREAK_A_LEG"
+   ],
+   [
+    98,
+    "SUPERFLEX"
+   ],
+   [
+    132,
+    "GLOBALIST"
    ]
   ],
   "needs": [
@@ -1745,20 +3442,70 @@
    [
     97,
     "WALLHACK"
+   ],
+   [
+    126,
+    "BREAK_A_LEG"
    ]
   ]
  },
- "85": {
+ "98": {
   "needs": [
    [
-    64,
-    "GLOBALIST"
+    61,
+    "SUPERFLEX"
+   ],
+   [
+    101,
+    "SUPERFLEX"
+   ],
+   [
+    129,
+    "WALLHACK"
    ]
   ],
   "enables": [
    [
-    48,
+    97,
+    "GLOBALIST"
+   ],
+   [
+    34,
+    "WALLHACK"
+   ],
+   [
+    93,
+    "WALLHACK"
+   ]
+  ]
+ },
+ "132": {
+  "needs": [
+   [
+    61,
+    "GLOBALIST"
+   ],
+   [
+    118,
     "BREAK_A_LEG"
+   ],
+   [
+    120,
+    "SUPERFLEX"
+   ]
+  ],
+  "enables": [
+   [
+    123,
+    "SUPERFLEX"
+   ],
+   [
+    129,
+    "WALLHACK"
+   ],
+   [
+    96,
+    "WALLHACK"
    ]
   ]
  },
@@ -1771,115 +3518,37 @@
    [
     77,
     "GLOBALIST"
+   ],
+   [
+    79,
+    "WALLHACK"
    ]
   ],
   "enables": [
    [
     44,
     "GLOBALIST"
-   ]
-  ]
- },
- "102": {
-  "needs": [
-   [
-    68,
-    "WALLHACK"
    ],
    [
-    94,
-    "BREAK_A_LEG"
-   ]
-  ],
-  "enables": [
-   [
-    92,
-    "GLOBALIST"
+    63,
+    "SUPERFLEX"
    ],
    [
-    66,
-    "WALLHACK"
-   ]
-  ]
- },
- "89": {
-  "needs": [
-   [
-    71,
-    "GLOBALIST"
-   ]
-  ],
-  "enables": [
-   [
-    103,
-    "BREAK_A_LEG"
-   ],
-   [
-    18,
-    "GLOBALIST"
-   ]
-  ]
- },
- "86": {
-  "needs": [
-   [
-    73,
-    "BREAK_A_LEG"
-   ],
-   [
-    93,
-    "GLOBALIST"
-   ]
-  ],
-  "enables": [
-   [
-    51,
-    "BREAK_A_LEG"
-   ]
-  ]
- },
- "77": {
-  "needs": [
-   [
-    74,
-    "BREAK_A_LEG"
-   ]
-  ],
-  "enables": [
-   [
-    83,
-    "GLOBALIST"
-   ],
-   [
-    39,
-    "GLOBALIST"
-   ]
-  ]
- },
- "93": {
-  "needs": [
-   [
-    80,
-    "WALLHACK"
-   ],
-   [
-    91,
-    "GLOBALIST"
-   ]
-  ],
-  "enables": [
-   [
-    90,
-    "GLOBALIST"
-   ],
-   [
-    86,
-    "GLOBALIST"
+    101,
+    "SUPERFLEX"
    ]
   ]
  },
  "103": {
   "needs": [
+   [
+    66,
+    "SUPERFLEX"
+   ],
+   [
+    70,
+    "WALLHACK"
+   ],
    [
     89,
     "BREAK_A_LEG"
@@ -1893,29 +3562,53 @@
    [
     3,
     "BREAK_A_LEG"
+   ],
+   [
+    28,
+    "WALLHACK"
    ]
   ]
  },
- "91": {
-  "enables": [
-   [
-    93,
-    "GLOBALIST"
-   ]
-  ],
+ "102": {
   "needs": [
    [
-    94,
+    68,
     "WALLHACK"
    ],
    [
-    99,
+    94,
     "BREAK_A_LEG"
+   ],
+   [
+    110,
+    "SUPERFLEX"
+   ]
+  ],
+  "enables": [
+   [
+    92,
+    "GLOBALIST"
+   ],
+   [
+    66,
+    "WALLHACK"
+   ],
+   [
+    33,
+    "WALLHACK"
    ]
   ]
  },
  "99": {
   "needs": [
+   [
+    68,
+    "SUPERFLEX"
+   ],
+   [
+    84,
+    "SUPERFLEX"
+   ],
    [
     92,
     "BREAK_A_LEG"
@@ -1929,61 +3622,340 @@
    [
     25,
     "GLOBALIST"
-   ]
-  ]
- },
- "94": {
-  "enables": [
-   [
-    102,
-    "BREAK_A_LEG"
    ],
    [
-    91,
-    "WALLHACK"
-   ]
-  ],
-  "needs": [
-   [
-    106,
-    "BREAK_A_LEG"
+    22,
+    "GLOBALIST"
    ]
   ]
  },
- "101": {
+ "89": {
   "needs": [
    [
-    95,
-    "BREAK_A_LEG"
-   ]
-  ],
-  "enables": [
-   [
-    84,
-    "BREAK_A_LEG"
-   ]
-  ]
- },
- "98": {
-  "enables": [
-   [
-    97,
+    71,
     "GLOBALIST"
    ],
    [
-    34,
+    105,
+    "SUPERFLEX"
+   ],
+   [
+    116,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    103,
+    "BREAK_A_LEG"
+   ],
+   [
+    18,
+    "GLOBALIST"
+   ],
+   [
+    95,
+    "SUPERFLEX"
+   ]
+  ]
+ },
+ "120": {
+  "needs": [
+   [
+    71,
+    "WALLHACK"
+   ],
+   [
+    116,
+    "GLOBALIST"
+   ],
+   [
+    124,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    132,
+    "SUPERFLEX"
+   ],
+   [
+    121,
+    "SUPERFLEX"
+   ],
+   [
+    63,
     "WALLHACK"
    ]
   ]
  },
- "105": {
-  "enables": []
- },
- "106": {
+ "117": {
+  "needs": [
+   [
+    72,
+    "SUPERFLEX"
+   ],
+   [
+    111,
+    "BREAK_A_LEG"
+   ],
+   [
+    116,
+    "SUPERFLEX"
+   ]
+  ],
   "enables": [
    [
-    94,
+    118,
+    "WALLHACK"
+   ],
+   [
+    111,
+    "WALLHACK"
+   ],
+   [
+    57,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "86": {
+  "needs": [
+   [
+    73,
     "BREAK_A_LEG"
+   ],
+   [
+    93,
+    "GLOBALIST"
+   ],
+   [
+    114,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    51,
+    "BREAK_A_LEG"
+   ],
+   [
+    94,
+    "SUPERFLEX"
+   ],
+   [
+    55,
+    "SUPERFLEX"
+   ]
+  ]
+ },
+ "121": {
+  "needs": [
+   [
+    74,
+    "WALLHACK"
+   ],
+   [
+    108,
+    "WALLHACK"
+   ],
+   [
+    120,
+    "SUPERFLEX"
+   ]
+  ],
+  "enables": [
+   [
+    127,
+    "SUPERFLEX"
+   ],
+   [
+    109,
+    "GLOBALIST"
+   ],
+   [
+    21,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "93": {
+  "needs": [
+   [
+    80,
+    "WALLHACK"
+   ],
+   [
+    91,
+    "GLOBALIST"
+   ],
+   [
+    98,
+    "WALLHACK"
+   ]
+  ],
+  "enables": [
+   [
+    90,
+    "GLOBALIST"
+   ],
+   [
+    86,
+    "GLOBALIST"
+   ],
+   [
+    39,
+    "BREAK_A_LEG"
+   ]
+  ]
+ },
+ "112": {
+  "needs": [
+   [
+    80,
+    "SUPERFLEX"
+   ],
+   [
+    113,
+    "GLOBALIST"
+   ],
+   [
+    127,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    107,
+    "SUPERFLEX"
+   ],
+   [
+    108,
+    "SUPERFLEX"
+   ],
+   [
+    77,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "108": {
+  "needs": [
+   [
+    82,
+    "BREAK_A_LEG"
+   ],
+   [
+    109,
+    "BREAK_A_LEG"
+   ],
+   [
+    112,
+    "SUPERFLEX"
+   ]
+  ],
+  "enables": [
+   [
+    121,
+    "WALLHACK"
+   ],
+   [
+    110,
+    "BREAK_A_LEG"
+   ],
+   [
+    125,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "123": {
+  "needs": [
+   [
+    88,
+    "BREAK_A_LEG"
+   ],
+   [
+    113,
+    "SUPERFLEX"
+   ],
+   [
+    132,
+    "SUPERFLEX"
+   ]
+  ],
+  "enables": [
+   [
+    114,
+    "BREAK_A_LEG"
+   ],
+   [
+    113,
+    "SUPERFLEX"
+   ],
+   [
+    24,
+    "GLOBALIST"
+   ]
+  ]
+ },
+ "122": {
+  "needs": [
+   [
+    94,
+    "SUPERFLEX"
+   ],
+   [
+    115,
+    "BREAK_A_LEG"
+   ],
+   [
+    126,
+    "WALLHACK"
+   ]
+  ],
+  "enables": [
+   [
+    115,
+    "GLOBALIST"
+   ],
+   [
+    114,
+    "BREAK_A_LEG"
+   ],
+   [
+    9,
+    "WALLHACK"
+   ]
+  ]
+ },
+ "125": {
+  "needs": [
+   [
+    107,
+    "SUPERFLEX"
+   ],
+   [
+    108,
+    "GLOBALIST"
+   ],
+   [
+    129,
+    "BREAK_A_LEG"
+   ]
+  ],
+  "enables": [
+   [
+    130,
+    "GLOBALIST"
+   ],
+   [
+    126,
+    "GLOBALIST"
+   ],
+   [
+    52,
+    "WALLHACK"
    ]
   ]
  }
