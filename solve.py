@@ -232,6 +232,8 @@ class Solver():
             if check_partial_solution(spec, solution, b, pt):
                 solution[b] = pt
                 self.try_solve(solution)
+                if time.time() - self.start_fig_vtx > 1: # 1 sec timeout per start fig vtx
+                    return False
                 # otherwise restore previous state
                 if self.best_score == 0: break
                 del solution[b]
@@ -268,7 +270,8 @@ class Solver():
                         continue
                 if self.best_score == 0:
                     break
-                print ('Trying connecting figure vtx={} to hole vtx with coords {}'.format(fig_vtx, first_hole_pt))
+                self.start_fig_vtx = time.time()
+                print ('Trying connecting figure vtx={} to hole vtx {}'.format(fig_vtx, hole_idx))
                 solution = {fig_vtx: tuple(first_hole_pt)}
 
                 self.try_solve(solution)
