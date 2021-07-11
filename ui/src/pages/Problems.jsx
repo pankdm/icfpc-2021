@@ -62,7 +62,7 @@ function Problems() {
           <span className={styles.refreshLabel} onClick={() => refetchSolution()}>Refresh</span>
         }
       </p>
-      {problem &&
+      {stats && problem &&
         <ProblemViewer
           key={problemId}
           problemId={problemId}
