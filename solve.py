@@ -6,6 +6,7 @@ import json
 import copy
 import random
 import time
+import math
 
 import os.path
 
@@ -13,6 +14,8 @@ from shapely.geometry import Point, Polygon
 
 from utils import read_problem
 from get_problems import submit_solution
+
+from networkx import nx
 
 TIMEOUT = 60 # seconds
 eps = 1e-6
@@ -62,7 +65,7 @@ def point_average(A: Tuple, B: Tuple, a=0.1) -> Tuple:
 
 def is_edge_inside(spec, A: Tuple, B: Tuple):
 # Check if AB is fully within the hole
-    if not all(is_inside(spec['hole_poly'], *point_average(A, B, a), eps) for a in (0.1, 0.3, 0.5, 0.7, 0.9)):
+    if not all(is_inside(spec['hole_poly'], *point_average(A, B, a), eps) for a in (0, 0.1, 0.3, 0.5, 0.7, 0.9, 1)):
         return False
     for i, v in enumerate(spec['hole']):
         if i == 0:
@@ -121,6 +124,11 @@ def check_distance(spec, orig_dist, new_dist):
     if abs(1.0 * new_dist / orig_dist - 1) <= spec['epsilon'] / 10**6:
         return True
     return False
+
+def check_distance_with_eps(orig_dist, new_dist, epsilon):
+    if abs(1.0 * new_dist / orig_dist - 1) <= epsilon:
+        return True
+    return False    
 
 # solution = {id -> [x, y]}
 def check_partial_solution(spec, solution, new_vertex, new_coords):
@@ -367,6 +375,117 @@ class GreedySolver:
             solution[b] = min_pt
             self.try_solve(solution)
 
+class Solution:
+    def __init__(self, num_vertices):
+        self.vertices = [None] * num_vertices
+        self.num_vertices = num_vertices
+        self.placed = set()
+        self.placement_order = []
+        self.next = 0
+
+    def place(self, i, pt):
+        self.vertices[i] = pt
+        self.placed.add(i)
+
+
+def viable_adj_points(origin, dist_2, epsilon, viable_points = None):
+    """Returns a list of int points within dist and eps."""
+    if viable_points:
+        result = [
+            pt 
+            for pt in viable_points
+            if check_distance_with_eps(orig_dist=dist_2, new_dist=dist2(origin, pt), epsilon=epsilon)
+        ]
+        return result
+
+    assert False
+
+def filter_bad_edges(spec, origin, points):
+    """Returns all points from `points` such that (origin, pt) is INSIDE and DOES NOT OVERLAP."""
+    return [
+        pt
+        for pt in points
+        is_edge_inside(spec, origin, pt)
+    ]
+
+
+class IntegralSolver:
+    def __init__(self, spec):
+        self.spec = spec
+
+        self.partial_solution = None
+
+        inside_points, polygon = compute_inside_points(spec)
+        self.inside_points = inside_points
+        spec['hole_poly'] = polygon
+        self.best_score = None
+        self.best_solution = None
+        self.timer = None
+
+        figure = spec["figure"]
+        edges, vtx = figure["edges"], figure["vertices"]
+        self.edges = edges
+        self.vertices = figure
+        self.epsilon = spec["epsilon"] / 1000000.0
+
+        # adjacency lists
+        graph = nx.Graph()
+        for e in spec['figure']['edges']:
+            graph.add_edge(e[0], e[1], dist=dist2(vtx[e[0]], vtx[e[1]]))
+        self.graph = graph
+
+        self.initial_points = [
+            Point(pt) for pt in spec['hole']
+        ] + self.inside_points
+
+    def full_solve(self):
+        solution = Solution(len(self.vertices))
+        for i in range(len(self.vertices)):
+            print(f"Starting from figure vertex {i}")
+            solution.placement_order = nx.bfs_successors(self.graph, i)
+            solution.next = 0
+            self.try_solve(solution)
+
+    def try_solve(self, solution):
+        if len(solution.placed) == solution.num_vertices:
+            # Done.
+            print(f"Found solution: {solution.vertices}")
+            exit()
+
+        next_to_place = solution.placement_order[solution.next]
+        assert next_to_place not in solution.placed
+
+        # Advance.
+        solution.next += 1
+        assert solution.placement_order[solution.next] not in solution.placed or len(solution.placed) == num_vertices
+
+        if not placed():
+            # first the first one
+            for pt in self.initial_points:
+                solution.place(next_to_place, pt)
+                self.try_solve(solution)
+        else:
+            # some neighbors already placed
+            viable_points = None
+            for neib in self.graph[next_to_place]:
+                if neib in solution.placed:
+                    neib_dist = self.graph[neib][next_to_place]["dist"]
+                    viable_points = viable_adj_points(self.vertices[neib], neib_dist, self.epsilon, viable_points=viable_points)
+                    viable_points = filter_bad_edges(self.spec, self.vertices[neib], viable_points)
+
+            # Must have at least one neib that's placed already.
+            assert viable_points is not None
+
+            if viable_points:
+                for pt in viable_points:
+                    solution.place(next_to_place, pt)
+                    self.try_solve(solution)
+
+        # Backoff.
+        solution.vertices[next_to_place] = None
+        solution.placed.remove(next_to_place)
+        solution.next -= 1
+
 
 def write_solution(solution_file, total_points, solution):
     vertices = []
@@ -509,14 +628,14 @@ def submit_manual(problem_id, solution_file_name):
 
 
 if __name__ == "__main__":
-    if len(sys.argv)==3:
-        problem_id = sys.argv[1]
-        file_name = sys.argv[2]
-        submit_manual(problem_id, file_name)
-    elif len(sys.argv)==2:
+    # if len(sys.argv)==3:
+    #     problem_id = sys.argv[1]
+    #     file_name = sys.argv[2]
+    #     submit_manual(problem_id, file_name)
+    # elif len(sys.argv)==2:
         problem_id = sys.argv[1]
         solve_and_submit(problem_id)
-    else:
-        for i in (50, 54, 55, 67, 70, 73, 77):
-            solve_and_submit(i)
+    # else:
+    #     for i in (50, 54, 55, 67, 70, 73, 77):
+    #         solve_and_submit(i)
 
