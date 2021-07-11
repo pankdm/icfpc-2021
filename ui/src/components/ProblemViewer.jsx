@@ -265,16 +265,16 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   useHotkeys('shift+a', () => {
     move(-1, 0)
   }, {}, [move])
-  useHotkeys('cmd+shift+w', () => {
+  useHotkeys('ctrl+shift+w', () => {
     move(0, -10)
   }, {}, [move])
-  useHotkeys("cmd+shift+s", () => {
+  useHotkeys("ctrl+shift+s", () => {
     move(0, 10)
   }, {}, [move])
-  useHotkeys('cmd+shift+d', () => {
+  useHotkeys('ctrl+shift+d', () => {
     move(10, 0)
   }, {}, [move])
-  useHotkeys('cmd+shift+a', () => {
+  useHotkeys('ctrl+shift+a', () => {
     move(-10, 0)
   }, {}, [move])
   useHotkeys('e', () => {
