@@ -48,9 +48,9 @@
         "max_score": 11414
     },
     "9": {
-        "dislikes": null,
+        "dislikes": "7760",
         "min_dislikes": 779,
-        "score": 0,
+        "score": 5574,
         "max_score": 17584
     },
     "10": {
@@ -252,9 +252,9 @@
         "max_score": 10129
     },
     "43": {
-        "dislikes": "2327",
+        "dislikes": "0",
         "min_dislikes": 0,
-        "score": 215,
+        "score": 10414,
         "max_score": 10414
     },
     "44": {
