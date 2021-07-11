@@ -265,10 +265,10 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   useHotkeys('shift+a', () => {
     move(-1, 0)
   }, {}, [move])
-  useHotkeys('shift+e', () => {
+  useHotkeys('e', () => {
     rotateCw(Math.PI/12)
   }, {}, [rotateCw])
-  useHotkeys('shift+q', () => {
+  useHotkeys('q', () => {
     rotateCw(-Math.PI/12)
   }, {}, [rotateCw])
   useHotkeys('a', () => {
@@ -380,12 +380,14 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         <button onClick={toggleDragMode}>{dragMode ? 'Pan Enabled' : 'Pan Disabled'}</button>
         <Spacer />
         <div className={styles.moveActions}>
-          <button onClick={() => rotateCw(Math.PI/12)}>⬆️+E Rotate +CW</button>
-          <button onClick={() => rotateCw(-Math.PI/12)}>⬆️+Q Rotate -CW</button>
-          <button onClick={() => rotateCw(-Math.PI/12)}>⬆️+W Move Up</button>
-          <button onClick={() => rotateCw(-Math.PI/12)}>⬆️+S Move Down</button>
-          <button onClick={() => rotateCw(-Math.PI/12)}>⬆️+A Move Left</button>
-          <button onClick={() => rotateCw(-Math.PI/12)}>⬆️+D Move Right</button>
+          <button onClick={() => rotateCw(Math.PI/12)}>(E) Rotate +CW</button>
+          <button onClick={() => rotateCw(-Math.PI/12)}>(Q) Rotate -CW</button>
+          <button onClick={() => flipVert()}>(D) Flip</button>
+          <button onClick={() => flipHz()}>(A) Mirror</button>
+          <button onClick={() => move(0, -5)}>⬆️+W Move Up</button>
+          <button onClick={() => move(0, 5)}>⬆️+S Move Down</button>
+          <button onClick={() => move(-5, 0)}>⬆️+A Move Left</button>
+          <button onClick={() => move(5, 0)}>⬆️+D Move Right</button>
         </div>
       </div>
       <div className={styles.bottomRight}>
