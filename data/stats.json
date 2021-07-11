@@ -336,15 +336,15 @@
         "max_score": 11614
     },
     "57": {
-        "dislikes": null,
+        "dislikes": "10730",
         "min_dislikes": 4514,
-        "score": 0,
+        "score": 7735,
         "max_score": 11924
     },
     "58": {
-        "dislikes": "\u274c",
+        "dislikes": "4286",
         "min_dislikes": 2171,
-        "score": 0,
+        "score": 8300,
         "max_score": 11661
     },
     "59": {
@@ -366,9 +366,9 @@
         "max_score": 12999
     },
     "62": {
-        "dislikes": null,
+        "dislikes": "12987",
         "min_dislikes": 4156,
-        "score": 0,
+        "score": 9600,
         "max_score": 16969
     },
     "63": {
@@ -619,7 +619,7 @@
     },
     "104": {
         "dislikes": null,
-        "min_dislikes": 16538,
+        "min_dislikes": 15985,
         "score": 0,
         "max_score": 16372
     },
