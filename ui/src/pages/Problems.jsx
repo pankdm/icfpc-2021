@@ -68,7 +68,7 @@ function Problems() {
           problemId={problemId}
           problem={problem}
           solution={solution}
-          stats={stats[problemId]}
+          stats={stats[`${problemId}`]}
           onSaveSolution={onSaveSolution}
         />
       }
