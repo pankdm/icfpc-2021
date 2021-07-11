@@ -10,7 +10,7 @@ import Grid from './svg/Grid.jsx'
 import Hole from './svg/Hole.jsx'
 import Figure from './svg/Figure.jsx'
 import styles from './ProblemViewer.module.css'
-import { getDistanceMap, getDistances, getScore, snapVecs, vecAdd, vecSub, vecMult, vecNorm } from '../utils/graph.js'
+import { getDistanceMap, getDistances, getScore, snapVecs, vecAdd, vecSub, vecMult, vecNorm, vecEquals, distance } from '../utils/graph.js'
 import { inflateLoop, inflateSimpleRadialLoop, relaxLoop, gravityLoop, applyShake } from '../utils/physics.js'
 import { useOnChangeValues } from '../utils/useOnChange.js'
 import useAnimLoop from '../utils/useAnimLoop.js'
@@ -61,9 +61,23 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     newSet.add(idx)
     setFrozenFigurePoints(newSet)
   }
+  const addFrozenFigurePoints = (idxs) => {
+    const newSet = new Set(frozenFigurePoints)
+    for (const idx of idxs) {
+      newSet.add(idx)
+    }
+    setFrozenFigurePoints(newSet)
+  }
   const removeFrozenFigurePoint = (idx) => {
     const newSet = new Set(frozenFigurePoints)
     newSet.delete(idx)
+    setFrozenFigurePoints(newSet)
+  }
+  const removeFrozenFigurePoints = (idxs) => {
+    const newSet = new Set(frozenFigurePoints)
+    for (const idx of idxs) {
+      newSet.delete(idx)
+    }
     setFrozenFigurePoints(newSet)
   }
   const clearFrozenFigurePoints = () => setFrozenFigurePoints(new Set())
@@ -214,11 +228,19 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     vertices = applyShake(vertices, { maxAmplitude: 3, frozenPoints: frozenFigurePoints })
     setOverriddenVertices(vertices)
   }
-  const snapVertices = () => {
+  const snapVertices = (verticesToSnap=null) => {
     let vertices = getCurrentVertices()
-    vertices = snapVecs(vertices)
+    if (verticesToSnap) {
+      let _verticesToSnap = _.map(verticesToSnap, (idx) => vertices[idx])
+      _verticesToSnap = snapVecs(_verticesToSnap)
+      _verticesToSnap = _.zipObject(verticesToSnap, _verticesToSnap)
+      vertices = _.map(vertices, (v, idx) => _verticesToSnap[idx] || v)
+    } else {
+      vertices = snapVecs(vertices)
+    }
     setOverriddenVertices(vertices)
   }
+  window.snapVertices = snapVertices
   const rotateCw = (phi) => {
     let vertices = getCurrentVertices()
     const cosPhi = Math.cos(phi)
@@ -259,13 +281,16 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     vertices = vertices.map(([x, y]) => ([x + dx, y + dy]))
     setOverriddenVertices(vertices)
   }
+  const getNeighbors = (idx) => {
+    return figure.edges
+        .filter(([v1, v2]) => v1 === idx || v2 === idx)
+        .map(([v1, v2]) => (v1 === idx? v2: v1));
+  }
   const powerClick = (idx) => {
     let vertices = _.cloneDeep(getCurrentVertices())
     let currPt = vertices[idx]
 
-    figure.edges
-        .filter(([v1, v2]) => v1 === idx || v2 === idx)
-        .map(([v1, v2]) => (v1 === idx? v2: v1))
+    getNeighbors(idx)
         .filter(v => !frozenFigurePoints.has(v))
         .map(v => {
             const originalDistance = optimalDistancesMap[idx][v];
@@ -280,6 +305,21 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
 
     setOverriddenVertices(vertices);
   }
+  const snapWinningVertices = (snapRadius=1) => {
+    let vertices = getCurrentVertices()
+    const verticesToSnap = vertices.reduce((acc, v, idx) => {
+      const hidx = _.findIndex(hole, (h) => distance(v, h) < snapRadius)
+      if (hidx >= 0) {
+        acc.push([idx, hidx])
+      }
+      return acc
+    }, [])
+    const verticesSnapIds = _.map(verticesToSnap, 0)
+    addFrozenFigurePoints(verticesSnapIds)
+    const verticesSnapMap = _.fromPairs(_.map(verticesToSnap, ([vid, hid]) => [vid, hole[hid]]))
+    vertices = vertices.map((v, idx) => verticesSnapMap[idx] || vertices[idx])
+    setOverriddenVertices(vertices)
+  }
   const reset = () => {
     setSimMode(null)
     stopPlaying()
@@ -287,28 +327,36 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     setZoom(0)
     setPanOffset([0, 0])
   }
-  useHotkeys('shift+w', () => {
+  useHotkeys('up', (ev) => {
+    ev.preventDefault()
     move(0, -1)
   }, {}, [move])
-  useHotkeys("shift+s", () => {
+  useHotkeys("down", (ev) => {
+    ev.preventDefault()
     move(0, 1)
   }, {}, [move])
-  useHotkeys('shift+d', () => {
+  useHotkeys('right', (ev) => {
+    ev.preventDefault()
     move(1, 0)
   }, {}, [move])
-  useHotkeys('shift+a', () => {
+  useHotkeys('left', (ev) => {
+    ev.preventDefault()
     move(-1, 0)
   }, {}, [move])
-  useHotkeys('ctrl+shift+w', () => {
+  useHotkeys('shift+up', (ev) => {
+    ev.preventDefault()
     move(0, -10)
   }, {}, [move])
-  useHotkeys("ctrl+shift+s", () => {
+  useHotkeys("shift+down", (ev) => {
+    ev.preventDefault()
     move(0, 10)
   }, {}, [move])
-  useHotkeys('ctrl+shift+d', () => {
+  useHotkeys('shift+right', (ev) => {
+    ev.preventDefault()
     move(10, 0)
   }, {}, [move])
-  useHotkeys('ctrl+shift+a', () => {
+  useHotkeys('shift+left', (ev) => {
+    ev.preventDefault()
     move(-10, 0)
   }, {}, [move])
   useHotkeys('e', () => {
@@ -421,7 +469,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
               <Bonuses vertices={bonuses}/>
               <Grid xMin={xMin} yMin={yMin} xMax={xMax} yMax={yMax} color='#787' />
               <Figure
-                animate={true}
+                animate={false}
                 vertices={getCurrentVertices()}
                 edges={figure.edges}
                 epsilon={epsilonFraction}
@@ -434,11 +482,13 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
                   addFrozenFigurePoint(idx)
                 }}
                 onPointRelease={(ev, idx) => {
+                  let wasFrozen = frozenFigurePoints.has(idx);
                   if (!multiselectMode) {
                     removeFrozenFigurePoint(idx)
                   }
                   if (powerClickMode) {
                     powerClick(idx);
+                    addFrozenFigurePoint(idx);
                   }
                 }}
                 onPointDrag={(ev, idx) => {
@@ -462,10 +512,9 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
       <button onClick={reset}>Reset</button>
       <Spacer />
       <button style={{ height: '2.5em' }} onClick={() => setMultiselectMode(!multiselectMode)}>{multiselectMode ? 'Selecting...' : '⬆️ Glue Points'}</button>
+      <button style={{ height: '2.5em' }} onClick={() => snapWinningVertices()}>Snap Winners</button>
       <button disabled={!frozenFigurePoints.size} onClick={() => unselectAllGluedPoints()}>Unselect {frozenFigurePoints.size}</button>
       <button onClick={toggleDragMode}>{dragMode ? 'Pan Enabled' : 'Pan Disabled'}</button>
-    </div>
-    <div className={styles.bottomRight}>
       <button onClick={() => setZoom(zoom+1)}>+</button>
       <button onClick={() => setZoom(zoom-1)}>-</button>
       <pre className={styles.score}>
@@ -481,19 +530,26 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         Best: {_.padStart(stats.min_dislikes, 5, ' ')}
       </pre>
     </div>
+    <div className={styles.bottomRight}>
+    </div>
     <pre className={styles.hotkeysInstruction}>
     {`
 Extra hotkeys:
 
-     E  - rotate +CW
-     Q  - rotate -CW
-     D  - flip vertical
-     A  - mirror horiztl
+          E  - rotate +CW
+          Q  - rotate -CW
+          D  - flip vertical
+          A  - mirror horiztl
 
-shft+W  - move up          ctrl+shft+W  - power move up
-shft+S  - move down        ctrl+shft+S  - power move down
-shft+A  - move left        ctrl+shft+A  - power move left
-shft+D  - move right       ctrl+shft+D  - power move right
+         up  - move up
+       down  - move down
+      right  - move left
+       left  - move right
+
+   shift+up  - power move up
+ shift+down  - power move down
+shift+right  - power move left
+ shift+left  - power move right
     `.trim()}
     </pre>
     </div>

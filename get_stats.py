@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from get_problems import get_problem_json
 import requests
 import os
