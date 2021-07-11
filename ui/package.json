@@ -17,7 +17,8 @@
     "react-hotkeys-hook": "^3.3.2",
     "react-query": "^3.18.1",
     "react-router-dom": "^5.2.0",
-    "react-spring": "^9.2.3"
+    "react-spring": "^9.2.3",
+    "shelljs": "^0.8.4"
   },
   "license": "ISC",
   "devDependencies": {

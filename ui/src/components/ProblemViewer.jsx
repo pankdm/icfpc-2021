@@ -251,7 +251,6 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     }
     setOverriddenVertices(vertices)
   }
-  window.snapVertices = snapVertices
   const rotateCw = (phi) => {
     let vertices = getCurrentVertices()
     const cosPhi = Math.cos(phi)
@@ -545,9 +544,9 @@ ${_.keys(overshrinkedEdges).length
       <button onClick={() => toggleSimMode('inflate')}>{simMode == 'inflate' ? '(I) Inflating' : '(I) Inflate'}</button>
       <button onClick={() => toggleSimMode('simpleInflate')}>{simMode == 'simpleInflate' ? '(O) Stretching' : '(O) Stretch'}</button>
       <button onClick={() => toggleSimMode('gravity')}>{simMode == 'gravity' ? '(G) Gravitating' : '(G) Gravity'}</button>
-      <button onClick={() => toggleSimMode('winningGravity')}>{simMode == 'holeVertcies' ? '(U) Holing...' : '(U) Hole It'}</button>
+      <button onClick={() => toggleSimMode('winningGravity')}>{simMode == 'winningGravity' ? '(U) Holing...' : '(U) Hole It'}</button>
       <button onClick={singleShake}>(K) Shake</button>
-      <button onClick={snapVertices}>(S) Snap</button>
+      <button onClick={() => snapVertices()}>(S) Snap</button>
       <button onClick={randomize}>Randomize</button>
       <button onClick={reset}>Reset</button>
       <Spacer />

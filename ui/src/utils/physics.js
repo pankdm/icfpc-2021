@@ -27,13 +27,13 @@ export const getSimpleRadialForce = (point, meanPoint, simpleRepelConst=FORCE_DE
   const radialUnitVec = vecMult(radialVec, 1/dist)
   return vecClampAbs(vecMult(radialUnitVec, simpleRepelConst), 0, simpleRepelConst)
 }
-export const getAttractForce = (point, otherPoint, attractConst=50, maxAttract=100) => {
+export const getAttractForce = (point, otherPoint, { steepPower=3, attractConst=50, maxAttract=100 }) => {
   const toOtherPoint = vecSub(otherPoint, point)
   if (isVecZero(toOtherPoint)) {
     return vecRand(maxAttract)
   }
   const dist = distance(point, otherPoint)
-  return vecClampAbs(vecMult(toOtherPoint, attractConst/dist**2), 0, Math.min(dist, maxAttract))
+  return vecClampAbs(vecMult(toOtherPoint, attractConst/(dist**steepPower)), 0, Math.min(dist, maxAttract))
 }
 export const getRepelForce = (point, otherPoint, repelConst=50, maxRepel=100) => {
   const fromOtherPoint = vecSub(point, otherPoint)
@@ -41,7 +41,7 @@ export const getRepelForce = (point, otherPoint, repelConst=50, maxRepel=100) =>
     return vecRand(maxRepel)
   }
   const dist = distance(point, otherPoint)
-  return vecClampAbs(vecMult(fromOtherPoint, repelConst/dist**2), 0, maxRepel)
+  return vecClampAbs(vecMult(fromOtherPoint, repelConst/(dist**2)), 0, maxRepel)
 }
 const getSpringForce = (point, otherPoint, optimalDistance, springConst=FORCE_DEFAULTS.springConst) => {
   const dist = distance(point, otherPoint)
@@ -90,14 +90,14 @@ export const applyGravity = (vertices, { meanCoords, gravityCenter, frozenPoints
   return mapApplyForce(vertices, getGravityForce)
 }
 
-export const applyMultiGravity = (vertices, { gravityPoints, gravityConst, maxGravity, frozenPoints }) => {
+export const applyMultiGravity = (vertices, { gravityPoints, gravityConst, maxGravity, steepPower, frozenPoints }) => {
   const getMultiGravityForce = (v, idx) => {
     if (frozenPoints && frozenPoints.has(idx)) {
       return ZERO_VEC
     }
     let sumForce = [0,0]
     gravityPoints.forEach((g) => {
-      sumForce = vecAdd_(sumForce, getAttractForce(v, g, gravityConst, maxGravity))
+      sumForce = vecAdd_(sumForce, getAttractForce(v, g, { gravityConst, maxGravity, steepPower }))
     })
     return sumForce
   }
@@ -166,5 +166,5 @@ export const gravityLoop = (vertices, { gravityCenter, frozenPoints }) => {
 }
 
 export const winningGraityLoop = (vertices, { holeVertcies, frozenPoints }) => {
-  return applyMultiGravity(vertices, { gravityPoints: holeVertcies, frozenPoints })
+  return applyMultiGravity(vertices, { gravityPoints: holeVertcies, steepPower:3, frozenPoints })
 }

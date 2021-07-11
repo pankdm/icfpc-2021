@@ -3,6 +3,7 @@ import express from 'express'
 import { createServer as createViteServer } from 'vite'
 import { naturalSort } from './src/utils/utils.js'
 import _ from 'lodash'
+import shell from 'shelljs'
 
 const PORT = process.env.PORT || 3000
 
@@ -89,7 +90,8 @@ async function createServer() {
   })
 
   app.get('/api/stats', (req, res) => {
-    const stats = JSON.parse(fs.readFileSync('../data/stats.json'))
+    shell.exec('../get_stats_js.py ../')
+    const stats = JSON.parse(fs.readFileSync('../data/stats_js.json'))
     res.send(stats)
   })
 
