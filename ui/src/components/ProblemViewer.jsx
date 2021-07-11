@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react'
 import _ from 'lodash'
 import AspectRatioBox from './AspectRatioBox.jsx'
 import Spacer from './Spacer.jsx'
-import Flex from './Flex.jsx'
+import Flex, { FlexItem } from './Flex.jsx'
 import TrafficLight from './TrafficLight.jsx'
 import Bonuses from './svg/Bonuses.jsx'
 import Group from './svg/Group.jsx'
@@ -12,7 +12,7 @@ import Figure from './svg/Figure.jsx'
 import styles from './ProblemViewer.module.css'
 import { getDistanceMap, getDistances, getScore, snapVecs, vecAdd, vecSub, vecMult, vecNorm, vecEquals, distance } from '../utils/graph.js'
 import { inflateLoop, inflateSimpleRadialLoop, relaxLoop, gravityLoop, applyShake } from '../utils/physics.js'
-import { useOnChangeValues } from '../utils/useOnChange.js'
+import useOnChange, { useOnChangeValues } from '../utils/useOnChange.js'
 import useAnimLoop from '../utils/useAnimLoop.js'
 import { useHotkeys } from 'react-hotkeys-hook'
 import useDrag from '../utils/useDrag.js'
@@ -50,37 +50,43 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   const zoomScale = 2**-zoom
   const [panDragStartPoint, setPanDragStartPoint] = useState(null)
   const [panDragStartOffset, setPanDragStartOffset] = useState(null)
+  const [timeScale, setTimeScale] = useState(1)
   const [multiselectMode, setMultiselectMode] = useState(false)
   const [powerClickMode, setPowerClickMode] = useState(false)
   const [panOffset, setPanOffset] = useState([0, 0])
   const [overriddenVerticesKey, setOverriddenVerticesKey] = useState(null)
   const [simMode, setSimMode] = useState(null)
-  const [frozenFigurePoints, setFrozenFigurePoints] = useState(new Set())
+  const getInitFrozenPoints = () => solution && solution.fixedPoints || []
+  const [frozenFigurePoints, _setFrozenFigurePoints] = useState(new Set(getInitFrozenPoints()))
+  const setFrozenFigurePoints = (points) => _setFrozenFigurePoints(new Set([...points]))
+  useOnChange(solution, () => {
+    setFrozenFigurePoints(getInitFrozenPoints())
+  })
   const addFrozenFigurePoint = (idx) => {
     const newSet = new Set(frozenFigurePoints)
     newSet.add(idx)
-    setFrozenFigurePoints(newSet)
+    _setFrozenFigurePoints(newSet)
   }
   const addFrozenFigurePoints = (idxs) => {
     const newSet = new Set(frozenFigurePoints)
     for (const idx of idxs) {
       newSet.add(idx)
     }
-    setFrozenFigurePoints(newSet)
+    _setFrozenFigurePoints(newSet)
   }
   const removeFrozenFigurePoint = (idx) => {
     const newSet = new Set(frozenFigurePoints)
     newSet.delete(idx)
-    setFrozenFigurePoints(newSet)
+    _setFrozenFigurePoints(newSet)
   }
   const removeFrozenFigurePoints = (idxs) => {
     const newSet = new Set(frozenFigurePoints)
     for (const idx of idxs) {
       newSet.delete(idx)
     }
-    setFrozenFigurePoints(newSet)
+    _setFrozenFigurePoints(newSet)
   }
-  const clearFrozenFigurePoints = () => setFrozenFigurePoints(new Set())
+  const clearFrozenFigurePoints = () => _setFrozenFigurePoints(new Set())
   const unselectAllGluedPoints = () => {
     stopPlaying()
     clearFrozenFigurePoints()
@@ -194,6 +200,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   const { playing, togglePlaying, stopPlaying } = useAnimLoop(() => {
     let vertices = getCurrentVertices()
     const frozenPoints = frozenFigurePoints
+    _.times(1 + (timeScale-1)*3, () => {
     if (simMode == 'inflate') {
       vertices = inflateLoop(vertices, { optimalDistancesMap, frozenPoints })
     }
@@ -204,8 +211,9 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
       vertices = gravityLoop(vertices, { gravityCenter: [xMean, yMean], frozenPoints })
     }
     vertices = relaxLoop(vertices, { optimalDistancesMap, frozenPoints })
+    })
     setOverriddenVertices(vertices)
-  }, {}, [frozenFigurePoints, simMode, optimalDistancesMap, xMean, yMean])
+  }, {}, [frozenFigurePoints, simMode, optimalDistancesMap, xMean, yMean, timeScale])
   const toggleSimMode = (mode) => {
     if (mode != simMode) {
       setSimMode(mode)
@@ -324,7 +332,9 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     setSimMode(null)
     stopPlaying()
     setOverriddenVertices(null)
+    setFrozenFigurePoints(getInitFrozenPoints())
     setZoom(0)
+    setTimeScale(1)
     setPanOffset([0, 0])
   }
   useHotkeys('up', (ev) => {
@@ -396,6 +406,14 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   useHotkeys('-', () => {
     setZoom(zoom-0.5)
   }, {}, [zoom])
+  useHotkeys('0,1,2,3,4,5,6,7,8,9', (ev) => {
+    const number = ev.keyCode - 48
+    if (number == 0) {
+      setTimeScale(10)
+    } else {
+      setTimeScale(number)
+    }
+  }, {}, [])
   useDOMEvent('keydown', (ev) => {
     // on press Shift
     if (ev.keyCode == 16) {
@@ -448,7 +466,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
             onClick={() => {
               stopPlaying()
               snapVertices()
-              onSaveSolution(problemId, username, { vertices: getCurrentVertices() })
+              onSaveSolution(problemId, username, { vertices: getCurrentVertices(), fixedPoints: [...frozenFigurePoints] })
               toggleSaved()
             }
           }>
@@ -517,6 +535,17 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
       <button onClick={toggleDragMode}>{dragMode ? 'Pan Enabled' : 'Pan Disabled'}</button>
       <button onClick={() => setZoom(zoom+1)}>+</button>
       <button onClick={() => setZoom(zoom-1)}>-</button>
+      <Flex alignItems='center'>
+        <FlexItem basis='1.5em' grow={0} shrink={0}>
+          <button style={{minWidth: 0, margin: 0}} onClick={() => setTimeScale(Math.max(timeScale-1, 1))}>-</button>
+        </FlexItem>
+        <Flex grow={1} justifyContent='center' alignSelf='stretch'>
+          Speed: {timeScale}
+        </Flex>
+        <FlexItem basis='1.5em' grow={0} shrink={0}>
+          <button style={{minWidth: 0, margin: 0}} onClick={() => setTimeScale(timeScale+1)}>+</button>
+        </FlexItem>
+      </Flex>
       <pre className={styles.score}>
         Zoom: {zoom > 0 && '+'}{zoom < 0 && '-'}{Math.abs(zoom)}
       </pre>

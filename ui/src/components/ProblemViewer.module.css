@@ -18,12 +18,14 @@
   z-index: 10;
   top: 1rem;
   left: 1rem;
+  color: #fff;
 }
 
 .top-right {
   position: absolute;
   top: 1rem;
   right: 1rem;
+  color: #fff;
 }
 
 .move-actions button {
@@ -71,6 +73,7 @@ pre {
   position: absolute;
   right: 1rem;
   margin-top: 1rem;
+  color: #fff;
 }
 .bottom-right pre {
   display: block;

@@ -1,4 +1,4 @@
-import { vecAdd, vecSub, distance, vecMult, vecClampAbs, vecRand, isVecZero, vecAbs, vecMean } from './graph.js'
+import { vecAdd, vecSub, distance, vecMult, vecClampAbs, vecRand, isVecZero, vecAbs, vecMean, vecAdd_ } from './graph.js'
 import _ from 'lodash'
 
 const FORCE_DEFAULTS = {
@@ -9,6 +9,7 @@ const FORCE_DEFAULTS = {
   springConst: 200,
 }
 const TIME_STEP = 0.01
+const ZERO_VEC = [0, 0]
 
 export const getLinearFravityForce = (point, gravityCenter, gravityConst=FORCE_DEFAULTS.gravityConst) => {
   const toGravityCenter = vecSub(gravityCenter, point)
@@ -36,39 +37,49 @@ export const getRepelForce = (point, otherPoint, repelConst=50, maxRepel=100) =>
 }
 const getSpringForce = (point, otherPoint, optimalDistance, springConst=FORCE_DEFAULTS.springConst) => {
   const dist = distance(point, otherPoint)
-  return vecMult(vecSub(point, otherPoint), springConst * (1 / dist - 1 / optimalDistance))
+  let mult = springConst * (1 / dist - 1 / optimalDistance)
+  // HACK: cap spring force, to avoid small edges oscillating
+  mult = Math.sign(mult) * Math.min(Math.abs(mult), dist*0.75)
+  return vecMult(vecSub(point, otherPoint), mult)
 }
 
+// immutable apply force
 const applyForce = (vec, force) => vecAdd(vec, vecMult(force, TIME_STEP))
+// mutating apply force
+const applyForce_ = (vec, force) => vecAdd_(vec, vecMult(force, TIME_STEP))
 
-export const applyConstraints = (vertices, { optimalDistancesMap, frozenPoints }) => {
-  const newVertices = vertices.map((v, idx) => {
-    let sumForce = [0,0]
+// immutable map-apply force
+const mapApplyForce = (vertices, forceFn) => vertices.map((v, idx) => applyForce(v, forceFn(v, idx)))
+// mutating map-apply force
+const mapApplyForce_ = (vertices, forceFn) => vertices.forEach((v, idx) => applyForce_(v, forceFn(v, idx)))
+
+export const applyConstraints = (vertices, { optimalDistancesMap, frozenPoints, mutate=false }) => {
+  const getTensionForce = (v, idx) => {
     if (frozenPoints && frozenPoints.has(idx)) {
-      return v
+      return ZERO_VEC
     }
+    let sumForce = [0,0]
     vertices.forEach((ov, ovIdx) => {
       if (ov == v) return
       const optimalDistance = optimalDistancesMap[idx][ovIdx] || null
       if (optimalDistance) {
         const springForce = getSpringForce(v, ov, optimalDistance)
-        sumForce = vecAdd(sumForce, springForce)
+        sumForce = vecAdd_(sumForce, springForce)
       }
     })
-    return applyForce(v, sumForce)
-  })
-  return newVertices
+    return sumForce
+  }
+  return mapApplyForce(vertices, getTensionForce)
 }
 
 export const applyGravity = (vertices, { meanCoords, gravityCenter, frozenPoints }) => {
-  const gravity = getLinearFravityForce(meanCoords, gravityCenter)
-  const newVertices = vertices.map((v, idx) => {
+  const getGravityForce = (v, idx) => {
     if (frozenPoints && frozenPoints.has(idx)) {
-      return v
+      return ZERO_VEC
     }
-    return applyForce(v, gravity)
-  })
-  return newVertices
+    return getLinearFravityForce(meanCoords, gravityCenter)
+  }
+  return mapApplyForce(vertices, getGravityForce)
 }
 
 export const applyShake = (vertices, { maxAmplitude, frozenPoints }) => {
@@ -83,20 +94,20 @@ export const applyShake = (vertices, { maxAmplitude, frozenPoints }) => {
 }
 
 export const inflateSimpleRadial = (vertices, { meanCoords, simpleRepelConst, frozenPoints }) => {
-  const newVertices = vertices.map((v, idx) => {
+  const getInflateForce = (v, idx) => {
     if (frozenPoints && frozenPoints.has(idx)) {
-      return v
+      return ZERO_VEC
     }
     let repelForce = getSimpleRadialForce(v, meanCoords, simpleRepelConst)
-    return applyForce(v, repelForce)
-  })
-  return newVertices
+    return repelForce
+  }
+  return mapApplyForce(vertices, getInflateForce)
 }
 
 export const inflate = (vertices, { repelConst, maxRepel, frozenPoints }) => {
-  const newVertices = vertices.map((v, idx) => {
+  const getInflateForce = (v, idx) => {
     if (frozenPoints && frozenPoints.has(idx)) {
-      return v
+      return ZERO_VEC
     }
     let repelForce = [0, 0]
     vertices.forEach((ov, ovIdx) => {
@@ -104,9 +115,9 @@ export const inflate = (vertices, { repelConst, maxRepel, frozenPoints }) => {
       const _repelForce = getRepelForce(v, ov, repelConst, maxRepel)
       repelForce = vecAdd(repelForce, _repelForce)
     })
-    return applyForce(v, repelForce)
-  })
-  return newVertices
+    return repelForce
+  }
+  return mapApplyForce(vertices, getInflateForce)
 }
 
 // Top Level Anim Loop Simulation Functions

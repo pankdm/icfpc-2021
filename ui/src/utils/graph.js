@@ -9,62 +9,7 @@ export function distance(p1, p2) {
   return Math.sqrt(distanceSq(p1, p2))
 }
 
-export class Vec {
-  constructor(x=0, y=0) {
-    this._vec = [x, y]
-  }
-  static random(abs=1) {
-    const [x, y] = vecRand(abs)
-    return new Vec(x, y)
-  }
-  toString = () => `(${this._vec[0]}, ${this._vec[1]})`
-  toList = () => [...this._vec]
-  static fromLists = (vecs) => vecs.map(v => new Vec(...v))
-  static toLists = (Vecs) => Vecs.map(V => V.toList())
-  add = (...vecs) => {
-    for (v of vecs) {
-      this._vec[0] += v[0]
-      this._vec[1] += v[1]
-    }
-    return this
-  }
-  sub = (vec) => {
-    this._vec[0] -= vec[0]
-    this._vec[1] -= vec[1]
-    return this
-  }
-  abs = () => {
-    distance([0, 0], this._vec)
-  }
-  mult = (scalar) => {
-    this._vec[0] *= scalar
-    this._vec[1] *= scalar
-    return this
-  }
-  normalize = () => {
-    const abs = this.abs()
-    if (abs == 0) {
-      throw new Error('Cannot normalize zero-length vector')
-    }
-    return this.mult(1/abs)
-  }
-  setAbs = (newAbs) => {
-    const abs = this.abs()
-    if (abs == 0) {
-      throw new Error('Cannot call setAbs on zero-length vector')
-    }
-    return this.mult(newAbs/abs)
-  }
-  clampAbs = (minAbs, maxAbs) => {
-    const abs = this.abs()
-    if (abs == 0 && minAbs > 0) {
-      throw new Error('Cannot call clampAbs with mositive minAbs on zero-length vector')
-    }
-    const newAbs = Math.min(Math.max(abs, minAbs), maxAbs)
-    return self.setAbs(newAbs)
-  }
-}
-
+// immutable vector operations
 export const vecEquals = (vec1, vec2) => vec1[0] == vec2[0] && vec1[1] == vec2[1]
 export const vecAdd = (...vecs) => [_.sumBy(vecs, 0), _.sumBy(vecs, 1)]
 export const vecSub = (vec1, vec2) => [vec1[0]-vec2[0], vec1[1]-vec2[1]]
@@ -87,6 +32,38 @@ export const vecRand = (abs=1) => {
   const randAngle = Math.random()*2*Math.PI
   return [abs*Math.cos(randAngle), abs*Math.sin(randAngle)]
 }
+
+// mutating vector operations
+export const vecAdd_ = (vec, ...vecs) => {
+  vec[0] += _.sumBy(vecs, 0)
+  vec[1] += _.sumBy(vecs, 1)
+  return vec
+}
+export const vecMult_ = (vec, scalar) => {
+  vec[0] *= scalar
+  vec[1] *= scalar
+  return vec
+}
+export const vecSub_ = (vec, ...vecs) => {
+  vec[0] -= _.sumBy(vecs, 0)
+  vec[1] -= _.sumBy(vecs, 1)
+  return vec
+}
+export const vecSetAbs_ = (vec, newAbs) => {
+  if (newAbs == 0) {
+    vec[0] = 0
+    vec[1] = 0
+    return vec
+  }
+  return vecMult_(vec, newAbs/vecAbs(vec))
+}
+export const vecClampAbs_ = (vec, minAbs, maxAbs) => {
+  const abs = vecAbs(vec)
+  const newAbs = Math.min(Math.max(abs, minAbs), maxAbs)
+  return vecSetAbs_(vec, newAbs)
+}
+export const vecNorm_ = (vec) => vecSetAbs_(vec, 1)
+
 export const isVecZero = (vec) => vec[0]==0&&vec[1]==0
 export const snapVecs = (vecs) => {
   return _.map(vecs, v => [Math.round(v[0]), Math.round(v[1])])

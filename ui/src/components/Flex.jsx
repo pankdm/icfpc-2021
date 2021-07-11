@@ -10,6 +10,11 @@ export function Flex({
     justifyItems=null,
     alignContent=null,
     justifyContent=null,
+    basis=null,
+    grow=null,
+    shrink=null,
+    alignSelf=null,
+    justifySelf=null,
     wrap=null,
     ...props
 }) {
@@ -20,6 +25,11 @@ export function Flex({
         alignContent,
         justifyItems,
         justifyContent,
+        flexBasis: basis,
+        flexGrow: grow,
+        flexShrink: shrink,
+        alignSelf,
+        justifySelf,
         ...style,
     }
     return <div className={cs(styles.flex, className)} style={finalStyle} {...props} />
