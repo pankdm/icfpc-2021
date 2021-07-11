@@ -49,7 +49,7 @@ button:active {
   right: 1rem;
 }
 
-.score {
+pre {
   color: #fff;
   font-size: 1.25em;
   font-weight: bold;
