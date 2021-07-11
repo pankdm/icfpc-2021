@@ -40,17 +40,20 @@ def parse_problems_html(html):
         td1, td2, td3 = row.find_all('td')
         problem_id = int(td1.string)
         dislikes = td2.string
-        min_dislikes = int(td3.string)
-
+        min_dislikes = td3.string
         spec = read_problem(problem_id)
-        # outer_bonus = spec['bonuses'][0]['problem']
         mult = 1000 * math.log2(len(spec['figure']['vertices']) * len(spec['figure']['edges']) * len(spec['hole']))
         max_score = int(math.floor(mult))
 
-        if dislikes is not None and str.isdigit(dislikes):
-            my_score = int(mult * math.sqrt((min_dislikes + 1) / (int(dislikes) + 1)))
+        # outer_bonus = spec['bonuses'][0]['problem']
+
+        if min_dislikes is not None and dislikes is not None and str.isdigit(dislikes):
+            my_score = int(mult * math.sqrt((int(min_dislikes) + 1) / (int(dislikes) + 1)))
         else:
             my_score = 0
+
+        if min_dislikes is not None:
+            min_dislikes = int(min_dislikes)
 
         # print (problem, dislikes, min_dislikes)
         output[problem_id] = {

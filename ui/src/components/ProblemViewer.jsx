@@ -19,7 +19,7 @@ import useLocalStorage from '../utils/useLocalStorage.js'
 import useDOMEvent from '../utils/useDOMEvent.js'
 
 
-export default function ProblemViewer({ problemId, problem, solution, onSaveSolution, ...props }) {
+export default function ProblemViewer({ problemId, problem, solution, onSaveSolution, stats, ...props }) {
   const { hole, epsilon, figure, bonuses } = problem
   const epsilonFraction = epsilon/1e6
   const zeroPointLocation = useRef()
@@ -277,10 +277,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   useHotkeys('d', () => {
     flipVert()
   }, {}, [flipVert])
-  useHotkeys('r', () => {
-    reset()
-  }, {}, [reset])
-  useHotkeys('p', () => {
+  useHotkeys('space', () => {
     togglePlaying()
   }, {}, [togglePlaying])
   useHotkeys('g', () => {
@@ -289,15 +286,21 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   useHotkeys('k', () => {
     singleShake()
   }, {}, [singleShake])
-  useHotkeys('i', () => {
+  useHotkeys('o', () => {
     toggleSimMode('simpleInflate')
   }, {}, [singleShake])
-  useHotkeys('o', () => {
-    toggleSimMode('infalte')
+  useHotkeys('i', () => {
+    toggleSimMode('inflate')
   }, {}, [toggleSimMode])
   useHotkeys('s', () => {
     snapVertices()
   }, {}, [snapVertices])
+  useHotkeys('=', () => {
+    setZoom(zoom+0.5)
+  }, {}, [zoom])
+  useHotkeys('-', () => {
+    setZoom(zoom-0.5)
+  }, {}, [zoom])
   useDOMEvent('keydown', (ev) => {
     // on press Shift
     if (ev.keyCode == 16) {
@@ -364,17 +367,20 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         </button>
       </div>
       <div className={styles.topRight}>
-        <button onClick={togglePlaying}>{playing ? 'Physics: on' : 'Physics: off'}</button>
-        <button onClick={() => toggleSimMode('inflate')}>{simMode == 'inflate' ? 'Inflating' : 'Inflate'}</button>
-        <button onClick={() => toggleSimMode('simpleInflate')}>{simMode == 'simpleInflate' ? 'Stretching' : 'Stretch'}</button>
-        <button onClick={() => toggleSimMode('gravity')}>{simMode == 'gravity' ? 'Gravitating' : 'Gravity'}</button>
-        <button onClick={singleShake}>Shake</button>
-        <button onClick={snapVertices}>Snap</button>
+        <button onClick={togglePlaying}>{playing ? '(_) Physics: on' : '(_) Physics: off'}</button>
+        <button onClick={() => toggleSimMode('inflate')}>{simMode == 'inflate' ? '(I) Inflating' : '(I) Inflate'}</button>
+        <button onClick={() => toggleSimMode('simpleInflate')}>{simMode == 'simpleInflate' ? '(O) Stretching' : '(O) Stretch'}</button>
+        <button onClick={() => toggleSimMode('gravity')}>{simMode == 'gravity' ? '(G) Gravitating' : '(G) Gravity'}</button>
+        <button onClick={singleShake}>(K) Shake</button>
+        <button onClick={snapVertices}>(S) Snap</button>
         <button onClick={reset}>Reset</button>
         <Spacer />
-        <button onClick={() => setMultiselectMode(!multiselectMode)}>{multiselectMode ? 'Selecting...' : 'Glue Points'}</button>
-        <button onClick={() => unselectAllGluedPoints()}>Unselect {frozenFigurePoints.size}</button>
+        <button style={{ height: '2.5em' }} onClick={() => setMultiselectMode(!multiselectMode)}>{multiselectMode ? 'Selecting...' : '⬆️ Glue Points'}</button>
+        <button disabled={!frozenFigurePoints.size} onClick={() => unselectAllGluedPoints()}>Unselect {frozenFigurePoints.size}</button>
         <button onClick={toggleDragMode}>{dragMode ? 'Pan Enabled' : 'Pan Disabled'}</button>
+        <Spacer />
+        <button onClick={() => rotateCw(Math.PI/12)}>(E) Rotate +CW</button>
+        <button onClick={() => rotateCw(-Math.PI/12)}>(Q) Rotate -CW</button>
       </div>
       <div className={styles.bottomRight}>
         <button onClick={() => setZoom(zoom+1)}>+</button>
@@ -387,6 +393,9 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         </pre>
         <pre className={styles.score}>
           Score: {_.padStart(score, 4, ' ')}
+        </pre>
+        <pre className={styles.score}>
+          Best: {_.padStart(stats.min_dislikes, 5, ' ')}
         </pre>
       </div>
     </AspectRatioBox>

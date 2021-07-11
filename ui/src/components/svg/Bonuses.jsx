@@ -11,6 +11,7 @@ export default function Bonuses({
   const colors = {
     'GLOBALIST': '#ff0',
     'BREAK_A_LEG': '#00f',
+    'WALLHACK': '#fa0',
   }
   return (
     <g id='bonuses' {...props}>
