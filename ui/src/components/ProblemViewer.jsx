@@ -12,7 +12,7 @@ import Figure from './svg/Figure.jsx'
 import styles from './ProblemViewer.module.css'
 import { getDistanceMap, getDistances, getScore, snapVecs, vecAdd, vecSub, vecMult, vecNorm, vecEquals, distance } from '../utils/graph.js'
 import { inflateLoop, inflateSimpleRadialLoop, relaxLoop, gravityLoop, applyShake } from '../utils/physics.js'
-import { useOnChangeValues } from '../utils/useOnChange.js'
+import useOnChange, { useOnChangeValues } from '../utils/useOnChange.js'
 import useAnimLoop from '../utils/useAnimLoop.js'
 import { useHotkeys } from 'react-hotkeys-hook'
 import useDrag from '../utils/useDrag.js'
@@ -55,32 +55,37 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   const [panOffset, setPanOffset] = useState([0, 0])
   const [overriddenVerticesKey, setOverriddenVerticesKey] = useState(null)
   const [simMode, setSimMode] = useState(null)
-  const [frozenFigurePoints, setFrozenFigurePoints] = useState(new Set())
+  const getInitFrozenPoints = () => solution && solution.fixedPoints || []
+  const [frozenFigurePoints, _setFrozenFigurePoints] = useState(new Set(getInitFrozenPoints()))
+  const setFrozenFigurePoints = (points) => _setFrozenFigurePoints(new Set([...points]))
+  useOnChange(solution, () => {
+    setFrozenFigurePoints(getInitFrozenPoints())
+  })
   const addFrozenFigurePoint = (idx) => {
     const newSet = new Set(frozenFigurePoints)
     newSet.add(idx)
-    setFrozenFigurePoints(newSet)
+    _setFrozenFigurePoints(newSet)
   }
   const addFrozenFigurePoints = (idxs) => {
     const newSet = new Set(frozenFigurePoints)
     for (const idx of idxs) {
       newSet.add(idx)
     }
-    setFrozenFigurePoints(newSet)
+    _setFrozenFigurePoints(newSet)
   }
   const removeFrozenFigurePoint = (idx) => {
     const newSet = new Set(frozenFigurePoints)
     newSet.delete(idx)
-    setFrozenFigurePoints(newSet)
+    _setFrozenFigurePoints(newSet)
   }
   const removeFrozenFigurePoints = (idxs) => {
     const newSet = new Set(frozenFigurePoints)
     for (const idx of idxs) {
       newSet.delete(idx)
     }
-    setFrozenFigurePoints(newSet)
+    _setFrozenFigurePoints(newSet)
   }
-  const clearFrozenFigurePoints = () => setFrozenFigurePoints(new Set())
+  const clearFrozenFigurePoints = () => _setFrozenFigurePoints(new Set())
   const unselectAllGluedPoints = () => {
     stopPlaying()
     clearFrozenFigurePoints()
@@ -324,6 +329,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     setSimMode(null)
     stopPlaying()
     setOverriddenVertices(null)
+    setFrozenFigurePoints(getInitFrozenPoints())
     setZoom(0)
     setPanOffset([0, 0])
   }
@@ -448,7 +454,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
             onClick={() => {
               stopPlaying()
               snapVertices()
-              onSaveSolution(problemId, username, { vertices: getCurrentVertices() })
+              onSaveSolution(problemId, username, { vertices: getCurrentVertices(), fixedPoints: [...frozenFigurePoints] })
               toggleSaved()
             }
           }>
