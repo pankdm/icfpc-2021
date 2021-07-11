@@ -8,7 +8,7 @@ import Grid from './svg/Grid.jsx'
 import Hole from './svg/Hole.jsx'
 import Figure from './svg/Figure.jsx'
 import styles from './ProblemViewer.module.css'
-import { getDistanceMap, getDistances, getScore, snapVecs, vecAdd, vecSub } from '../utils/graph.js'
+import { getDistanceMap, getDistances, getScore, snapVecs, vecAdd, vecSub, vecMult, vecNorm } from '../utils/graph.js'
 import { inflateLoop, inflateSimpleRadialLoop, relaxLoop, gravityLoop, applyShake } from '../utils/physics.js'
 import { useOnChangeValues } from '../utils/useOnChange.js'
 import useAnimLoop from '../utils/useAnimLoop.js'
@@ -48,6 +48,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   const [panDragStartPoint, setPanDragStartPoint] = useState(null)
   const [panDragStartOffset, setPanDragStartOffset] = useState(null)
   const [multiselectMode, setMultiselectMode] = useState(false)
+  const [powerClickMode, setPowerClickMode] = useState(false)
   const [panOffset, setPanOffset] = useState([0, 0])
   const [overriddenVerticesKey, setOverriddenVerticesKey] = useState(null)
   const [simMode, setSimMode] = useState(null)
@@ -246,6 +247,27 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     vertices = vertices.map(([x, y]) => ([x + dx, y + dy]))
     setOverriddenVertices(vertices)
   }
+  const powerClick = (idx) => {
+    let vertices = _.cloneDeep(getCurrentVertices())
+    let currPt = vertices[idx]
+
+    figure.edges
+        .filter(([v1, v2]) => v1 === idx || v2 === idx)
+        .map(([v1, v2]) => (v1 === idx? v2: v1))
+        .filter(v => !frozenFigurePoints.has(v))
+        .map(v => {
+            const originalDistance = optimalDistancesMap[idx][v];
+
+            const oldPt = vertices[v]
+            const norm = vecNorm(vecSub(oldPt, currPt))
+            const scaled = vecMult(norm, originalDistance)
+            let newPt = vecAdd(vecMult(norm, originalDistance), currPt)
+
+            vertices[v] = newPt
+        });
+
+    setOverriddenVertices(vertices);
+  }
   const reset = () => {
     setSimMode(null)
     stopPlaying()
@@ -326,6 +348,19 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
       setMultiselectMode(false)
     }
   })
+  useDOMEvent('keydown', (ev) => {
+      // on press Shift
+      if (ev.keyCode == 91) {
+        setPowerClickMode(true)
+      };
+    })
+    useDOMEvent('keyup', (ev) => {
+      // on release Shift
+      if (ev.keyCode == 91) {
+        setPowerClickMode(false)
+      }
+    })
+
   useOnChangeValues([problem, solution], () => {
     reset()
   })
@@ -356,6 +391,9 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
                 onPointRelease={(ev, idx) => {
                   if (!multiselectMode) {
                     removeFrozenFigurePoint(idx)
+                  }
+                  if (powerClickMode) {
+                    powerClick(idx);
                   }
                 }}
                 onPointDrag={(ev, idx) => {
