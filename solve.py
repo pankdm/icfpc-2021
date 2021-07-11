@@ -3,6 +3,7 @@ import sys
 from typing import Tuple
 from collections import defaultdict
 import json
+from math import *
 import copy
 import random
 import time
@@ -469,6 +470,34 @@ def try_to_fix_edges(spec, solution):
     for edge in edges:
         if not check_edge_length(spec, solution, edge):
             fix_edge(spec, solution, edge)
+
+def viable_adj_points(origin, len2, epsilon):
+    """Returns a list of int points within dist and eps."""
+    vectors = viable_vectors(len2, epsilon)
+    points = []
+    x, y = origin
+    points += [(x + px, y + py) for (px, py) in vectors]
+    points += [(x + px, y - py) for (px, py) in vectors]
+    points += [(x - px, y + py) for (px, py) in vectors]
+    points += [(x - px, y - py) for (px, py) in vectors]
+    return points
+
+def viable_vectors(len2, epsilon):
+    low2, high2 = len2 * (1 - epsilon), len2 * (1 + epsilon)
+    high = floor(high2 ** 0.5)
+    x, x2 = 0, 0
+    vectors = []
+    print(low2, high2, high)
+    while x2 <= high2:
+        while high >= 0 and x2 + high * high > high2:
+            high -= 1
+        y = high
+        while y >= 0 and x2 + y * y >= low2:
+            vectors.append((x, y))
+            y -= 1
+        x += 1
+        x2 = x * x
+    return vectors
 
 
 def submit_manual(problem_id, solution_file_name):
