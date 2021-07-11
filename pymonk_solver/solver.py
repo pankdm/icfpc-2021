@@ -9,7 +9,7 @@ import pymunk
 import pymunk.pygame_util
 from pymunk.vec2d import Vec2d
 
-p_number= 87
+p_number= 106
 
 # Read input.
 with open(f"../problems/{p_number}", "r") as json_file:
@@ -21,7 +21,7 @@ figure_vertices =  input["figure"]["vertices"]
 figure_edges =  input["figure"]["edges"]
 
 # scale
-scale = 5
+scale = 1
 hole = [(p[0] * scale, p[1] * scale) for p in hole]
 figure_vertices = [(p[0] * scale, p[1] * scale) for p in figure_vertices]
 
@@ -111,8 +111,7 @@ def min_dist_hole_v(v):
 
 transformed_figure_vertices = []
 for v in figure_vertices:
-    new_v = scale_figure_v(v, figure_center, 0.2)
-    new_v = (new_v[0], new_v[1] - 150)
+    new_v = vec_add(scale_figure_v(v, figure_center, 0.2), vec_sub(hole_center, figure_center))
     transformed_figure_vertices.append(new_v)
 
 balls = []
