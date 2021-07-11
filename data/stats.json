@@ -612,15 +612,9 @@
         "max_score": 17975
     },
     "103": {
-<<<<<<< HEAD
-        "dislikes": null,
-        "min_dislikes": 58518,
-        "score": 0,
-=======
         "dislikes": "216058",
         "min_dislikes": 58518,
         "score": 8918,
->>>>>>> Manually solve 103 on 210k
         "max_score": 17137
     },
     "104": {
