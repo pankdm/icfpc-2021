@@ -34,3 +34,10 @@ a:visited {
   padding-left: 2rem;
   padding-right: 2rem;
 }
+
+code {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin: 0;
+  white-space: pre-wrap;
+}

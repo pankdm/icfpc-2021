@@ -1,4 +1,11 @@
+.viewer {
+  position: relative;
+}
+.svg-wrapper {
+  position: relative;
+}
 .svg {
+  position: absolute;
   width: 100%;
   height: 100%;
   background-color: rgb(153, 138, 124);
@@ -62,9 +69,11 @@ pre {
 
 .bottom-right {
   position: absolute;
-  bottom: 1rem;
   right: 1rem;
-  color: #fff;
+  margin-top: 1rem;
+}
+.bottom-right pre {
+  display: block;
 }
 
 @media screen and (min-width: 1200px) {
@@ -84,6 +93,45 @@ pre {
     min-width: 8rem;
     right: unset;
     left: calc(100% + 1rem);
+    color: #222;
+  }
+}
+
+@media screen and (max-width: 860px) {
+  .viewer {
+    display: flex;
+    flex-direction: column;
+  }
+  .svg {
+    position: relative;
+  }
+  .svg-wrapper {
+    order: -3;
+  }
+  .top-left {
+    order: -4;
+    position: relative;
+    top: unset;
+    left: unset;
+    right: unset;
+    color: #222;
+  }
+  .top-right {
+    order: -1;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    top: unset;
+    left: unset;
+    right: unset;
+    color: #222;
+  }
+  .bottom-right {
+    order: -2;
+    position: relative;
+    left: unset;
+    right: unset;
+    bottom: unset;
     color: #222;
   }
 }

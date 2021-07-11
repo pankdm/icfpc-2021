@@ -377,7 +377,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     reset()
   })
   return (
-    <div style={{ position: 'relative' }}>
+    <div className={styles.viewer}>
       <div className={styles.topLeft}>
         <TrafficLight
           size='14em'
@@ -411,7 +411,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         </div>
       </Flex>
     </div>
-    <AspectRatioBox>
+    <AspectRatioBox className={styles.svgWrapper}>
       <svg ref={svgRef} className={styles.svg} viewBox={`${0} ${0} ${xMax - xMin} ${yMax - yMin}`}>
         <Group x={-xMin} y={-yMin}>
           <Group x={(xMax-xMin)/2} y={(yMax-yMin)/2} scale={1/zoomScale}>
@@ -450,37 +450,37 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
           </Group>
         </Group>
       </svg>
-      <div className={styles.topRight}>
-        <button onClick={togglePlaying}>{playing ? '(_) Physics: on' : '(_) Physics: off'}</button>
-        <button onClick={() => toggleSimMode('inflate')}>{simMode == 'inflate' ? '(I) Inflating' : '(I) Inflate'}</button>
-        <button onClick={() => toggleSimMode('simpleInflate')}>{simMode == 'simpleInflate' ? '(O) Stretching' : '(O) Stretch'}</button>
-        <button onClick={() => toggleSimMode('gravity')}>{simMode == 'gravity' ? '(G) Gravitating' : '(G) Gravity'}</button>
-        <button onClick={singleShake}>(K) Shake</button>
-        <button onClick={snapVertices}>(S) Snap</button>
-        <button onClick={randomize}>Randomize</button>
-        <button onClick={reset}>Reset</button>
-        <Spacer />
-        <button style={{ height: '2.5em' }} onClick={() => setMultiselectMode(!multiselectMode)}>{multiselectMode ? 'Selecting...' : '⬆️ Glue Points'}</button>
-        <button disabled={!frozenFigurePoints.size} onClick={() => unselectAllGluedPoints()}>Unselect {frozenFigurePoints.size}</button>
-        <button onClick={toggleDragMode}>{dragMode ? 'Pan Enabled' : 'Pan Disabled'}</button>
-      </div>
-      <div className={styles.bottomRight}>
-        <button onClick={() => setZoom(zoom+1)}>+</button>
-        <button onClick={() => setZoom(zoom-1)}>-</button>
-        <pre className={styles.score}>
-          Zoom: {zoom > 0 && '+'}{zoom < 0 && '-'}{Math.abs(zoom)}
-        </pre>
-        <pre className={styles.score}>
-          Epsilon: {_.round(epsilonFraction, 4)}
-        </pre>
-        <pre className={styles.score}>
-          Score: {_.padStart(score, 4, ' ')}
-        </pre>
-        <pre className={styles.score}>
-          Best: {_.padStart(stats.min_dislikes, 5, ' ')}
-        </pre>
-      </div>
     </AspectRatioBox>
+    <div className={styles.topRight}>
+      <button onClick={togglePlaying}>{playing ? '(_) Physics: on' : '(_) Physics: off'}</button>
+      <button onClick={() => toggleSimMode('inflate')}>{simMode == 'inflate' ? '(I) Inflating' : '(I) Inflate'}</button>
+      <button onClick={() => toggleSimMode('simpleInflate')}>{simMode == 'simpleInflate' ? '(O) Stretching' : '(O) Stretch'}</button>
+      <button onClick={() => toggleSimMode('gravity')}>{simMode == 'gravity' ? '(G) Gravitating' : '(G) Gravity'}</button>
+      <button onClick={singleShake}>(K) Shake</button>
+      <button onClick={snapVertices}>(S) Snap</button>
+      <button onClick={randomize}>Randomize</button>
+      <button onClick={reset}>Reset</button>
+      <Spacer />
+      <button style={{ height: '2.5em' }} onClick={() => setMultiselectMode(!multiselectMode)}>{multiselectMode ? 'Selecting...' : '⬆️ Glue Points'}</button>
+      <button disabled={!frozenFigurePoints.size} onClick={() => unselectAllGluedPoints()}>Unselect {frozenFigurePoints.size}</button>
+      <button onClick={toggleDragMode}>{dragMode ? 'Pan Enabled' : 'Pan Disabled'}</button>
+    </div>
+    <div className={styles.bottomRight}>
+      <button onClick={() => setZoom(zoom+1)}>+</button>
+      <button onClick={() => setZoom(zoom-1)}>-</button>
+      <pre className={styles.score}>
+        Zoom: {zoom > 0 && '+'}{zoom < 0 && '-'}{Math.abs(zoom)}
+      </pre>
+      <pre className={styles.score}>
+        Epsilon: {_.round(epsilonFraction, 4)}
+      </pre>
+      <pre className={styles.score}>
+        Score: {_.padStart(score, 4, ' ')}
+      </pre>
+      <pre className={styles.score}>
+        Best: {_.padStart(stats.min_dislikes, 5, ' ')}
+      </pre>
+    </div>
     <pre className={styles.hotkeysInstruction}>
     {`
 Extra hotkeys:
