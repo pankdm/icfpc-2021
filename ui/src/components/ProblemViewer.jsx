@@ -289,7 +289,8 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   useHotkeys('d', () => {
     flipVert()
   }, {}, [flipVert])
-  useHotkeys('space', () => {
+  useHotkeys('space', (ev) => {
+    ev.preventDefault()
     togglePlaying()
   }, {}, [togglePlaying])
   useHotkeys('g', () => {
