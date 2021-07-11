@@ -395,7 +395,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
           Score: {_.padStart(score, 4, ' ')}
         </pre>
         <pre className={styles.score}>
-          Best: {_.padStart(stats.min_dislikes, 4, ' ')}
+          Best: {_.padStart(stats.min_dislikes, 5, ' ')}
         </pre>
       </div>
     </AspectRatioBox>
