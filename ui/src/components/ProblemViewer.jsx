@@ -241,6 +241,11 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     })
     setOverriddenVertices(vertices)
   }
+  const move = (dx, dy) => {
+    let vertices = getCurrentVertices()
+    vertices = vertices.map(([x, y]) => ([x + dx, y + dy]))
+    setOverriddenVertices(vertices)
+  }
   const reset = () => {
     setSimMode(null)
     stopPlaying()
@@ -248,6 +253,18 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     setZoom(0)
     setPanOffset([0, 0])
   }
+  useHotkeys('[', () => {
+    move(0, -1)
+  }, {}, [move])
+  useHotkeys("'", () => {
+    move(0, 1)
+  }, {}, [move])
+  useHotkeys('\\', () => {
+    move(1, 0)
+  }, {}, [move])
+  useHotkeys(';', () => {
+    move(-1, 0)
+  }, {}, [move])
   useHotkeys('e', () => {
     rotateCw(Math.PI/12)
   }, {}, [rotateCw])
@@ -285,7 +302,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     // on press Shift
     if (ev.keyCode == 16) {
       setMultiselectMode(true)
-    }
+    };
   })
   useDOMEvent('keyup', (ev) => {
     // on release Shift
