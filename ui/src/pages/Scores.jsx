@@ -29,6 +29,15 @@ export default function Scores(props) {
   if (!all_problems) {
     return <div className={`app ${styles.app}`}></div>
   }
+  let from_bonuses = {}
+  _.map(all_problems, (value, idx) => {
+    _.map(value['bonuses'], (bonus) => {
+      from_bonuses[bonus['problem']] = from_bonuses[bonus['problem']] || {}
+      from_bonuses[bonus['problem']][idx] = bonus['bonus']
+    })
+  })
+  console.log(from_bonuses)
+
   const getSortOrder = (key) => sort == key ? sortOrder : null
   const toggleSort = (newSort, defSortOrder='asc') => {
     if (newSort != sort) {
@@ -53,6 +62,7 @@ export default function Scores(props) {
     }
     return richValue
   })
+  console.log(from_bonuses)
   const sortedStats = _.orderBy(_.values(richStats), [sort], [sortOrder])
   return (
     <div className={`app ${styles.app}`}>
@@ -67,7 +77,8 @@ export default function Scores(props) {
             <Th sortOrder={getSortOrder('score')} onClick={() => toggleSort('score', 'desc')}> your score </Th>
             <Th sortOrder={getSortOrder('max_score')} onClick={() => toggleSort('max_score', 'desc')}> max score </Th>
             <Th sortOrder={getSortOrder('delta')} onClick={() => toggleSort('delta', 'desc')}> delta </Th>
-            <th> bonuses </th>
+            <th> bonuses to get</th>
+            <th> bonuses to use </th>
           </tr>
           {_.map(
             sortedStats,
@@ -81,11 +92,19 @@ export default function Scores(props) {
                 <td> {value['max_score']}</td>
                 <td> {value['delta']}</td>
                 <td>
-                  {_.map(all_problems[value['id']]['bonuses'], (b, bidx) => (
+                  {_.map(all_problems[id]['bonuses'], (b, bidx) => (
                     <pre key={value['id']+'bonus'+bidx}>
                       {(b.bonus + ':').padEnd(13, ' ')} #{b.problem.toString().padEnd(4)} ({b.position[0]},{b.position[1]})
                       <br/>
                     </pre>
+                  ))}
+                </td>
+                <td>
+                  {_.map(from_bonuses[id], (b, from_idx) => (
+                    <pre key={value['id']+'bonus_from'+from_idx}>
+                     {(b + '').padEnd(13, ' ')}  {'from'} #{from_idx}
+                    <br/>
+                  </pre>
                   ))}
                 </td>
               </tr>
