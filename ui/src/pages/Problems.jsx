@@ -11,7 +11,7 @@ function Problems() {
   const [solutionId, setSolutionId] = useState(null)
   const { data: problems } = useProblems()
   const { data: problem } = useProblem(problemId, { enabled: !!problemId })
-  const { data: solutions } = useSolutions(problemId, { enabled: !!problemId, refetchInterval: 1000 })
+  const { data: solutions, refetch: refetchSolutions } = useSolutions(problemId, { enabled: !!problemId, refreshInterval: 60000 })
   const { data: solution, refetch: refetchSolution } = useSolution(problemId, solutionId, { enabled: !!problemId && !!solutionId })
   const { data: stats } = useStats()
   const onSaveSolution = (problemId, username, solution) => {
@@ -58,9 +58,7 @@ function Problems() {
           }
         </select>
         {` `}
-        {solutionId &&
-          <span className={styles.refreshLabel} onClick={() => refetchSolution()}>Refresh</span>
-        }
+        <span className={styles.refreshLabel} onClick={() => { refetchSolutions(); refetchSolution(); }}>Refresh</span>
       </p>
       {stats && problem &&
         <ProblemViewer

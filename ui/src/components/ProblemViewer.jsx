@@ -10,7 +10,7 @@ import Grid from './svg/Grid.jsx'
 import Hole from './svg/Hole.jsx'
 import Figure from './svg/Figure.jsx'
 import styles from './ProblemViewer.module.css'
-import { getDistanceMap, getDistances, getScore, snapVecs, vecAdd, vecSub, vecMult, vecNorm } from '../utils/graph.js'
+import { getDistanceMap, getDistances, getScore, snapVecs, vecAdd, vecSub, vecMult, vecNorm, vecEquals, distance } from '../utils/graph.js'
 import { inflateLoop, inflateSimpleRadialLoop, relaxLoop, gravityLoop, applyShake } from '../utils/physics.js'
 import { useOnChangeValues } from '../utils/useOnChange.js'
 import useAnimLoop from '../utils/useAnimLoop.js'
@@ -61,9 +61,23 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     newSet.add(idx)
     setFrozenFigurePoints(newSet)
   }
+  const addFrozenFigurePoints = (idxs) => {
+    const newSet = new Set(frozenFigurePoints)
+    for (const idx of idxs) {
+      newSet.add(idx)
+    }
+    setFrozenFigurePoints(newSet)
+  }
   const removeFrozenFigurePoint = (idx) => {
     const newSet = new Set(frozenFigurePoints)
     newSet.delete(idx)
+    setFrozenFigurePoints(newSet)
+  }
+  const removeFrozenFigurePoints = (idxs) => {
+    const newSet = new Set(frozenFigurePoints)
+    for (const idx of idxs) {
+      newSet.delete(idx)
+    }
     setFrozenFigurePoints(newSet)
   }
   const clearFrozenFigurePoints = () => setFrozenFigurePoints(new Set())
@@ -214,11 +228,19 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     vertices = applyShake(vertices, { maxAmplitude: 3, frozenPoints: frozenFigurePoints })
     setOverriddenVertices(vertices)
   }
-  const snapVertices = () => {
+  const snapVertices = (verticesToSnap=null) => {
     let vertices = getCurrentVertices()
-    vertices = snapVecs(vertices)
+    if (verticesToSnap) {
+      let _verticesToSnap = _.map(verticesToSnap, (idx) => vertices[idx])
+      _verticesToSnap = snapVecs(_verticesToSnap)
+      _verticesToSnap = _.zipObject(verticesToSnap, _verticesToSnap)
+      vertices = _.map(vertices, (v, idx) => _verticesToSnap[idx] || v)
+    } else {
+      vertices = snapVecs(vertices)
+    }
     setOverriddenVertices(vertices)
   }
+  window.snapVertices = snapVertices
   const rotateCw = (phi) => {
     let vertices = getCurrentVertices()
     const cosPhi = Math.cos(phi)
@@ -282,6 +304,21 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         });
 
     setOverriddenVertices(vertices);
+  }
+  const snapWinningVertices = (snapRadius=1) => {
+    let vertices = getCurrentVertices()
+    const verticesToSnap = vertices.reduce((acc, v, idx) => {
+      const hidx = _.findIndex(hole, (h) => distance(v, h) < snapRadius)
+      if (hidx >= 0) {
+        acc.push([idx, hidx])
+      }
+      return acc
+    }, [])
+    const verticesSnapIds = _.map(verticesToSnap, 0)
+    addFrozenFigurePoints(verticesSnapIds)
+    const verticesSnapMap = _.fromPairs(_.map(verticesToSnap, ([vid, hid]) => [vid, hole[hid]]))
+    vertices = vertices.map((v, idx) => verticesSnapMap[idx] || vertices[idx])
+    setOverriddenVertices(vertices)
   }
   const reset = () => {
     setSimMode(null)
@@ -475,6 +512,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
       <button onClick={reset}>Reset</button>
       <Spacer />
       <button style={{ height: '2.5em' }} onClick={() => setMultiselectMode(!multiselectMode)}>{multiselectMode ? 'Selecting...' : '⬆️ Glue Points'}</button>
+      <button style={{ height: '2.5em' }} onClick={() => snapWinningVertices()}>Snap Winners</button>
       <button disabled={!frozenFigurePoints.size} onClick={() => unselectAllGluedPoints()}>Unselect {frozenFigurePoints.size}</button>
       <button onClick={toggleDragMode}>{dragMode ? 'Pan Enabled' : 'Pan Disabled'}</button>
       <button onClick={() => setZoom(zoom+1)}>+</button>

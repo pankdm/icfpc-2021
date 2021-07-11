@@ -39,7 +39,7 @@ function FigurePoint({
         onDragEnd={(ev) => onPointRelease(ev, idx)}
         onDrag={(ev) => onPointDrag(ev, idx, {clientX: ev.clientX, clientY: ev.clientY, dx: ev.movementX, dy: ev.movementY})}
       />
-      <Label xOffset={0.5} yOffset={-0.5}>{idx}</Label>
+      <Label xOffset={0.5} yOffset={-0.5} style={{ pointerEvents: 'none'}}>{idx}</Label>
     </Group>
   )
 }

@@ -65,6 +65,7 @@ export class Vec {
   }
 }
 
+export const vecEquals = (vec1, vec2) => vec1[0] == vec2[0] && vec1[1] == vec2[1]
 export const vecAdd = (...vecs) => [_.sumBy(vecs, 0), _.sumBy(vecs, 1)]
 export const vecSub = (vec1, vec2) => [vec1[0]-vec2[0], vec1[1]-vec2[1]]
 export const vecAbs = (vec) => distance([0, 0], vec)
