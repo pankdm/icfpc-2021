@@ -11,37 +11,23 @@ from pymunk.vec2d import Vec2d
 
 import sys
 
-p_number = sys.argv[1] if len(sys.argv) > 1 else 106
+from absl import app
+from absl import flags
 
-# Read input.
-with open(f"../problems/{p_number}", "r") as json_file:
-    input = json.load(json_file)
+FLAGS = flags.FLAGS
 
-# # read starting
-# with open(f"../solutions/manual/75_dm_1625974946342", "r") as json_file:
-#     start = json.load(json_file)
-#     input["figure"]["vertices"] = start["vertices"]
+flags.DEFINE_string('init_path', None, 'Path to a solution file to seed initial vertices.')
+flags.DEFINE_float('world_scale', 1.0, 'World scale')
+flags.DEFINE_float('scale', None, 'Scale for initial vertices (rel. to mid point).')
+flags.DEFINE_string('move', None, 'Translation "dx, dy" for initial vertices.')
 
 
-print(input)
-hole =  input["hole"]
-figure_vertices =  input["figure"]["vertices"]
-figure_edges =  input["figure"]["edges"]
+DEFAULT_PROBLEM = 106
 
-# scale
-scale = 1
-hole = [(p[0] * scale, p[1] * scale) for p in hole]
-figure_vertices = [(p[0] * scale, p[1] * scale) for p in figure_vertices]
+REPEL_G = 1000
+PULL_APART_F = 500
+HOLE_G = 2000
 
-hole_center = (
-    float(sum([p[0] for p in hole]))/len(hole),
-    float(sum([p[1] for p in hole]))/len(hole)
-)
-
-figure_center = (
-    float(sum([p[0] for p in figure_vertices]))/len(figure_vertices),
-    float(sum([p[1] for p in figure_vertices]))/len(figure_vertices)
-)
 
 def scale_figure_v(v, c, s):
     dv = (v[0] - c[0], v[1] - c[1])
@@ -66,215 +52,215 @@ def vec_scale(v, s):
     return (v[0] * s, v[1] * s)
 
 def vec_mid(vs):
+    l = len(vs)
     return (
-        float(sum([v[0] for v in vs])) / len(vs),
-        float(sum([v[1] for v in vs])) / len(vs),
+        float(sum([v[0] for v in vs])) / l,
+        float(sum([v[1] for v in vs])) / l,
     )
 
-
-pygame.init()
-screen = pygame.display.set_mode((1200, 1200))
-clock = pygame.time.Clock()
-font = pygame.font.Font(None, 24)
-
-
-space = pymunk.Space()
-space.gravity = (0.0, 0.0)
-space.damping = 0.5
-draw_options = pymunk.pygame_util.DrawOptions(screen)
-
-
-# containers
-# box_size = 200
-# w = screen.get_width()
-# h = screen.get_height()
-for i, p1 in enumerate(hole):
-    p2 = hole[(i + 1) % len(hole)]
-    s = pymunk.Segment(space.static_body, p1, p2, 1)
-    s.friction = 0
-    s.elasticity = 0
-    space.add(s)
-
-
-def add_ball(space, pos, **kwargs):
-    body = pymunk.Body(**kwargs)
-    body.position = Vec2d(*pos)
-    shape = pymunk.Circle(body, 1)
-    shape.mass = 10
-    shape.friction = 0
-    shape.elasticity = 0
-    space.add(body, shape)
-    return body
-
-
-def min_dist_hole_v(v):
-    min_dist = 1000000
-    min_hole_v = None
-    for hv in hole:
-        dist = Vec2d(*hv).get_distance(Vec2d(*v))
-        if dist < min_dist:
-            min_dist = dist
-            min_hole_v = hv
-    return min_hole_v
-
-transformed_figure_vertices = []
-for v in figure_vertices:
-    new_v = vec_add(scale_figure_v(v, figure_center, 0.2), vec_sub(hole_center, figure_center))
-    transformed_figure_vertices.append(new_v)
-
-balls = []
-for v in transformed_figure_vertices:
-    b = add_ball(space, v)
-    balls.append(b)
-
-hole_balls = []
-for h in hole:
-    b = add_ball(space, h, body_type=pymunk.Body.STATIC)
-    hole_balls.append(b)
-
-for e in figure_edges:
-    b1 = balls[e[0]]
-    b2 = balls[e[1]]
-    rest_len = Vec2d(*figure_vertices[e[0]]).get_distance(Vec2d(*figure_vertices[e[1]]))
-    c = pymunk.DampedSpring(b1, b2, (0, 0), (0, 0), rest_len, 1000, 500)
-    space.add(c)
-
-# segments_with_springs = []
-
-# def update_segments(create_objects=False):
-#     # return
-
-#     # global segments_with_springs
-#     # for s in segments_with_springs:
-#     #     space.remove(s)
-#     # segments_with_springs = []
-
-#     for i, e in enumerate(figure_edges):
-#         b1 = balls[e[0]]
-#         b2 = balls[e[1]]
-#         if not create_objects:
-#             spr_body, s, spr1, spr2 = segments_with_springs[i]
-#         else:
-#             spr_body = pymunk.Body()            
-#             spr_body.position = b1.position
-#             s = pymunk.Segment(
-#                 spr_body,
-#                 (0, 0),
-#                 b2.position - b1.position,
-#                 1)
-#             s.mass = 1
-#             s.friction = 0
-#             s.elasticity = 0
-#             spr1 = pymunk.DampedSpring(b1, spr_body, (0, 0), (0, 0), 0.1, 100, 0.5)
-#             spr2 = pymunk.DampedSpring(b2, spr_body, (0, 0), b2.position - b1.position, 0.1, 100, 0.5)
-#             space.add(spr_body, s, spr1, spr2)
-#             segments_with_springs.append((spr_body, s, spr1, spr2))
-#         # spr_body.position = b1.position
-#         # # s.b = b2.position - b1.position
-#         # spr2.anchor_b = b2.position - b1.position
-
-# update_segments(create_objects=True)
-
-# for ball in balls:
-#     for hole_ball in hole_balls:
-#         c = pymunk.DampedSpring(ball, hole_ball, (0, 0), (0, 0), 0.1, 1, 0.1)
-#         space.add(c)
-
-def save():
-    result = []
-    for i in range(len(figure_vertices)):
-        p = balls[i].position
-        result.append([int(p[0]/scale), int(p[1]/scale)])
-
-    result_json = f"{{\"vertices\":{result}}}"
-    print(result_json)
-
-    with open(f"../solutions/pymonk/{p_number}", "w") as out:
-        out.write(result_json + "\n")
-
-
-
-REPEL_G = 1000
-PULL_APART_F = 500
-HOLE_G = 2000
-
-num_balls = len(balls)
-
-def repel_force(v, ball_positions):
-    f_total = (0, 0)
-    for p in ball_positions:
-        dist = vec_dist(p, v) + 0.1
-        if dist > 50:
-            continue
-        f = REPEL_G / (dist * dist)
-        f_total = vec_add(f_total, vec_scale(vec_norm(vec_sub(p, v)), -f))
-    return f_total
-
-
-def pull_apart_force(v, ball_positions):
-    ball_center = [
-        float(sum([p[0] for p in ball_positions])) / num_balls,
-        float(sum([p[1] for p in ball_positions])) / num_balls,
+def vec_scale_all(vectors, center, scale):
+    return [
+        vec_add(center, vec_scale(vec_sub(v, center), scale))
+        for v in vectors
     ]
-    f = PULL_APART_F  # * (1.0 - vec_dist(v, ball_center) / 500.0)
-    return vec_scale(vec_norm(vec_sub(v, ball_center)), f)
 
-
-def hole_pull_force(v, ball_positions):
-    f_total = (0, 0)
-    for p in hole:
-        dist = vec_dist(p, v) + 0.1
-        if dist > 100:
-            continue
-        f = HOLE_G / (dist * dist)
-        f_total = vec_add(f_total, vec_scale(vec_norm(vec_sub(p, v)), f))
-    return f_total
-
-def all_forces(i, ball, ball_positions):
-    forces = [
-        pull_apart_force,
-        # repel_force,
-        hole_pull_force,
+def vec_translate_all(vectors, delta):
+    return [
+        vec_add(v, delta)
+        for v in vectors
     ]
-    result = (0, 0)
-    for f in forces:
-        result = vec_add(result, f(ball_positions[i], ball_positions))
-    return result
 
-def apply_forces():
-    ball_positions = [b.position for b in balls]
-    for i, ball in enumerate(balls):
-        f = all_forces(i, ball, ball_positions)
-        # print(f"[{i}] f={f}")
-        ball.apply_force_at_local_point(f, (0, 0))
+class World:
+    def __init__(self, p_number, hole, figure_vertices, figure_edges, initial_vertices, world_scale):
+        pygame.init()
 
-        # pygame.draw.lines(
-        #     screen,
-        #     (100, 0, 0),
-        #     False,
-        #     [ball.position, vec_add(ball.position, f)],
-        #     1,
-        # )
+        self.screen = pygame.display.set_mode((1200, 1200))
+        self.clock = pygame.time.Clock()
+        self.font = pygame.font.Font(None, 24)
 
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            exit()
-        elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-            exit()
-        elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-            save()
+        space = pymunk.Space()
+        space.gravity = (0.0, 0.0)
+        space.damping = 0.5
+        self.space = space
 
-    screen.fill(pygame.Color("white"))
+        self.draw_options = pymunk.pygame_util.DrawOptions(self.screen)
 
-    for i in range(20):
-        # if i % 1 == 0:
-        apply_forces()
-        # update_segments()
-        space.step(1.0 / 60)
+        self.world_scale = world_scale
 
-    space.debug_draw(draw_options)
-    pygame.display.flip()
+        hole = vec_scale_all(hole, (0, 0), world_scale)
+        figure_vertices = vec_scale_all(figure_vertices, (0, 0), world_scale)
+        initial_vertices = vec_scale_all(initial_vertices, (0, 0), world_scale)
 
-    clock.tick(60)
-    pygame.display.set_caption(f"fps: {clock.get_fps()}")
+        self.p_number = p_number
+        self.hole = hole
+        self.figure_vertices = figure_vertices
+        self.figure_edges = figure_edges
+        self.initial_vertices = initial_vertices
+
+        self.setup()
+
+    def add_ball(self, pos, **kwargs):
+        body = pymunk.Body(**kwargs)
+        body.position = Vec2d(*pos)
+        shape = pymunk.Circle(body, 1)
+        shape.mass = 10
+        shape.friction = 0
+        shape.elasticity = 0
+        self.space.add(body, shape)
+        return body
+
+    def setup(self):
+        for i, p1 in enumerate(self.hole):
+            p2 = self.hole[(i + 1) % len(self.hole)]
+            s = pymunk.Segment(self.space.static_body, p1, p2, 1)
+            s.friction = 0
+            s.elasticity = 0
+            self.space.add(s)
+
+        balls = []
+        for v in self.initial_vertices:
+            b = self.add_ball(v)
+            balls.append(b)
+
+        hole_balls = []
+        for h in self.hole:
+            b = self.add_ball(h, body_type=pymunk.Body.STATIC)
+            hole_balls.append(b)
+
+        for e in self.figure_edges:
+            b1 = balls[e[0]]
+            b2 = balls[e[1]]
+            rest_len = Vec2d(*self.figure_vertices[e[0]]).get_distance(Vec2d(*self.figure_vertices[e[1]]))
+            c = pymunk.DampedSpring(b1, b2, (0, 0), (0, 0), rest_len, 1000, 500)
+            self.space.add(c)
+
+        self.balls = balls
+        self.hole_balls = hole_balls
+
+    def repel_force(self, v, ball_positions):
+        f_total = (0, 0)
+        for p in ball_positions:
+            dist = vec_dist(p, v) + 0.1
+            if dist > 50:
+                continue
+            f = REPEL_G / (dist * dist)
+            f_total = vec_add(f_total, vec_scale(vec_norm(vec_sub(p, v)), -f))
+        return f_total
+
+
+    def pull_apart_force(self, v, ball_positions):
+        ball_center = vec_mid(ball_positions)
+        f = PULL_APART_F  # * (1.0 - vec_dist(v, ball_center) / 500.0)
+        return vec_scale(vec_norm(vec_sub(v, ball_center)), f)
+
+
+    def hole_pull_force(self, v, ball_positions):
+        f_total = (0, 0)
+        for p in self.hole:
+            dist = vec_dist(p, v) + 0.1
+            if dist > 100:
+                continue
+            f = HOLE_G / (dist * dist)
+            f_total = vec_add(f_total, vec_scale(vec_norm(vec_sub(p, v)), f))
+        return f_total
+
+    def apply_forces(self):
+        balls = self.balls
+        ball_positions = [b.position for b in balls]
+        forces = [
+            lambda v: self.pull_apart_force(v, ball_positions),
+            # lambda v: self.repel_force(v, ball_positions),
+            lambda v: self.hole_pull_force(v, ball_positions),
+        ]
+        for i, ball in enumerate(balls):
+            f = (0, 0)
+            for force_fn in forces:
+                f = vec_add(f, force_fn(ball_positions[i]))
+
+            ball.apply_force_at_local_point(f, (0, 0))
+
+            # pygame.draw.lines(
+            #     self.screen,
+            #     (100, 0, 0),
+            #     False,
+            #     [ball.position, vec_add(ball.position, f)],
+            #     1,
+            # )
+
+    def save(self):
+        result = []
+        for i in range(len(self.figure_vertices)):
+            p = self.balls[i].position
+            result.append([int(p[0]/self.world_scale), int(p[1]/self.world_scale)])
+
+        result_json = f"{{\"vertices\":{result}}}"
+        print(result_json)
+
+        out_path = f"../solutions/pymonk/{self.p_number}"
+        with open(out_path, "w") as out:
+            out.write(result_json + "\n")
+
+        print(f"Saved output to {out_path}")
+
+    def game_loop(self):
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    exit()
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    exit()
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    self.save()
+
+            self.screen.fill(pygame.Color("white"))
+
+            for i in range(20):
+                self.apply_forces()
+                self.space.step(1.0 / 60)
+
+            self.space.debug_draw(self.draw_options)
+            pygame.display.flip()
+
+            self.clock.tick(60)
+            pygame.display.set_caption(f"fps: {self.clock.get_fps()}")
+
+def read_initial_vertices(initial_vertices_path):
+    with open(initial_vertices_path, "r") as json_file:
+            start = json.load(json_file)
+            initial_vertices = start["vertices"]
+    return initial_vertices
+
+def main(argv):
+    p_number = argv[1] if len(sys.argv) > 1 else DEFAULT_PROBLEM
+
+    # Read input.
+    with open(f"../problems/{p_number}", "r") as json_file:
+        input = json.load(json_file)
+
+    hole =  input["hole"]
+    figure_vertices =  input["figure"]["vertices"]
+    figure_edges =  input["figure"]["edges"]
+
+    # Read initial vertices.
+    initial_vertices = figure_vertices
+    if FLAGS.init_path:
+        initial_vertices = read_initial_vertices(FLAGS.init_path)
+
+    if FLAGS.scale:
+        initial_vertices = vec_scale_all(initial_vertices, vec_mid(initial_vertices), float(FLAGS.scale))
+
+    if FLAGS.move:
+        dx, dy = [float(s) for s in FLAGS.move.split(",")]
+        initial_vertices = vec_translate_all(initial_vertices, (dx, dy))
+
+    world = World(
+        p_number = p_number,
+        hole=hole,
+        figure_vertices=figure_vertices,
+        figure_edges=figure_edges,
+        initial_vertices=initial_vertices,
+        world_scale = FLAGS.world_scale)
+    world.game_loop()
+
+if __name__ == '__main__':
+  app.run(main)
