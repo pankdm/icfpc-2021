@@ -1,4 +1,4 @@
-from manual_solve import find_all_pairs
+# from manual_solve import find_all_pairs
 import sys
 import json
 
@@ -47,3 +47,5 @@ def print_distances(problem_id):
         total += min_dist
     print ("total = {}".format(total))
 
+
+print_distances(problem_id)
