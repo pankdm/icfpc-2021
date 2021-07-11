@@ -253,16 +253,16 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     setZoom(0)
     setPanOffset([0, 0])
   }
-  useHotkeys('[', () => {
+  useHotkeys('shift+w', () => {
     move(0, -1)
   }, {}, [move])
-  useHotkeys("'", () => {
+  useHotkeys("shift+s", () => {
     move(0, 1)
   }, {}, [move])
-  useHotkeys('\\', () => {
+  useHotkeys('shift+d', () => {
     move(1, 0)
   }, {}, [move])
-  useHotkeys(';', () => {
+  useHotkeys('shift+a', () => {
     move(-1, 0)
   }, {}, [move])
   useHotkeys('e', () => {
