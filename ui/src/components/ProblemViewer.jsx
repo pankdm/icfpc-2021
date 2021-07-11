@@ -2,19 +2,22 @@ import React, { useCallback, useMemo, useRef, useState } from 'react'
 import _ from 'lodash'
 import AspectRatioBox from './AspectRatioBox.jsx'
 import Spacer from './Spacer.jsx'
+import Flex from './Flex.jsx'
+import TrafficLight from './TrafficLight.jsx'
 import Bonuses from './svg/Bonuses.jsx'
 import Group from './svg/Group.jsx'
 import Grid from './svg/Grid.jsx'
 import Hole from './svg/Hole.jsx'
 import Figure from './svg/Figure.jsx'
 import styles from './ProblemViewer.module.css'
-import { getDistanceMap, getDistances, getScore, snapVecs, vecAdd, vecSub } from '../utils/graph.js'
+import { getDistanceMap, getDistances, getScore, snapVecs, vecAdd, vecSub, vecMult, vecNorm } from '../utils/graph.js'
 import { inflateLoop, inflateSimpleRadialLoop, relaxLoop, gravityLoop, applyShake } from '../utils/physics.js'
 import { useOnChangeValues } from '../utils/useOnChange.js'
 import useAnimLoop from '../utils/useAnimLoop.js'
 import { useHotkeys } from 'react-hotkeys-hook'
 import useDrag from '../utils/useDrag.js'
 import useBlip from '../utils/useBlip.js'
+import useDebounce from '../utils/useDebounce.js'
 import useLocalStorage from '../utils/useLocalStorage.js'
 import useDOMEvent from '../utils/useDOMEvent.js'
 
@@ -48,6 +51,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   const [panDragStartPoint, setPanDragStartPoint] = useState(null)
   const [panDragStartOffset, setPanDragStartOffset] = useState(null)
   const [multiselectMode, setMultiselectMode] = useState(false)
+  const [powerClickMode, setPowerClickMode] = useState(false)
   const [panOffset, setPanOffset] = useState([0, 0])
   const [overriddenVerticesKey, setOverriddenVerticesKey] = useState(null)
   const [simMode, setSimMode] = useState(null)
@@ -155,6 +159,9 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
       _.pickBy(stretches, (v) => v * v < 1-epsilonFraction),
     ]
   }, [figure, optimalDistancesMap, currentDistances, epsilon])
+  const hasBrokenEdges = _.size(overstretchedEdges) > 0 || _.size(overshrinkedEdges) > 0
+  const _debouncedHasBrokenEdges = useDebounce(hasBrokenEdges, 1000)
+  const debncHasBrokenEdges = hasBrokenEdges ? true : _debouncedHasBrokenEdges
   const score = useMemo(() => {
     return Math.floor(getScore(hole, currentVertices))
   }, [currentVertices, hole])
@@ -246,6 +253,27 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     vertices = vertices.map(([x, y]) => ([x + dx, y + dy]))
     setOverriddenVertices(vertices)
   }
+  const powerClick = (idx) => {
+    let vertices = _.cloneDeep(getCurrentVertices())
+    let currPt = vertices[idx]
+
+    figure.edges
+        .filter(([v1, v2]) => v1 === idx || v2 === idx)
+        .map(([v1, v2]) => (v1 === idx? v2: v1))
+        .filter(v => !frozenFigurePoints.has(v))
+        .map(v => {
+            const originalDistance = optimalDistancesMap[idx][v];
+
+            const oldPt = vertices[v]
+            const norm = vecNorm(vecSub(oldPt, currPt))
+            const scaled = vecMult(norm, originalDistance)
+            let newPt = vecAdd(vecMult(norm, originalDistance), currPt)
+
+            vertices[v] = newPt
+        });
+
+    setOverriddenVertices(vertices);
+  }
   const reset = () => {
     setSimMode(null)
     stopPlaying()
@@ -326,6 +354,19 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
       setMultiselectMode(false)
     }
   })
+  useDOMEvent('keydown', (ev) => {
+      // on press Shift
+      if (ev.keyCode == 91) {
+        setPowerClickMode(true)
+      };
+    })
+    useDOMEvent('keyup', (ev) => {
+      // on release Shift
+      if (ev.keyCode == 91) {
+        setPowerClickMode(false)
+      }
+    })
+
   useOnChangeValues([problem, solution], () => {
     reset()
   })
@@ -357,6 +398,9 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
                   if (!multiselectMode) {
                     removeFrozenFigurePoint(idx)
                   }
+                  if (powerClickMode) {
+                    powerClick(idx);
+                  }
                 }}
                 onPointDrag={(ev, idx) => {
                   const localDelta = clientDeltaToLocalSpaceDelta([ev.movementX, ev.movementY])
@@ -368,17 +412,37 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         </Group>
       </svg>
       <div className={styles.topLeft}>
-        <input placeholder='username / manual solutions alias' value={username} onChange={ev => setUsername(ev.target.value)} />
-        <button
-          disabled={saved}
-          onClick={() => {
-            snapVertices()
-            onSaveSolution(problemId, username, { vertices: getCurrentVertices() })
-            toggleSaved()
-          }
-        }>
-          {saved ? 'Saved' : 'Save'}
-        </button>
+          <TrafficLight
+            size='14em'
+            red={debncHasBrokenEdges}
+            yellow={false}
+            green={!debncHasBrokenEdges}
+          />
+        <Flex>
+          {/* <TrafficLight
+            size='4em'
+            red={hasBrokenEdges}
+            yellow={false}
+            green={!hasBrokenEdges}
+          /> */}
+          <div>
+            <input placeholder='username / manual solutions alias' value={username} onChange={ev => setUsername(ev.target.value)} />
+            <button
+              disabled={saved}
+              style={_.merge({}, hasBrokenEdges && { opacity: 0.75 })}
+              onClick={() => {
+                stopPlaying()
+                snapVertices()
+                onSaveSolution(problemId, username, { vertices: getCurrentVertices() })
+                toggleSaved()
+              }
+            }>
+              {hasBrokenEdges
+                ? (saved ? 'Okay...' : 'Save?')
+                : (saved ? 'Saved' : 'Save')}
+            </button>
+          </div>
+        </Flex>
       </div>
       <div className={styles.topRight}>
         <button onClick={togglePlaying}>{playing ? '(_) Physics: on' : '(_) Physics: off'}</button>

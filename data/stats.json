@@ -318,9 +318,9 @@
         "max_score": 11507
     },
     "54": {
-        "dislikes": "5072",
+        "dislikes": "0",
         "min_dislikes": 0,
-        "score": 162,
+        "score": 11552,
         "max_score": 11552
     },
     "55": {
@@ -414,9 +414,9 @@
         "max_score": 14252
     },
     "70": {
-        "dislikes": "11168",
+        "dislikes": "0",
         "min_dislikes": 0,
-        "score": 169,
+        "score": 17860,
         "max_score": 17860
     },
     "71": {
@@ -474,9 +474,9 @@
         "max_score": 15824
     },
     "80": {
-        "dislikes": null,
+        "dislikes": "0",
         "min_dislikes": 0,
-        "score": 0,
+        "score": 18409,
         "max_score": 18409
     },
     "81": {
@@ -505,7 +505,7 @@
     },
     "85": {
         "dislikes": null,
-        "min_dislikes": 42,
+        "min_dislikes": 14,
         "score": 0,
         "max_score": 20203
     },
@@ -535,8 +535,8 @@
     },
     "90": {
         "dislikes": "2925346",
-        "min_dislikes": 2397623,
-        "score": 19325,
+        "min_dislikes": 0,
+        "score": 12,
         "max_score": 21347
     },
     "91": {
@@ -553,25 +553,25 @@
     },
     "93": {
         "dislikes": null,
-        "min_dislikes": 15359,
+        "min_dislikes": 1086,
         "score": 0,
         "max_score": 20291
     },
     "94": {
         "dislikes": null,
-        "min_dislikes": 1661,
+        "min_dislikes": 1508,
         "score": 0,
         "max_score": 16842
     },
     "95": {
         "dislikes": null,
-        "min_dislikes": 8837,
+        "min_dislikes": 7907,
         "score": 0,
         "max_score": 19110
     },
     "96": {
         "dislikes": null,
-        "min_dislikes": 15423,
+        "min_dislikes": 15391,
         "score": 0,
         "max_score": 17437
     },
@@ -601,7 +601,7 @@
     },
     "101": {
         "dislikes": null,
-        "min_dislikes": 9202,
+        "min_dislikes": 7581,
         "score": 0,
         "max_score": 17617
     },
@@ -612,14 +612,14 @@
         "max_score": 17975
     },
     "103": {
-        "dislikes": null,
+        "dislikes": "216058",
         "min_dislikes": 58518,
-        "score": 0,
+        "score": 8918,
         "max_score": 17137
     },
     "104": {
         "dislikes": null,
-        "min_dislikes": 17039,
+        "min_dislikes": 16663,
         "score": 0,
         "max_score": 16372
     },

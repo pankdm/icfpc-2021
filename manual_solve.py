@@ -25,19 +25,20 @@ hole = spec['hole']
 print ("======")
 
 def find_all_pairs(new_dist):
+    v = spec['figure']['vertices']
     res = []
-    for i in range(len(hole)):
-        a = i
-        b = (i + 1) % len(hole)
-        d = dist2(hole[a], hole[b])
-        # print (i, (i + 1) % len(hole), d)
-        if check_distance(spec, d, new_dist):
+    for (a, b) in sorted(spec['figure']['edges']):
+        orig_dist = dist2(v[a], v[b])
+        if check_distance(spec, orig_dist, new_dist):
             res.append((a, b))
     return res
-    
 
-v = spec['figure']['vertices']
-for (a, b) in sorted(spec['figure']['edges']):
-    new_dist = dist2(v[a], v[b])
-    valid = find_all_pairs(new_dist)
-    print (a, b, new_dist, valid)
+
+for i in range(len(hole)):
+    a = i
+    b = (i + 1) % len(hole)
+    d = dist2(hole[a], hole[b])
+    # print (i, (i + 1) % len(hole), d)
+    res = find_all_pairs(d)
+    print ('hole from', a, 'to', b, '->', res)
+    
