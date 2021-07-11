@@ -288,9 +288,9 @@
         "max_score": 10851
     },
     "49": {
-        "dislikes": "96",
+        "dislikes": "0",
         "min_dislikes": 0,
-        "score": 1126,
+        "score": 11092,
         "max_score": 11092
     },
     "50": {
@@ -312,9 +312,9 @@
         "max_score": 11369
     },
     "53": {
-        "dislikes": null,
+        "dislikes": "0",
         "min_dislikes": 0,
-        "score": 0,
+        "score": 11507,
         "max_score": 11507
     },
     "54": {
@@ -625,8 +625,8 @@
     },
     "105": {
         "dislikes": "5593754",
-        "min_dislikes": 696267,
-        "score": 7954,
+        "min_dislikes": 335510,
+        "score": 5521,
         "max_score": 22546
     },
     "106": {
