@@ -51,6 +51,16 @@ async function createServer() {
     res.send(problems.sort(naturalSort))
   })
 
+  app.get('/api/problems/all', (req, res) => {
+    const problems = fs.readdirSync('../problems')
+    const all_problems = {}
+    _.map(problems, (id) => {
+      const problem = JSON.parse(fs.readFileSync(`../problems/${id}`))
+      all_problems[id] = problem
+    });
+    res.send(all_problems)
+  })
+
   app.get('/api/problems/:id', (req, res) => {
     const { id } = req.params
     const problem = JSON.parse(fs.readFileSync(`../problems/${id}`))
@@ -76,6 +86,13 @@ async function createServer() {
     res.status(201)
     res.send()
   })
+
+  app.get('/api/stats', (req, res) => {
+    const stats = JSON.parse(fs.readFileSync('../data/stats.json'))
+    res.send(stats)
+  })
+
+
 
   // UI frontend server Vite.js
   app.use(vite.middlewares)

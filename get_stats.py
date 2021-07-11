@@ -2,11 +2,14 @@ from get_problems import get_problem_json
 import requests
 import os
 import json
+import math
 
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 
 from get_problems import http_error
+from utils import read_problem
+
 
 
 load_dotenv()
@@ -31,15 +34,33 @@ def parse_problems_html(html):
     rows = soup.html.body.section.table.find_all('tr')
     # skipping header
     output = {}
+
+
     for row in rows[1:]:
         td1, td2, td3 = row.find_all('td')
-        problem = td1.string
+        problem_id = int(td1.string)
         dislikes = td2.string
         min_dislikes = td3.string
+        spec = read_problem(problem_id)
+        mult = 1000 * math.log2(len(spec['figure']['vertices']) * len(spec['figure']['edges']) * len(spec['hole']))
+        max_score = int(math.floor(mult))
+
+        # outer_bonus = spec['bonuses'][0]['problem']
+
+        if min_dislikes is not None and dislikes is not None and str.isdigit(dislikes):
+            my_score = int(mult * math.sqrt((int(min_dislikes) + 1) / (int(dislikes) + 1)))
+        else:
+            my_score = 0
+
+        if min_dislikes is not None:
+            min_dislikes = int(min_dislikes)
+
         # print (problem, dislikes, min_dislikes)
-        output[problem] = {
+        output[problem_id] = {
             'dislikes': dislikes,
             'min_dislikes': min_dislikes,
+            'score': my_score,
+            'max_score': max_score,
         }
     return output
 

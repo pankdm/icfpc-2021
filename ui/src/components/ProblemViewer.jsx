@@ -19,7 +19,7 @@ import useLocalStorage from '../utils/useLocalStorage.js'
 import useDOMEvent from '../utils/useDOMEvent.js'
 
 
-export default function ProblemViewer({ problemId, problem, solution, onSaveSolution, ...props }) {
+export default function ProblemViewer({ problemId, problem, solution, onSaveSolution, stats, ...props }) {
   const { hole, epsilon, figure, bonuses } = problem
   const epsilonFraction = epsilon/1e6
   const zeroPointLocation = useRef()
@@ -213,6 +213,39 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     vertices = snapVecs(vertices)
     setOverriddenVertices(vertices)
   }
+  const rotateCw = (phi) => {
+    let vertices = getCurrentVertices()
+    const cosPhi = Math.cos(phi)
+    const sinPhi = Math.sin(phi)
+
+    vertices = vertices.map(([x, y]) => {
+      let _x = (x - xMean) * cosPhi - (y - yMean) * sinPhi + xMean
+      let _y = (x - xMean) * sinPhi + (y - yMean) * cosPhi + yMean
+      return [_x, _y];
+    })
+    setOverriddenVertices(vertices)
+  }
+  const flipHz = () => {
+    let vertices = getCurrentVertices()
+    vertices = vertices.map(([x, y]) => {
+      let _x = xMean - (x - xMean)
+      return [_x, y]
+    })
+    setOverriddenVertices(vertices)
+  }
+  const flipVert = () => {
+    let vertices = getCurrentVertices()
+    vertices = vertices.map(([x, y]) => {
+      let _y = yMean - (y - yMean)
+      return [x, _y]
+    })
+    setOverriddenVertices(vertices)
+  }
+  const move = (dx, dy) => {
+    let vertices = getCurrentVertices()
+    vertices = vertices.map(([x, y]) => ([x + dx, y + dy]))
+    setOverriddenVertices(vertices)
+  }
   const reset = () => {
     setSimMode(null)
     stopPlaying()
@@ -220,10 +253,44 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     setZoom(0)
     setPanOffset([0, 0])
   }
-  useHotkeys('r', () => {
-    reset()
-  }, {}, [reset])
-  useHotkeys('p', () => {
+  useHotkeys('shift+w', () => {
+    move(0, -1)
+  }, {}, [move])
+  useHotkeys("shift+s", () => {
+    move(0, 1)
+  }, {}, [move])
+  useHotkeys('shift+d', () => {
+    move(1, 0)
+  }, {}, [move])
+  useHotkeys('shift+a', () => {
+    move(-1, 0)
+  }, {}, [move])
+  useHotkeys('ctrl+shift+w', () => {
+    move(0, -10)
+  }, {}, [move])
+  useHotkeys("ctrl+shift+s", () => {
+    move(0, 10)
+  }, {}, [move])
+  useHotkeys('ctrl+shift+d', () => {
+    move(10, 0)
+  }, {}, [move])
+  useHotkeys('ctrl+shift+a', () => {
+    move(-10, 0)
+  }, {}, [move])
+  useHotkeys('e', () => {
+    rotateCw(Math.PI/12)
+  }, {}, [rotateCw])
+  useHotkeys('q', () => {
+    rotateCw(-Math.PI/12)
+  }, {}, [rotateCw])
+  useHotkeys('a', () => {
+    flipHz()
+  }, {}, [flipHz])
+  useHotkeys('d', () => {
+    flipVert()
+  }, {}, [flipVert])
+  useHotkeys('space', (ev) => {
+    ev.preventDefault()
     togglePlaying()
   }, {}, [togglePlaying])
   useHotkeys('g', () => {
@@ -232,17 +299,26 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   useHotkeys('k', () => {
     singleShake()
   }, {}, [singleShake])
-  useHotkeys('i', () => {
+  useHotkeys('o', () => {
     toggleSimMode('simpleInflate')
   }, {}, [singleShake])
-  useHotkeys('o', () => {
-    toggleSimMode('infalte')
+  useHotkeys('i', () => {
+    toggleSimMode('inflate')
   }, {}, [toggleSimMode])
+  useHotkeys('s', () => {
+    snapVertices()
+  }, {}, [snapVertices])
+  useHotkeys('=', () => {
+    setZoom(zoom+0.5)
+  }, {}, [zoom])
+  useHotkeys('-', () => {
+    setZoom(zoom-0.5)
+  }, {}, [zoom])
   useDOMEvent('keydown', (ev) => {
     // on press Shift
     if (ev.keyCode == 16) {
       setMultiselectMode(true)
-    }
+    };
   })
   useDOMEvent('keyup', (ev) => {
     // on release Shift
@@ -254,6 +330,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     reset()
   })
   return (
+    <div>
     <AspectRatioBox>
       <svg ref={svgRef} className={styles.svg} viewBox={`${0} ${0} ${xMax - xMin} ${yMax - yMin}`}>
         <Group x={-xMin} y={-yMin}>
@@ -304,16 +381,16 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         </button>
       </div>
       <div className={styles.topRight}>
-        <button onClick={togglePlaying}>{playing ? 'Physics: on' : 'Physics: off'}</button>
-        <button onClick={() => toggleSimMode('inflate')}>{simMode == 'inflate' ? 'Inflating' : 'Inflate'}</button>
-        <button onClick={() => toggleSimMode('simpleInflate')}>{simMode == 'simpleInflate' ? 'Stretching' : 'Stretch'}</button>
-        <button onClick={() => toggleSimMode('gravity')}>{simMode == 'gravity' ? 'Gravitating' : 'Gravity'}</button>
-        <button onClick={singleShake}>Shake</button>
-        <button onClick={snapVertices}>Snap</button>
+        <button onClick={togglePlaying}>{playing ? '(_) Physics: on' : '(_) Physics: off'}</button>
+        <button onClick={() => toggleSimMode('inflate')}>{simMode == 'inflate' ? '(I) Inflating' : '(I) Inflate'}</button>
+        <button onClick={() => toggleSimMode('simpleInflate')}>{simMode == 'simpleInflate' ? '(O) Stretching' : '(O) Stretch'}</button>
+        <button onClick={() => toggleSimMode('gravity')}>{simMode == 'gravity' ? '(G) Gravitating' : '(G) Gravity'}</button>
+        <button onClick={singleShake}>(K) Shake</button>
+        <button onClick={snapVertices}>(S) Snap</button>
         <button onClick={reset}>Reset</button>
         <Spacer />
-        <button onClick={() => setMultiselectMode(!multiselectMode)}>{multiselectMode ? 'Selecting...' : 'Glue Points'}</button>
-        <button onClick={() => unselectAllGluedPoints()}>Unselect {frozenFigurePoints.size}</button>
+        <button style={{ height: '2.5em' }} onClick={() => setMultiselectMode(!multiselectMode)}>{multiselectMode ? 'Selecting...' : '⬆️ Glue Points'}</button>
+        <button disabled={!frozenFigurePoints.size} onClick={() => unselectAllGluedPoints()}>Unselect {frozenFigurePoints.size}</button>
         <button onClick={toggleDragMode}>{dragMode ? 'Pan Enabled' : 'Pan Disabled'}</button>
       </div>
       <div className={styles.bottomRight}>
@@ -328,7 +405,26 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         <pre className={styles.score}>
           Score: {_.padStart(score, 4, ' ')}
         </pre>
+        <pre className={styles.score}>
+          Best: {_.padStart(stats.min_dislikes, 5, ' ')}
+        </pre>
       </div>
     </AspectRatioBox>
+    <pre className={styles.hotkeysInstruction}>
+    {`
+Extra hotkeys:
+
+     E  - rotate +CW
+     Q  - rotate -CW
+     D  - flip vertical
+     A  - mirror horiztl
+
+shft+W  - move up          ctrl+shft+W  - power move up
+shft+S  - move down        ctrl+shft+S  - power move down
+shft+A  - move left        ctrl+shft+A  - power move left
+shft+D  - move right       ctrl+shft+D  - power move right
+    `.trim()}
+    </pre>
+    </div>
   )
 }

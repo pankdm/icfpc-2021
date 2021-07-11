@@ -1,0 +1,57 @@
+.app {
+    max-width: none;
+}
+
+.table {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 600;
+    width: 100%;
+}
+
+.table tr:nth-child(2n+2) {
+    background-color: rgba(0,0,0,0.1);
+}
+
+.table th {
+    font-weight: 900;
+    font-size: 1.125em;
+    vertical-align: bottom;
+    text-align: left;
+    padding-bottom: .5em;
+    padding: 0.25em;
+    user-select: none;
+}
+.sort-icon {
+    display: inline-block;
+    font-size: 1.5em;
+    line-height: 1;
+    vertical-align: middle;
+    text-align: center;
+    width: 1em;
+    height: 1em;
+}
+.column-label {
+    display: inline-block;
+}
+.column-label:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+.table td {
+    vertical-align: top;
+    min-height: 3em;
+    padding-bottom: .5em;
+    padding: 0.25em;
+    font-size: 1.125em;
+}
+
+.table,
+.table pre {
+    color: #444;
+}
+.table pre {
+    font-size: 1em;
+}
+.id-cell {
+    min-height: 3em;
+}

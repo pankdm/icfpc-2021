@@ -152,8 +152,27 @@ class TimeoutException(Exception):
     pass
 
 
+def compute_edge_lens(spec):
+    hole = spec["hole"]
+    hole_edges = [dist2(hole[i], hole[i-1]) for i in range(1, len(hole))]
+    hole_edges.append(dist2(hole[0], hole[-1]))
+    spec["hole_edge_lens"] = hole_edges
+
+    figure = spec["figure"]
+    edges, vtx = figure["edges"], figure["vertices"]
+    fig_edges = [dist2(vtx[edges[i][0]], vtx[edges[i][1]]) for i in range(len(edges))]
+    epsilon = spec["epsilon"]
+    fig_edges_min_max = [(edge*(1-epsilon/1e6), edge*(1+epsilon/1e6)) for edge in fig_edges]
+    figure["edges_min_max_lens"] = fig_edges_min_max
+
+    fig_vtx_lens = [set() for i in range(len(vtx))]
+    for i, e in enumerate(edges):
+        for a in (0, 1):
+            fig_vtx_lens[e[a]].add(fig_edges_min_max[i])
+    figure["vtx_min_max_lens"] = fig_vtx_lens
+
 class Solver():
-    def __init__(self, spec):
+    def __init__(self, spec, len_matching=False):
         self.spec = spec
         inside_points, polygon = compute_inside_points(spec)
         self.inside_points = inside_points
@@ -167,6 +186,9 @@ class Solver():
             adj[e[0]].append(e[1])
             adj[e[1]].append(e[0])
         spec['figure']['adj'] = adj
+        self.len_matching = len_matching
+        if len_matching:
+            compute_edge_lens(spec)
 
     def try_solve(self, solution):
         spec = self.spec
@@ -210,6 +232,8 @@ class Solver():
             if check_partial_solution(spec, solution, b, pt):
                 solution[b] = pt
                 self.try_solve(solution)
+                if time.time() - self.start_fig_vtx > 1: # 1 sec timeout per start fig vtx
+                    return False
                 # otherwise restore previous state
                 if self.best_score == 0: break
                 del solution[b]
@@ -221,31 +245,36 @@ class Solver():
         
 
         spec = self.spec
-        total_points = len(spec['figure']['vertices'])
+        num_fig_vtx = len(spec['figure']['vertices'])
 
         # start from some setup
-        with open('solutions/manual/59_dm_start_1625956775678') as f:
-            start = json.loads(f.read())
-        solution = {}
-        for (idx, v) in enumerate(start['vertices']):
-            if v in spec['hole']:
-                solution[idx] = v
-        print ('start with {} nodes'.format(len(solution)))
-        self.try_solve(solution)
+        # with open('solutions/manual/59_dm_start_1625956775678') as f:
+        #     start = json.loads(f.read())
+        # solution = {}
+        # for (idx, v) in enumerate(start['vertices']):
+        #     if v in spec['hole']:
+        #         solution[idx] = v
+        # print ('start with {} nodes'.format(len(solution)))
+        # self.try_solve(solution)
 
-        # hole_indices = list(range(len(spec['hole'])))
-        # random.shuffle(hole_indices)
-        # for first_index in hole_indices:
-        #     first_hole_pt = spec['hole'][first_index]
-        #     point_indices = list(range(total_points))
-        #     random.shuffle(point_indices)
-        #     for index in point_indices:
-        #         if self.best_score == 0:
-        #             break
-        #         print ('Trying connecting index={} to {}'.format(index, first_hole_pt))
-        #         solution = {index: tuple(first_hole_pt)}
+        hole_indices = list(range(len(spec['hole'])))
+        random.shuffle(hole_indices)
+        for hole_idx in hole_indices:
+            first_hole_pt = spec['hole'][hole_idx]
+            fig_vtcs = list(range(num_fig_vtx))
+            random.shuffle(fig_vtcs)
+            for fig_vtx in fig_vtcs:
+                if self.len_matching:
+                    if (not any(mi<=spec["hole_edge_lens"][hole_idx]<=ma for mi, ma in spec["figure"]["vtx_min_max_lens"][fig_vtx])
+                    and not any(mi<=spec["hole_edge_lens"][hole_idx-1]<=ma for mi, ma in spec["figure"]["vtx_min_max_lens"][fig_vtx])):
+                        continue
+                if self.best_score == 0:
+                    break
+                self.start_fig_vtx = time.time()
+                print ('Trying connecting figure vtx={} to hole vtx {}'.format(fig_vtx, hole_idx))
+                solution = {fig_vtx: tuple(first_hole_pt)}
 
-        #         self.try_solve(solution)
+                self.try_solve(solution)
 
 
 
@@ -356,7 +385,7 @@ def solve_and_submit(problem_id):
     print ('edges:', len(spec['figure']['edges']))
     print ('vertices:', len(spec['figure']['vertices']))
 
-    solver = Solver(spec)
+    solver = Solver(spec, len_matching=True)
     print ('inside points:', len(solver.inside_points))
     try:
         solver.full_solve()
