@@ -38,3 +38,7 @@ export function saveSolution(problemId, username, solution) {
     body: JSON.stringify(solution),
   })
 }
+
+export function useStats(opts={}) {
+  return useQuery('stats', () => fetchJson(`${API_ROOT}/stats`), opts)
+}
