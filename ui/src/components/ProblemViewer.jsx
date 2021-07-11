@@ -468,8 +468,6 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
       <button style={{ height: '2.5em' }} onClick={() => setMultiselectMode(!multiselectMode)}>{multiselectMode ? 'Selecting...' : '⬆️ Glue Points'}</button>
       <button disabled={!frozenFigurePoints.size} onClick={() => unselectAllGluedPoints()}>Unselect {frozenFigurePoints.size}</button>
       <button onClick={toggleDragMode}>{dragMode ? 'Pan Enabled' : 'Pan Disabled'}</button>
-    </div>
-    <div className={styles.bottomRight}>
       <button onClick={() => setZoom(zoom+1)}>+</button>
       <button onClick={() => setZoom(zoom-1)}>-</button>
       <pre className={styles.score}>
@@ -484,6 +482,8 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
       <pre className={styles.score}>
         Best: {_.padStart(stats.min_dislikes, 5, ' ')}
       </pre>
+    </div>
+    <div className={styles.bottomRight}>
     </div>
     <pre className={styles.hotkeysInstruction}>
     {`

@@ -355,8 +355,8 @@
     },
     "60": {
         "dislikes": "12489",
-        "min_dislikes": 240,
-        "score": 2037,
+        "min_dislikes": 211,
+        "score": 1910,
         "max_score": 14665
     },
     "61": {
@@ -409,7 +409,7 @@
     },
     "69": {
         "dislikes": null,
-        "min_dislikes": 738,
+        "min_dislikes": 705,
         "score": 0,
         "max_score": 14252
     },
@@ -487,7 +487,7 @@
     },
     "82": {
         "dislikes": null,
-        "min_dislikes": 1481,
+        "min_dislikes": 1451,
         "score": 0,
         "max_score": 16933
     },
@@ -505,7 +505,7 @@
     },
     "85": {
         "dislikes": null,
-        "min_dislikes": 14,
+        "min_dislikes": 0,
         "score": 0,
         "max_score": 20203
     },
@@ -541,8 +541,8 @@
     },
     "91": {
         "dislikes": "51774",
-        "min_dislikes": 12882,
-        "score": 8570,
+        "min_dislikes": 12879,
+        "score": 8569,
         "max_score": 17181
     },
     "92": {
@@ -565,13 +565,13 @@
     },
     "95": {
         "dislikes": null,
-        "min_dislikes": 7903,
+        "min_dislikes": 5744,
         "score": 0,
         "max_score": 19110
     },
     "96": {
         "dislikes": null,
-        "min_dislikes": 14645,
+        "min_dislikes": 14461,
         "score": 0,
         "max_score": 17437
     },
@@ -613,13 +613,13 @@
     },
     "103": {
         "dislikes": "216058",
-        "min_dislikes": 58518,
-        "score": 8918,
+        "min_dislikes": 49921,
+        "score": 8237,
         "max_score": 17137
     },
     "104": {
         "dislikes": null,
-        "min_dislikes": 15985,
+        "min_dislikes": 15872,
         "score": 0,
         "max_score": 16372
     },
@@ -634,5 +634,161 @@
         "min_dislikes": 0,
         "score": 10,
         "max_score": 20899
+    },
+    "107": {
+        "dislikes": null,
+        "min_dislikes": 4511,
+        "score": 0,
+        "max_score": 19061
+    },
+    "108": {
+        "dislikes": null,
+        "min_dislikes": 18427,
+        "score": 0,
+        "max_score": 14752
+    },
+    "109": {
+        "dislikes": null,
+        "min_dislikes": 548,
+        "score": 0,
+        "max_score": 15938
+    },
+    "110": {
+        "dislikes": null,
+        "min_dislikes": 13208,
+        "score": 0,
+        "max_score": 16756
+    },
+    "111": {
+        "dislikes": null,
+        "min_dislikes": 15582,
+        "score": 0,
+        "max_score": 17140
+    },
+    "112": {
+        "dislikes": null,
+        "min_dislikes": 20277,
+        "score": 0,
+        "max_score": 16761
+    },
+    "113": {
+        "dislikes": null,
+        "min_dislikes": 12179,
+        "score": 0,
+        "max_score": 16877
+    },
+    "114": {
+        "dislikes": null,
+        "min_dislikes": 735143,
+        "score": 0,
+        "max_score": 23013
+    },
+    "115": {
+        "dislikes": null,
+        "min_dislikes": 57540,
+        "score": 0,
+        "max_score": 18115
+    },
+    "116": {
+        "dislikes": null,
+        "min_dislikes": 4458,
+        "score": 0,
+        "max_score": 16968
+    },
+    "117": {
+        "dislikes": null,
+        "min_dislikes": 37165,
+        "score": 0,
+        "max_score": 17442
+    },
+    "118": {
+        "dislikes": null,
+        "min_dislikes": 5985,
+        "score": 0,
+        "max_score": 18255
+    },
+    "119": {
+        "dislikes": null,
+        "min_dislikes": 26556,
+        "score": 0,
+        "max_score": 17214
+    },
+    "120": {
+        "dislikes": null,
+        "min_dislikes": 29396,
+        "score": 0,
+        "max_score": 17739
+    },
+    "121": {
+        "dislikes": null,
+        "min_dislikes": 15410,
+        "score": 0,
+        "max_score": 17564
+    },
+    "122": {
+        "dislikes": null,
+        "min_dislikes": 2807,
+        "score": 0,
+        "max_score": 22114
+    },
+    "123": {
+        "dislikes": null,
+        "min_dislikes": 14293,
+        "score": 0,
+        "max_score": 16225
+    },
+    "124": {
+        "dislikes": null,
+        "min_dislikes": 15855,
+        "score": 0,
+        "max_score": 16570
+    },
+    "125": {
+        "dislikes": null,
+        "min_dislikes": 1385435,
+        "score": 0,
+        "max_score": 22520
+    },
+    "126": {
+        "dislikes": null,
+        "min_dislikes": 139964,
+        "score": 0,
+        "max_score": 21004
+    },
+    "127": {
+        "dislikes": null,
+        "min_dislikes": 17227,
+        "score": 0,
+        "max_score": 13222
+    },
+    "128": {
+        "dislikes": null,
+        "min_dislikes": 13943,
+        "score": 0,
+        "max_score": 17162
+    },
+    "129": {
+        "dislikes": null,
+        "min_dislikes": 34881,
+        "score": 0,
+        "max_score": 18710
+    },
+    "130": {
+        "dislikes": null,
+        "min_dislikes": 7070,
+        "score": 0,
+        "max_score": 17597
+    },
+    "131": {
+        "dislikes": null,
+        "min_dislikes": 21097,
+        "score": 0,
+        "max_score": 17330
+    },
+    "132": {
+        "dislikes": null,
+        "min_dislikes": 16857,
+        "score": 0,
+        "max_score": 18099
     }
 }
