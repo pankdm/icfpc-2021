@@ -18,6 +18,8 @@
 
 ![](img/ui.png)
 
+[Watch video demo](https://youtu.be/4fN2UakDoFM)
+
 Our main approach was to build user interface tool to assist the human in manually solving the puzzles.
 At some it became obvious that automated solvers approach is not fruitfull for us so we went all-in on this UI.
 Over time it grow in functionality so much and so that we started calling it `ICFPC IDE`.
