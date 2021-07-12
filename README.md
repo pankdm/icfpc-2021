@@ -39,9 +39,7 @@ Here is overview of main funtionality:
 ## Usage
 
 ```
-cd ui/
-yarn install
-yarn dev
+cd ui/ && yarn install && yarn dev
 ```
 
 Navigate to [http://localhost:3000]()
