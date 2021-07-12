@@ -44,8 +44,8 @@ def parse_problems_html(html):
         dislikes = td2.string
         min_dislikes = td3.string
         spec = read_problem(problem_id)
-        mult = 1000 * math.log2(len(spec['figure']['vertices']) * len(spec['figure']['edges']) * len(spec['hole']))
-        max_score = int(math.floor(mult))
+        mult = 1000 * math.log2(len(spec['figure']['vertices']) * len(spec['figure']['edges']) * len(spec['hole']) / 6.0)
+        max_score = int(math.ceil(mult))
 
         # outer_bonus = spec['bonuses'][0]['problem']
 
