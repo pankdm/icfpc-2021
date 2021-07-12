@@ -92,7 +92,7 @@ def is_edge_inside(spec, A: Tuple, B: Tuple):
     return is_edge_not_overlapping_hole(spec, A, B)
 
 def is_edge_points_inside_fast(inside_points_set, A: Tuple, B: Tuple):
-    for a in [0.5, 0.25, 0.75]:
+    for a in [0.5, 0.25, 0.75, 0.1, 0.2, 0.3, 0.4, 0.6, 0.7, 0.8, 0.9]:
         pt = point_average(A, B, a)
         if (int(pt[0]), int(pt[1])) not in inside_points_set:
             return False
@@ -448,6 +448,8 @@ class Solution:
         self.hole_status = s["hole_status"]
         self.vertices = s["vertices"]
 
+solution_num = 0
+
 class IntegralSolver:
     def __init__(self, spec, initial_solution, problem_id):
         self.spec = spec
@@ -481,7 +483,7 @@ class IntegralSolver:
         self.edges = edges
         self.vertices = [tuple(v) for v in vtx]
         print(f"self.vertices = {self.vertices}")
-        self.epsilon = 0.5 * spec["epsilon"] / 1000000.0
+        self.epsilon = 0.8 * spec["epsilon"] / 1000000.0
 
         # adjacency lists
         graph = nx.Graph()
@@ -591,11 +593,14 @@ class IntegralSolver:
             
 
     def try_solve(self, solution):
+        global solution_num
         self.watchdog(solution)
 
         if len(solution.placed) == solution.num_vertices:
             # Done.
             solution.print()
+            solution_num += 1
+            solution.write_to_file(f"solutions/solver/{self.problem_id}_{solution_num}")
             score = count_dislikes_impl(self.spec, solution.vertices)
             print(f"Found solution! score = {score}")
 
@@ -646,6 +651,7 @@ class IntegralSolver:
                             pt in self.inside_points_set and  # fast
                             is_edge_not_overlapping_hole(self.spec, solution.vertices[neib], pt) and  # slower
                             is_edge_points_inside_fast(self.inside_points_set, solution.vertices[neib], pt)# slowest
+                            # is_edge_inside(self.spec, solution.vertices[neib], pt)
                         ))
 
 
