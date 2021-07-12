@@ -81,10 +81,16 @@ async function createServer() {
   })
   app.post('/api/solutions/:problemId', (req, res) => {
     const { problemId } = req.params
+    const { forSubmit=false } = req.query
     const { alias='' } = req.query
     const solution = req.body
+    console.log(req.query)
     fs.writeFileSync(`../solutions/manual/${problemId}_${alias}_${Date.now()}`, JSON.stringify(solution))
     fs.writeFileSync(`../solutions/current`, JSON.stringify(solution))
+    if (forSubmit) {
+      // don't use date to make it easier to push to git
+      fs.writeFileSync(`../solutions/submit/${problemId}_${alias}`, JSON.stringify(solution))
+    }
     res.status(201)
     res.send()
   })

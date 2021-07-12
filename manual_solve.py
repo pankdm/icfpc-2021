@@ -1,7 +1,7 @@
 
 from utils import read_problem
 import sys
-
+import json
 
 problem_id = sys.argv[1]
 spec = read_problem(problem_id)
@@ -22,6 +22,9 @@ hole = spec['hole']
 # for i in range(len(hole)):
 #     print (i, (i + 1) % len(hole), dist2(hole[i], hole[(i + 1) % len(hole)]))
 
+with open('solutions/current', 'rt') as f:
+    current = json.loads(f.read())
+
 print ("======")
 
 def find_all_pairs(new_dist):
@@ -29,6 +32,8 @@ def find_all_pairs(new_dist):
     res = []
     for (a, b) in sorted(spec['figure']['edges']):
         orig_dist = dist2(v[a], v[b])
+        if a in current['fixedPoints'] or b in current['fixedPoints']:
+            continue
         if check_distance(spec, orig_dist, new_dist):
             res.append((a, b))
     return res

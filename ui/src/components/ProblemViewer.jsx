@@ -486,7 +486,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
             onClick={() => {
               stopPlaying()
               snapVertices()
-              onSaveSolution(problemId, username, { vertices: getCurrentVertices() })
+              onSaveSolution(problemId, username, { vertices: getCurrentVertices() },  /* forSubmit */ true)
               toggleSaved()
             }
           }>

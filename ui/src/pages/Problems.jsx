@@ -14,9 +14,9 @@ function Problems() {
   const { data: solutions, refetch: refetchSolutions } = useSolutions(problemId, { enabled: !!problemId, refreshInterval: 60000 })
   const { data: solution, refetch: refetchSolution } = useSolution(problemId, solutionId, { enabled: !!problemId && !!solutionId })
   const { data: stats } = useStats()
-  const onSaveSolution = (problemId, username, solution) => {
+  const onSaveSolution = (problemId, username, solution, forSubmit=false) => {
     console.log('Saving solution', problemId, solution)
-    return saveSolution(problemId, username, solution)
+    return saveSolution(problemId, username, solution, forSubmit)
   }
   return (
     <div className='app'>
