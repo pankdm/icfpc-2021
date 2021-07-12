@@ -53,5 +53,8 @@
     font-size: 1em;
 }
 .id-cell {
-    min-height: 3em;
+    width: 9em;
+}
+.id-cell-content {
+    min-height: 5em;
 }

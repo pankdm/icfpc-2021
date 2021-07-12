@@ -26,16 +26,16 @@ function Th({ sortOrder, children, ...props }) {
 
 function StatsRow({ problemId, problem, stat, fromBonuses, ...props }) {
   const ref = useRef()
-  const visible = useOnScreen(ref, '300px')
+  const visible = useOnScreen(ref, -300, parseInt(problemId) == 4 ? problemId : null)
   return (
     <tr ref={ref}>
-      <td>
-        <Flex className={styles.idCell}>
-          <FlexItem basis={100} flex={0} style={{ height: 100 }}>
+      <td className={styles.idCell}>
+        <Flex className={styles.idCellContent}>
+          <div style={{ width: '5em', height: '5em' }}>
             {visible && <ProblemPreview problem={problem} />}
-          </FlexItem>
+          </div>
           <Spacer size='xs' />
-          <Flex basis={'3em'} flex={0}>
+          <Flex basis={'3em'} grow={0}>
             <a href={`http://poses.live/problems/${problemId}`}>
               {problemId}
             </a>
@@ -128,9 +128,10 @@ export default function Scores(props) {
           </tr>
           {_.map(
             sortedStats,
-            (stat) => (
+            (stat, rowIdx) => (
               <StatsRow
-                key={stat['id']}
+                key={rowIdx}
+                // key={stat['id']}
                 stat={stat}
                 problemId={stat['id']}
                 problem={all_problems[stat['id']]}
