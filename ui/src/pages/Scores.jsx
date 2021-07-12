@@ -42,6 +42,7 @@ function StatsRow({ problemId, problem, stat, fromBonuses, ...props }) {
           </Flex>
         </Flex>
       </td>
+      <td> {stat['dislikes'] == stat['min_dislikes'] ? '✅ ': ''}</td>
       <td> {stat['dislikes']}</td>
       <td> {stat['min_dislikes']}</td>
       <td> {stat['score']}</td>
@@ -116,6 +117,7 @@ export default function Scores(props) {
         <tbody>
           <tr>
             <Th sortOrder={getSortOrder('id')} onClick={() => toggleSort('id', 'asc')}> problem </Th>
+            <Th> best? </Th>
             <Th sortOrder={getSortOrder('dislikes')} onClick={() => toggleSort('dislikes', 'desc')}> your dislikes</Th>
             <Th sortOrder={getSortOrder('min_dislikes')} onClick={() => toggleSort('min_dislikes', 'desc')}> minimal dislikes </Th>
             <Th sortOrder={getSortOrder('score')} onClick={() => toggleSort('score', 'desc')}> your score </Th>
