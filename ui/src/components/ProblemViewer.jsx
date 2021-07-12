@@ -50,6 +50,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   const zoomScale = 2**-zoom
   const [panDragStartPoint, setPanDragStartPoint] = useState(null)
   const [panDragStartOffset, setPanDragStartOffset] = useState(null)
+  const [pointRadius, setPointRadius] = useState(0.5)
   const [timeScale, setTimeScale] = useState(1)
   const [multiselectMode, setMultiselectMode] = useState(false)
   const [powerClickMode, setPowerClickMode] = useState(false)
@@ -523,6 +524,7 @@ ${_.keys(overshrinkedEdges).length
               <Figure
                 animate={false}
                 vertices={getCurrentVertices()}
+                pointRadius={pointRadius}
                 edges={figure.edges}
                 epsilon={epsilonFraction}
                 edgeStretches={edgeStretches}
@@ -579,6 +581,17 @@ ${_.keys(overshrinkedEdges).length
         </Flex>
         <FlexItem basis='1.5em' grow={0} shrink={0}>
           <button style={{minWidth: 0, margin: 0}} onClick={() => setTimeScale(timeScale+1)}>+</button>
+        </FlexItem>
+      </Flex>
+      <Flex alignItems='center'>
+        <FlexItem basis='1.5em' grow={0} shrink={0}>
+          <button style={{minWidth: 0, margin: 0}} onClick={() => setPointRadius(Math.max(pointRadius-0.5, 0.5))}>-</button>
+        </FlexItem>
+        <Flex grow={1} justifyContent='center' alignSelf='stretch'>
+          Size: {pointRadius}
+        </Flex>
+        <FlexItem basis='1.5em' grow={0} shrink={0}>
+          <button style={{minWidth: 0, margin: 0}} onClick={() => setPointRadius(pointRadius+0.5)}>+</button>
         </FlexItem>
       </Flex>
       <pre className={styles.score}>
