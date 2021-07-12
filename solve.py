@@ -591,7 +591,7 @@ class IntegralSolver:
             if current_depth > self.current_depth:
                 self.current_depth = current_depth
                 self.start_times[current_depth] = now
-            elif current_depth in self.start_times and now - self.start_times[current_depth] > 120:  # too long at the same branch
+            elif current_depth in self.start_times and now - self.start_times[current_depth] > 40:  # too long at the same branch
                 print("\n\nWOOF WOOF WATCHDOT NOT HAPPY\n\n")
                 solution.print()
                 solution.write_to_file(f"solutions/solver/{self.problem_id}_partial")
@@ -758,12 +758,11 @@ def solve_and_win(problem_id):
 
     sol = Solution(spec, len(spec['figure']['vertices']))
     # Load a partial solution from the perimeter map from walker_solve.py
-    h2f = {
-        14: 52, 15: 55, 16: 70, 17: 85, 18: 80, 19: 98, 20: 102, 21: 107, 22: 114, 23: 120, 24: 116, 25: 125, 26: 124, 27: 128, 28: 130, 29: 131, 30: 129, 31: 123, 32: 122, 33: 111, 34: 93, 35: 79, 65: 29, 66: 23, 67: 13, 68: 8, 69: 3, 70: 9, 71: 2, 72: 0, 0: 1, 1: 4, 2: 6, 3: 5, 4: 7, 5: 12, 6: 11, 7: 16, 8: 21, 9: 34, 10: 42, 11: 28, 12: 46, 13: 56, 43: 115, 44: 103, 45: 101, 46: 83, 47: 86, 48: 96, 49: 88, 50: 76, 51: 74, 52: 69, 53: 53, 54: 51, 55: 37, 56: 41, 57: 31, 58: 17, 59: 10, 60: 15, 61: 27, 62: 20, 36: 100, 37: 113, 38: 119, 39: 126, 40: 127, 41: 117, 42: 121}
+    h2f = {29: 87, 30: 91, 31: 88, 32: 81, 33: 75, 34: 73, 35: 60, 36: 74, 37: 84, 38: 78, 39: 64, 40: 46, 41: 31, 42: 21, 43: 9, 44: 11, 45: 8, 46: 15, 47: 16, 48: 6, 49: 0, 0: 1, 1: 10, 2: 23, 14: 26, 15: 34, 16: 55, 17: 53, 18: 79, 19: 80, 20: 82, 21: 68, 22: 57, 23: 51}
 
     for h,f in h2f.items():
         sol.place(f, tuple(spec["hole"][h]))
-    # initial_solution = sol
+    initial_solution = sol
 
     solver = IntegralSolver(spec =spec, initial_solution =initial_solution, problem_id=problem_id)
     print ('inside points:', len(solver.inside_points))
