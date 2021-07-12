@@ -479,6 +479,20 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
               ? (saved ? 'Okay...' : 'Save?')
               : (saved ? 'Saved' : 'Save')}
           </button>
+          <button
+            disabled={saved}
+            style={_.merge({}, debncHasBrokenEdges && { opacity: 0.75 })}
+            onClick={() => {
+              stopPlaying()
+              snapVertices()
+              onSaveSolution(problemId, username, { vertices: getCurrentVertices() })
+              toggleSaved()
+            }
+          }>
+            {debncHasBrokenEdges
+              ? (saved ? 'Okay...' : 'Save for Submit?')
+              : (saved ? 'Saved' : 'Save for Submit')}
+          </button>
         <pre style={{overflowX: 'scroll'}}>
 {`
 Stretched Edges:
