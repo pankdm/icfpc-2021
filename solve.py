@@ -481,7 +481,7 @@ class IntegralSolver:
         self.edges = edges
         self.vertices = [tuple(v) for v in vtx]
         print(f"self.vertices = {self.vertices}")
-        self.epsilon = spec["epsilon"] / 1000000.0
+        self.epsilon = 0.5 * spec["epsilon"] / 1000000.0
 
         # adjacency lists
         graph = nx.Graph()
@@ -649,15 +649,17 @@ class IntegralSolver:
                         ))
 
 
-            # print(f"viable_points for {next_to_place} (neibs {neibs}): {viable_points}")
+            print(f"viable_points for {next_to_place} (neibs {neibs}): {viable_points}")
 
             # Must have at least one neib that's placed already.
             assert viable_points is not None
 
-            viable_points = [
-                pt for pt in viable_points
-                if self.is_point_reachable_from_points(solution, solution.placed, next_to_place, pt)
-            ]
+            # viable_points = [
+            #     pt for pt in viable_points
+            #     if self.is_point_reachable_from_points(solution, solution.placed, next_to_place, pt)
+            # ]
+
+            # print(f"viable_points for {next_to_place} (neibs {neibs}): {viable_points}")
 
             if viable_points:
 
