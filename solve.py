@@ -74,10 +74,7 @@ def point_average(A: Tuple, B: Tuple, a=0.1) -> Tuple:
     # Get a point on line AB, 'a' fraction distance from A
     return ((1-a)*A[0]+a*B[0], (1-a)*A[1]+a*B[1])
 
-def is_edge_inside(spec, A: Tuple, B: Tuple):
-    # Check if AB is fully within the hole
-    if not all(is_inside(spec['hole_poly'], *point_average(A, B, a), eps) for a in (0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1)):
-        return False
+def is_edge_not_overlapping_hole(spec, A: Tuple, B: Tuple):
     for i, v in enumerate(spec['hole']):
         if i == 0:
             continue
@@ -86,6 +83,19 @@ def is_edge_inside(spec, A: Tuple, B: Tuple):
             return False
     if segment_intersect(spec['hole'][-1], spec['hole'][0], A, B):
         return False
+    return True
+
+def is_edge_inside(spec, A: Tuple, B: Tuple):
+    # Check if AB is fully within the hole
+    if not all(is_inside(spec['hole_poly'], *point_average(A, B, a), eps) for a in (0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1)):
+        return False
+    return is_edge_not_overlapping_hole(spec, A, B)
+
+def is_edge_points_inside_fast(inside_points_set, A: Tuple, B: Tuple):
+    for a in [0.5, 0.25, 0.75]:
+        pt = point_average(A, B, a)
+        if (int(pt[0]), int(pt[1])) not in inside_points_set:
+            return False
     return True
 
 def compute_inside_points(spec):
@@ -438,8 +448,6 @@ class Solution:
         self.hole_status = s["hole_status"]
         self.vertices = s["vertices"]
 
-
-
 class IntegralSolver:
     def __init__(self, spec, initial_solution, problem_id):
         self.spec = spec
@@ -487,6 +495,27 @@ class IntegralSolver:
         # print(f"initial_points = {self.initial_points}")
         # exit()
 
+        self.shortest_distances = nx.floyd_warshall(graph, "dist")
+
+        self.start_times = {}
+        self.current_depth = 0
+
+
+    def is_point_reachable(self, solution, origin, node, pt):
+        origin_v = solution.vertices[origin]
+        new_dist = dist2(origin_v, pt)
+        max_dist = self.shortest_distances[origin][node]
+        if new_dist > max_dist * (1 + self.epsilon):
+            # print(f"Node {node} at {pt} got too far from {origin} at {origin_v} ({new_dist} vs {max_dist})")
+            return False
+        return True
+
+    def is_point_reachable_from_points(self, solution, origin_points, node, pt):
+        for origin in origin_points:
+            if not self.is_point_reachable(solution, origin, node, pt):
+                return False
+        return True
+
     def get_placement_order_by_placed_neibs(self, i):
         if self.initial_solution:
             result = []
@@ -527,6 +556,7 @@ class IntegralSolver:
                 self.try_solve(solution)
             except KeyboardInterrupt:
                 solution.print()
+                exit()
 
         else:
             # Try all initial positions.
@@ -544,9 +574,25 @@ class IntegralSolver:
                     self.try_solve(solution)
                 except KeyboardInterrupt:
                     solution.print()
+                    exit()
 
+    def watchdog(self, solution):
+        now = time.time()
+        current_depth = len(solution.placed)
+        if current_depth != self.current_depth:
+            if current_depth > self.current_depth:
+                self.current_depth = current_depth
+                self.start_times[current_depth] = now
+            elif current_depth in self.start_times and now - self.start_times[current_depth] > 10:  # too long at the same branch
+                print("\n\nWOOF WOOF WATCHDOT NOT HAPPY\n\n")
+                self.start_times = {}
+                self.current_depth = 0
+                raise TrySomethingNew()            
+            
 
     def try_solve(self, solution):
+        self.watchdog(solution)
+
         if len(solution.placed) == solution.num_vertices:
             # Done.
             solution.print()
@@ -598,30 +644,42 @@ class IntegralSolver:
                         solution.vertices[neib], neib_dist, self.epsilon, viable_points=viable_points,
                         bounds_check_fn = lambda pt: (
                             pt in self.inside_points_set and  # fast
-                            is_edge_inside(self.spec, solution.vertices[neib], pt)  # slow
+                            is_edge_not_overlapping_hole(self.spec, solution.vertices[neib], pt) and  # slower
+                            is_edge_points_inside_fast(self.inside_points_set, solution.vertices[neib], pt)# slowest
                         ))
 
 
-            # print(f"viable_points for {next_to_place} (neibs {neibs}): {viable_points}\nplaced={solution.placed}")
+            # print(f"viable_points for {next_to_place} (neibs {neibs}): {viable_points}")
 
             # Must have at least one neib that's placed already.
             assert viable_points is not None
 
+            viable_points = [
+                pt for pt in viable_points
+                if self.is_point_reachable_from_points(solution, solution.placed, next_to_place, pt)
+            ]
+
             if viable_points:
 
                 def metric(pt):
-                    if pt in solution.hole_dict:
-                        print(f"{pt} is a HOLE")
+                    if pt in solution.hole_dict and not solution.hole_status[solution.hole_dict[pt]]:
+                        print(f"{pt} is a FREE HOLE")
                         return 1000000
 
                     total_dislikes = 0
-                    for hole_pt, i in solution.hole_dict.items():
-                        if solution.hole_status[i]:
-                            continue
-                        total_dislikes += dist2(hole_pt, pt)
+                    # for hole_pt, i in solution.hole_dict.items():
+                    #     if solution.hole_status[i]:
+                    #         continue
+                    #     total_dislikes += dist2(hole_pt, pt)
+                    for pi in solution.placed:
+                        total_dislikes += dist2(solution.vertices[pi], pt)
+
                     return total_dislikes
 
+                # if any(pt in solution.hole_dict for pt in viable_points):
                 viable_points.sort(key=lambda p: metric(p), reverse=True)
+                # else:
+                #     random.shuffle(viable_points)
 
                 for pt in viable_points:
                     solution.place(next_to_place, pt)
