@@ -35,7 +35,7 @@ def find_all_pairs(new_dist):
         if a in current['fixedPoints'] or b in current['fixedPoints']:
             continue
         if check_distance(spec, orig_dist, new_dist):
-            res.append((a, b))
+            res.append(tuple(sorted((a, b))))
     return res
 
 

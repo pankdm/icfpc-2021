@@ -33,8 +33,8 @@ def print_distances(problem_id):
 
     with open('solutions/current') as f:
         start = json.loads(f.read())
-        # for index, v in enumerate(start['vertices']):
-        #     print (index, v)
+        for index, v in enumerate(start['vertices']):
+            print (index, v)
 
     all_dist = []
     for (hole_idx, hole_pt) in enumerate(spec['hole']):
@@ -52,4 +52,48 @@ def print_distances(problem_id):
     print ("total = {}".format(total))
 
 
-print_distances(problem_id)
+def print_json():
+    with open("solutions/submit/85_dm", 'r') as f:
+        print (json.dumps(json.loads(f.read())['bonuses'], indent = 4))
+
+
+# print_distances(problem_id)
+# print_json()
+
+def print_global_limit(problem_id):
+    spec = read_problem(problem_id)
+    with open('solutions/current') as f:
+        start = json.loads(f.read())
+    
+    res = []
+    total = 0
+    total_limit = 0
+    for (a, b) in spec['figure']['edges']:
+        a_pt =  spec['figure']['vertices'][a]
+        b_pt = spec['figure']['vertices'][b]
+        orig_dist = dist2(a_pt, b_pt)
+        
+        now_a_pt = start['vertices'][a]
+        now_b_pt = start['vertices'][b]
+        new_dist = dist2(now_a_pt, now_b_pt)
+        delta = abs(1.0 * new_dist / orig_dist - 1)
+        res.append((delta, a, b))
+        total += delta
+        total_limit += spec["epsilon"] / 10**6
+
+    print ('total = ', total)
+    print ('total_limit = ', total_limit)
+    res.sort(key=lambda x: x[0])
+    print (res[-1])
+    print (res[-2])
+
+
+# print_distances(problem_id)
+# print_json()
+print_global_limit(problem_id)
+
+
+
+
+
+
