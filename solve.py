@@ -85,6 +85,10 @@ def is_edge_not_overlapping_hole(spec, A: Tuple, B: Tuple):
         return False
     return True
 
+def is_edge_inside_fast(spec, A: Tuple, B: Tuple):
+    # Check if 9 AB midpoints are all within the hole
+    return all(is_inside(spec['hole_poly'], *point_average(A, B, a), eps) for a in (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9))
+
 def is_edge_inside(spec, A: Tuple, B: Tuple):
     # Check if AB is fully within the hole
     if not all(is_inside(spec['hole_poly'], *point_average(A, B, a), eps) for a in (0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1)):
@@ -483,7 +487,7 @@ class IntegralSolver:
         self.edges = edges
         self.vertices = [tuple(v) for v in vtx]
         print(f"self.vertices = {self.vertices}")
-        self.epsilon = 0.8 * spec["epsilon"] / 1000000.0
+        self.epsilon = spec["epsilon"] / 1000000.0
 
         # adjacency lists
         graph = nx.Graph()
@@ -648,14 +652,14 @@ class IntegralSolver:
                     viable_points = viable_adj_points_with_candidates(
                         solution.vertices[neib], neib_dist, self.epsilon, viable_points=viable_points,
                         bounds_check_fn = lambda pt: (
-                            pt in self.inside_points_set and  # fast
-                            is_edge_not_overlapping_hole(self.spec, solution.vertices[neib], pt) and  # slower
-                            is_edge_points_inside_fast(self.inside_points_set, solution.vertices[neib], pt)# slowest
-                            # is_edge_inside(self.spec, solution.vertices[neib], pt)
+                            pt in self.inside_points_set and # fast
+                            # is_edge_not_overlapping_hole(self.spec, solution.vertices[neib], pt) and  # slower
+                            # is_edge_points_inside_fast(self.inside_points_set, solution.vertices[neib], pt)# slowest
+                            is_edge_inside_fast(self.spec, solution.vertices[neib], pt)
                         ))
 
 
-            print(f"viable_points for {next_to_place} (neibs {neibs}): {viable_points}")
+            # print(f"viable_points for {next_to_place} (neibs {neibs}): {viable_points}")
 
             # Must have at least one neib that's placed already.
             assert viable_points is not None
@@ -747,6 +751,13 @@ def solve_and_win(problem_id):
     initial_solution = None
     if FLAGS.init_path:
         initial_solution = load_initial_solution(spec, FLAGS.init_path)
+
+    sol = Solution(spec, len(spec['figure']['vertices']))
+    # Load a partial solution from the perimeter map
+    fig2hole = {0:0}
+    for f,h in fig2hole.items():
+        sol.place(f, tuple(spec["hole"][h]))
+    # initial_solution = sol
 
     solver = IntegralSolver(spec =spec, initial_solution =initial_solution, problem_id=problem_id)
     print ('inside points:', len(solver.inside_points))
