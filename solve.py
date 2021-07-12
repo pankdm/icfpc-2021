@@ -431,6 +431,8 @@ class Solution:
         result = [list(pt) if pt is not None else [0,0] for pt in self.vertices]
         result_json = f"{{\"vertices\":{result}}}"
         print(result_json)
+        hole2fig = {self.hole_dict[vpt]:v for v, vpt in enumerate(self.vertices) if vpt in self.hole_dict }
+        print("Fig2hole:", {hole2fig[h]:h for h, hpt in enumerate(self.hole) if h in hole2fig} )
 
     def write_to_file(self, file_name):
         result = [list(pt) if pt is not None else [0,0] for pt in self.vertices]
@@ -582,15 +584,17 @@ class IntegralSolver:
                     solution.print()
                     exit()
 
-    def watchdog(self, solution):
+    def watchdog(self, solution: Solution):
         now = time.time()
         current_depth = len(solution.placed)
         if current_depth != self.current_depth:
             if current_depth > self.current_depth:
                 self.current_depth = current_depth
                 self.start_times[current_depth] = now
-            elif current_depth in self.start_times and now - self.start_times[current_depth] > 10:  # too long at the same branch
+            elif current_depth in self.start_times and now - self.start_times[current_depth] > 120:  # too long at the same branch
                 print("\n\nWOOF WOOF WATCHDOT NOT HAPPY\n\n")
+                solution.print()
+                solution.write_to_file(f"solutions/solver/{self.problem_id}_partial")
                 self.start_times = {}
                 self.current_depth = 0
                 raise TrySomethingNew()            
@@ -602,7 +606,7 @@ class IntegralSolver:
 
         if len(solution.placed) == solution.num_vertices:
             # Done.
-            solution.print()
+            # solution.print()
             solution_num += 1
             solution.write_to_file(f"solutions/solver/{self.problem_id}_{solution_num}")
             score = count_dislikes_impl(self.spec, solution.vertices)
@@ -616,7 +620,7 @@ class IntegralSolver:
                 print("NEW BEST")
             elif self.best_score:
                 self.num_solutions_after_best += 1
-                if self.num_solutions_after_best > 10:
+                if self.num_solutions_after_best > 50:
                     self.num_solutions_after_best = 0
                     raise TrySomethingNew()
 
@@ -753,9 +757,11 @@ def solve_and_win(problem_id):
         initial_solution = load_initial_solution(spec, FLAGS.init_path)
 
     sol = Solution(spec, len(spec['figure']['vertices']))
-    # Load a partial solution from the perimeter map
-    fig2hole = {0:0}
-    for f,h in fig2hole.items():
+    # Load a partial solution from the perimeter map from walker_solve.py
+    h2f = {
+        14: 52, 15: 55, 16: 70, 17: 85, 18: 80, 19: 98, 20: 102, 21: 107, 22: 114, 23: 120, 24: 116, 25: 125, 26: 124, 27: 128, 28: 130, 29: 131, 30: 129, 31: 123, 32: 122, 33: 111, 34: 93, 35: 79, 65: 29, 66: 23, 67: 13, 68: 8, 69: 3, 70: 9, 71: 2, 72: 0, 0: 1, 1: 4, 2: 6, 3: 5, 4: 7, 5: 12, 6: 11, 7: 16, 8: 21, 9: 34, 10: 42, 11: 28, 12: 46, 13: 56, 43: 115, 44: 103, 45: 101, 46: 83, 47: 86, 48: 96, 49: 88, 50: 76, 51: 74, 52: 69, 53: 53, 54: 51, 55: 37, 56: 41, 57: 31, 58: 17, 59: 10, 60: 15, 61: 27, 62: 20, 36: 100, 37: 113, 38: 119, 39: 126, 40: 127, 41: 117, 42: 121}
+
+    for h,f in h2f.items():
         sol.place(f, tuple(spec["hole"][h]))
     # initial_solution = sol
 
