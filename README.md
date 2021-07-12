@@ -5,6 +5,7 @@
 
 - Dmitry K.
 - Dmitry P.
+- Mikhail K.
 - Oleg G.
 - Victor K.
 - Vitaly A.
