@@ -33,8 +33,8 @@ def print_distances(problem_id):
 
     with open('solutions/current') as f:
         start = json.loads(f.read())
-        for index, v in enumerate(start['vertices']):
-            print (index, v)
+        # for index, v in enumerate(start['vertices']):
+        #     print (index, v)
 
     all_dist = []
     for (hole_idx, hole_pt) in enumerate(spec['hole']):
