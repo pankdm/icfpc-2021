@@ -111,6 +111,7 @@ export default function Figure({
             idx={idx}
             x={x}
             y={y}
+            pointRadius={pointRadius}
             pointColor={pointColor}
             animate={_animate}
             springConfig={springConfig}
