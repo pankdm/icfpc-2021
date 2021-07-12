@@ -7,6 +7,7 @@ export default function Hole({
   bgColor='#444',
   color='#aaa',
   safePadding=5,
+  renderLabels=true,
   ...props
 }) {
   const minCoord = _.min(_.flatten(vertices))
@@ -43,7 +44,7 @@ export default function Hole({
         `}
         {...props}
       />
-      {vertices.map(([x, y], idx) => (
+      {renderLabels && vertices.map(([x, y], idx) => (
         <Label key={idx} x={x} y={y} textAnchor='right' color='#000'>{idx}</Label>
       ))}
     </g>

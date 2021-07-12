@@ -1,7 +1,10 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import _ from 'lodash'
-import Flex from '../components/Flex.jsx'
+import Spacer from '../components/Spacer.jsx'
+import Flex, { FlexItem } from '../components/Flex.jsx'
+import ProblemPreview from '../components/ProblemPreview.jsx'
 import NavHeader from '../NavHeader.jsx'
+import useOnScreen from '../utils/useOnScreen.js'
 import styles from './Scores.module.css'
 
 import { useProblem, useProblems, useProblemsAll, useStats } from '../api/problems'
@@ -21,6 +24,49 @@ function Th({ sortOrder, children, ...props }) {
   )
 }
 
+function StatsRow({ problemId, problem, stat, fromBonuses, ...props }) {
+  const ref = useRef()
+  const visible = useOnScreen(ref, '300px')
+  return (
+    <tr ref={ref}>
+      <td>
+        <Flex className={styles.idCell}>
+          <FlexItem basis={100} flex={0} style={{ height: 100 }}>
+            {visible && <ProblemPreview problem={problem} />}
+          </FlexItem>
+          <Spacer size='xs' />
+          <Flex basis={'3em'} flex={0}>
+            <a href={`http://poses.live/problems/${problemId}`}>
+              {problemId}
+            </a>
+          </Flex>
+        </Flex>
+      </td>
+      <td> {stat['dislikes']}</td>
+      <td> {stat['min_dislikes']}</td>
+      <td> {stat['score']}</td>
+      <td> {stat['max_score']}</td>
+      <td> {stat['delta']}</td>
+      <td>
+        {_.map(problem['bonuses'], (b, bidx) => (
+          <pre key={stat['id']+'bonus'+bidx}>
+            {(b.bonus + ':').padEnd(13, ' ')} #{b.problem.toString().padEnd(4)} ({b.position[0]},{b.position[1]})
+            <br/>
+          </pre>
+        ))}
+      </td>
+      <td>
+        {_.map(fromBonuses, (b, from_idx) => (
+          <pre key={stat['id']+'bonus_from'+from_idx}>
+            {(b + '').padEnd(13, ' ')}  {'from'} #{from_idx}
+          <br/>
+        </pre>
+        ))}
+      </td>
+    </tr>
+  )
+}
+
 export default function Scores(props) {
   const { data: stats } = useStats()
   const { data: all_problems } = useProblemsAll()
@@ -36,7 +82,6 @@ export default function Scores(props) {
       from_bonuses[bonus['problem']][idx] = bonus['bonus']
     })
   })
-  console.log(from_bonuses)
 
   const getSortOrder = (key) => sort == key ? sortOrder : null
   const toggleSort = (newSort, defSortOrder='asc') => {
@@ -62,7 +107,6 @@ export default function Scores(props) {
     }
     return richValue
   })
-  console.log(from_bonuses)
   const sortedStats = _.orderBy(_.values(richStats), [sort], [sortOrder])
   return (
     <div className={`app ${styles.app}`}>
@@ -82,33 +126,15 @@ export default function Scores(props) {
           </tr>
           {_.map(
             sortedStats,
-            (value) => {
-              const id = value['id']
-              return <tr key={id}>
-                <td><a href={`http://poses.live/problems/${id}`}><div className={styles.idCell}>{id}</div></a></td>
-                <td> {value['dislikes']}</td>
-                <td> {value['min_dislikes']}</td>
-                <td> {value['score']}</td>
-                <td> {value['max_score']}</td>
-                <td> {value['delta']}</td>
-                <td>
-                  {_.map(all_problems[id]['bonuses'], (b, bidx) => (
-                    <pre key={value['id']+'bonus'+bidx}>
-                      {(b.bonus + ':').padEnd(13, ' ')} #{b.problem.toString().padEnd(4)} ({b.position[0]},{b.position[1]})
-                      <br/>
-                    </pre>
-                  ))}
-                </td>
-                <td>
-                  {_.map(from_bonuses[id], (b, from_idx) => (
-                    <pre key={value['id']+'bonus_from'+from_idx}>
-                     {(b + '').padEnd(13, ' ')}  {'from'} #{from_idx}
-                    <br/>
-                  </pre>
-                  ))}
-                </td>
-              </tr>
-            }
+            (stat) => (
+              <StatsRow
+                key={stat['id']}
+                stat={stat}
+                problemId={stat['id']}
+                problem={all_problems[stat['id']]}
+                fromBonuses={from_bonuses[stat['id']]}
+              />
+            )
           )
           }
         </tbody>

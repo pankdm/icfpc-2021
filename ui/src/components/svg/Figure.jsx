@@ -63,6 +63,7 @@ export default function Figure({
   shrinkedLines=null,
   stretchColor='gold',
   shrinkColor='orange',
+  renderPoints=true,
   onPointGrab=()=>{},
   onPointRelease=()=>{},
   onPointDrag=()=>{},
@@ -101,7 +102,7 @@ export default function Figure({
           />
         )
       })}
-      {vertices.map(([x, y], idx) => {
+      {renderPoints && vertices.map(([x, y], idx) => {
         const isFrozen = frozenPoints.has(idx)
         const _animate = isFrozen ? false : animate
         const pointColor = isFrozen ? '#fa0' : '#fff'
