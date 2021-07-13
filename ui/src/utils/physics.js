@@ -35,13 +35,13 @@ export const getAttractForce = (point, otherPoint, { steepPower=3, attractConst=
   const dist = distance(point, otherPoint)
   return vecClampAbs(vecMult(toOtherPoint, attractConst/(dist**steepPower)), 0, Math.min(dist, maxAttract))
 }
-export const getRepelForce = (point, otherPoint, repelConst=50, maxRepel=100) => {
+export const getRepelForce = (point, otherPoint, { steepPower=2, repelConst=50, maxRepel=100 }) => {
   const fromOtherPoint = vecSub(point, otherPoint)
   if (isVecZero(fromOtherPoint)) {
     return vecRand(maxRepel)
   }
   const dist = distance(point, otherPoint)
-  return vecClampAbs(vecMult(fromOtherPoint, repelConst/(dist**2)), 0, maxRepel)
+  return vecClampAbs(vecMult(fromOtherPoint, repelConst/(dist**steepPower)), 0, maxRepel)
 }
 const getSpringForce = (point, otherPoint, optimalDistance, springConst=FORCE_DEFAULTS.springConst) => {
   const dist = distance(point, otherPoint)
@@ -126,7 +126,7 @@ export const inflateSimpleRadial = (vertices, { meanCoords, simpleRepelConst, fr
   return mapApplyForce(vertices, getInflateForce)
 }
 
-export const inflate = (vertices, { repelConst, maxRepel, frozenPoints }) => {
+export const inflate = (vertices, { steepPower, repelConst, maxRepel, frozenPoints }) => {
   const getInflateForce = (v, idx) => {
     if (frozenPoints && frozenPoints.has(idx)) {
       return ZERO_VEC
@@ -134,7 +134,7 @@ export const inflate = (vertices, { repelConst, maxRepel, frozenPoints }) => {
     let repelForce = [0, 0]
     vertices.forEach((ov, ovIdx) => {
       if (ov == v) return
-      const _repelForce = getRepelForce(v, ov, repelConst, maxRepel)
+      const _repelForce = getRepelForce(v, ov, { steepPower, repelConst, maxRepel })
       repelForce = vecAdd_(repelForce, _repelForce)
     })
     return repelForce
@@ -145,6 +145,11 @@ export const inflate = (vertices, { repelConst, maxRepel, frozenPoints }) => {
 // Top Level Anim Loop Simulation Functions
 export const inflateLoop = (vertices, { optimalDistancesMap, frozenPoints }) => {
   vertices = inflate(vertices, { frozenPoints })
+  vertices = applyConstraints(vertices, { optimalDistancesMap, frozenPoints })
+  return vertices
+}
+export const inflateLocalLoop = (vertices, { optimalDistancesMap, frozenPoints }) => {
+  vertices = inflate(vertices, { frozenPoints, steepPower: 2.5 })
   vertices = applyConstraints(vertices, { optimalDistancesMap, frozenPoints })
   return vertices
 }

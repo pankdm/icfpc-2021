@@ -11,7 +11,7 @@ import Hole from './svg/Hole.jsx'
 import Figure from './svg/Figure.jsx'
 import styles from './ProblemViewer.module.css'
 import { getDistanceMap, getDistances, getScore, snapVecs, vecAdd, vecSub, vecMult, vecNorm, vecEquals, distance } from '../utils/graph.js'
-import { inflateLoop, inflateSimpleRadialLoop, relaxLoop, gravityLoop, applyShake, winningGraityLoop } from '../utils/physics.js'
+import { inflateLoop, inflateLocalLoop, inflateSimpleRadialLoop, relaxLoop, gravityLoop, applyShake, winningGraityLoop } from '../utils/physics.js'
 import useOnChange, { useOnChangeValues } from '../utils/useOnChange.js'
 import useAnimLoop from '../utils/useAnimLoop.js'
 import { useHotkeys } from 'react-hotkeys-hook'
@@ -203,10 +203,10 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     const frozenPoints = frozenFigurePoints
     _.times(1 + (timeScale-1)*3, () => {
     if (simMode == 'inflate') {
-      vertices = inflateLoop(vertices, { optimalDistancesMap, frozenPoints })
+      vertices = inflateLocalLoop(vertices, { optimalDistancesMap, frozenPoints })
     }
-    if (simMode == 'simpleInflate') {
-      vertices = inflateSimpleRadialLoop(vertices, { optimalDistancesMap, frozenPoints })
+    if (simMode == 'stretch') {
+      vertices = inflateLoop(vertices, { optimalDistancesMap, frozenPoints })
     }
     if (simMode == 'gravity') {
       vertices = gravityLoop(vertices, { gravityCenter: [xMean, yMean], frozenPoints })
@@ -395,7 +395,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     singleShake()
   }, {}, [singleShake])
   useHotkeys('o', () => {
-    toggleSimMode('simpleInflate')
+    toggleSimMode('stretch')
   }, {}, [singleShake])
   useHotkeys('i', () => {
     toggleSimMode('inflate')
@@ -558,7 +558,7 @@ ${_.keys(overshrinkedEdges).length
     <div className={styles.topRight}>
       <button onClick={togglePlaying}>{playing ? '(_) Physics: on' : '(_) Physics: off'}</button>
       <button onClick={() => toggleSimMode('inflate')}>{simMode == 'inflate' ? '(I) Inflating' : '(I) Inflate'}</button>
-      <button onClick={() => toggleSimMode('simpleInflate')}>{simMode == 'simpleInflate' ? '(O) Stretching' : '(O) Stretch'}</button>
+      <button onClick={() => toggleSimMode('stretch')}>{simMode == 'stretch' ? '(O) Stretching' : '(O) Stretch'}</button>
       <button onClick={() => toggleSimMode('gravity')}>{simMode == 'gravity' ? '(G) Gravitating' : '(G) Gravity'}</button>
       <button onClick={() => toggleSimMode('winningGravity')}>{simMode == 'winningGravity' ? '(U) Holing...' : '(U) Hole It'}</button>
       <button onClick={singleShake}>(K) Shake</button>
