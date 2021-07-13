@@ -32,16 +32,4 @@ export default function Grid({
       />
     </g>
   )
-  return (
-    <g id='grid' {...props}>
-      {'<!-- Grid Start -->'}
-      {_.times(yCount, (y) => (
-        <line key={`h${y}`} x1={xMin} x2={xMax} y1={yMin+y*yStep} y2={yMin+y*yStep} stroke={color} strokeWidth={strokeWidth} />
-      ))}
-      {_.times(xCount, (x) => (
-        <line key={`v${x}}`} x1={xMin+x*xStep} x2={xMin+x*xStep} y1={yMin} y2={yMax} stroke={color} strokeWidth={strokeWidth} />
-      ))}
-      {'<!-- Grid End -->'}
-    </g>
-  )
 }

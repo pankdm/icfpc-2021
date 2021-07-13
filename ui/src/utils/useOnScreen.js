@@ -1,44 +1,35 @@
-import { useState, useLayoutEffect } from "react"
-import useInterval from "./useInterval";
+import { useState } from "react"
+import useAnimationFrame from "./useAnimationFrame"
+import useInterval from "./useInterval"
 
-function syncCheckVisible(elm, threshold) {
+function checkIsVisible(elm, threshold) {
   threshold = threshold || 0;
-  var rect = elm.getBoundingClientRect();
-  var viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
-  var above = rect.bottom - threshold < 0;
-  var below = rect.top - viewHeight + threshold >= 0;
-  return !(above || below)
+  const rect = elm.getBoundingClientRect();
+  const viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
+  const viewWidth = Math.max(document.documentElement.clientWidth, window.innerWidth);
+  const above = rect.bottom + threshold < 0;
+  const below = rect.top - viewHeight - threshold >= 0;
+  const left = rect.left + threshold < 0;
+  const right = rect.top - viewWidth - threshold >= 0;
+  return !(above || below || left || right)
 }
 
-export default function useOnScreen(ref, margin=0) {
-  const startVisible = ref.current ? syncCheckVisible(ref.current) : false
-  // const startVisible = false
-  const [isIntersecting, setIntersecting] = useState(startVisible)
-  useInterval(100, () => {
-    const visible = ref.current && syncCheckVisible(ref.current, margin)
-    if (isIntersecting != visible) {
-      setIntersecting(visible)
+export default function useOnScreen(ref, { checkinterval=null, margin=0 }) {
+  // IMPORTANT: checkInterval not to be constant!!!
+  const startVisible = ref.current ? checkIsVisible(ref.current) : false
+  const [isVisible, setIsVisible] = useState(startVisible)
+  const updateVisible = () => {
+    if (ref.current) {
+      const visible = checkIsVisible(ref.current, margin)
+      if (isVisible !== visible) {
+        setIsVisible(visible)
+      }
     }
-  }, [isIntersecting])
-
-  // FIXME: use IntersectionObserver?
-  // useLayoutEffect(() => {
-  //   const observer = new IntersectionObserver(
-  //     ([entry]) => {
-  //       debugId && console.log('Observer: ', debugId, entry.isIntersecting)
-  //       setIntersecting(entry.isIntersecting)
-  //     },
-  //     {
-  //       rootMargin: `${-margin}px`,
-  //     }
-  //   )
-  //   if (ref.current) {
-  //     observer.observe(ref.current)
-  //   }
-  //   return () => {
-  //     observer.unobserve(ref.current)
-  //   }
-  // }, [])
-
-  return isIntersecting
+  }
+  if (checkinterval) {
+    useInterval(checkinterval, updateVisible, [isVisible])
+  } else {
+    useAnimationFrame(updateVisible, [isVisible])
+  }
+  return isVisible
 }

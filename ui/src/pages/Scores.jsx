@@ -26,7 +26,7 @@ function Th({ sortOrder, children, ...props }) {
 
 function StatsRow({ problemId, problem, stat, fromBonuses, ...props }) {
   const ref = useRef()
-  const visible = useOnScreen(ref, -300, parseInt(problemId) == 4 ? problemId : null)
+  const visible = useOnScreen(ref, { margin: 1000 })
   return (
     <tr ref={ref}>
       <td className={styles.idCell}>
@@ -130,8 +130,7 @@ export default function Scores(props) {
             sortedStats,
             (stat, rowIdx) => (
               <StatsRow
-                key={rowIdx}
-                // key={stat['id']}
+                key={stat['id']}
                 stat={stat}
                 problemId={stat['id']}
                 problem={all_problems[stat['id']]}
