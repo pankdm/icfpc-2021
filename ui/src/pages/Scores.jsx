@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import _ from 'lodash'
 import Spacer from '../components/Spacer.jsx'
 import Flex, { FlexItem } from '../components/Flex.jsx'
@@ -28,15 +29,17 @@ function StatsRow({ problemId, problem, stat, fromBonuses, ...props }) {
   const ref = useRef()
   const visible = useOnScreen(ref, { margin: 1000 })
   return (
-    <tr ref={ref}>
+    <tr>
       <td className={styles.idCell}>
         <Flex className={styles.idCellContent}>
-          <div style={{ width: '5em', height: '5em' }}>
+          <Link to={`/?problem=${problemId}`}>
+          <div ref={ref} style={{ width: '5em', height: '5em' }}>
             {visible && <ProblemPreview problem={problem} />}
           </div>
+          </Link>
           <Spacer size='xs' />
           <Flex basis={'3em'} grow={0}>
-            <a href={`http://poses.live/problems/${problemId}`}>
+            <a target='_blank' href={`http://poses.live/problems/${problemId}`}>
               {problemId}
             </a>
           </Flex>
@@ -71,8 +74,8 @@ function StatsRow({ problemId, problem, stat, fromBonuses, ...props }) {
 export default function Scores(props) {
   const { data: stats } = useStats()
   const { data: all_problems } = useProblemsAll()
-  const [sort, setSort] = useState(null)
-  const [sortOrder, setSortOrder] = useState(null)
+  const [sort, setSort] = useState('id')
+  const [sortOrder, setSortOrder] = useState('asc')
   if (!all_problems) {
     return <div className={`app ${styles.app}`}></div>
   }
@@ -90,12 +93,7 @@ export default function Scores(props) {
       setSort(newSort)
       setSortOrder(defSortOrder)
     } else {
-      if (sortOrder == defSortOrder) {
-        setSortOrder(defSortOrder == 'asc' ? 'desc' : 'asc')
-      } else {
-        setSort(null)
-        setSortOrder(null)
-      }
+      setSortOrder(sortOrder == 'asc' ? 'desc' : 'asc')
     }
   }
   const richStats = _.mapValues(stats, (value, key) => {

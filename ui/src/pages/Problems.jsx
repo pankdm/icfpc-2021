@@ -3,11 +3,18 @@ import _ from 'lodash'
 import NavHeader from '../NavHeader.jsx'
 import styles from './Problems.module.css'
 import ProblemViewer from '../components/ProblemViewer.jsx'
-import useLocalStorage from '../utils/useLocalStorage.js'
+import ScrollToTop from '../components/helpers/ScrollToTop.jsx'
+import useSearchQuery from '../utils/useSearchQuery.js'
 import { useProblems, useProblem, useSolutions, useSolution, saveSolution, useStats } from '../api/problems'
 
 function Problems() {
-  const [problemId, setProblemId] = useLocalStorage('problemId', 1)
+  const { searchQuery, updateSearchQuery } = useSearchQuery()
+  const { problem: startProblemId } = searchQuery
+  const [problemId, _setProblemId] = useState(startProblemId || 1)
+  const setProblemId = (newProblemId) => {
+    updateSearchQuery({ problem: newProblemId }, true)
+    _setProblemId(newProblemId)
+  }
   const [solutionId, setSolutionId] = useState(null)
   const { data: problems } = useProblems()
   const { data: problem } = useProblem(problemId, { enabled: !!problemId })
@@ -20,6 +27,7 @@ function Problems() {
   }
   return (
     <div className='app'>
+      <ScrollToTop/>
       <NavHeader/>
       <h1>Welcome to ICFPC 2021!</h1>
       <p>
