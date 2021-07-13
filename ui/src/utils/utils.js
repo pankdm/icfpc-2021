@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import qs from 'qs'
 
 export const sleep = (delayMs=1000) => new Promise(res => setTimeout(res, delayMs))
 
@@ -7,6 +8,11 @@ export const shakeCoord = (coord, amplitude=1) => coord + amplitude*(Math.random
 export const shakePoint = ([x, y], amplitude=1) => {
   const randAngle = Math.random() * 2*Math.PI
   return [x + amplitude*Math.cos(randAngle), y + amplitude*Math.sin(randAngle)]
+}
+
+export function getSearchQuery() {
+  const search = window.location.search
+  return qs.parse(search[0] == '?' ? search.slice(1) : search)
 }
 
 export function naturalSort(a, b) {
