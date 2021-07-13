@@ -1,10 +1,6 @@
 import React from 'react'
-import { useSpring, animated } from 'react-spring'
 
 export default function Line({ x1, x2, y1, y2, stroke, animate=false, springConfig, ...props }) {
   const animatableProps = { x1, x2, y1, y2, stroke }
-  const animatedProps = useSpring({ to: animatableProps, config: springConfig })
-  return animate
-    ? <animated.line {...animatedProps} {...props}/>
-    : <line {...animatableProps} {...props}/>
+  return <line {...animatableProps} {...props}/>
 }

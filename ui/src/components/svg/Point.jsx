@@ -1,5 +1,4 @@
 import React from 'react'
-import { useSpring, animated } from 'react-spring'
 
 const WrappedPoint = React.forwardRef(function Point({
   x=0,
@@ -11,10 +10,7 @@ const WrappedPoint = React.forwardRef(function Point({
   ...props
 }, ref) {
   const animatableProps = { cx: x, cy: y, r: radius, fill: color }
-  const animatedProps = useSpring({ to: animatableProps, config: springConfig })
-  return animate
-    ? <animated.circle ref={ref} {...animatedProps} {...props}/>
-    : <circle ref={ref} {...animatableProps} {...props}/>
+  return <circle ref={ref} {...animatableProps} {...props}/>
 })
 
 export default WrappedPoint
