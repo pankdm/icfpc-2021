@@ -26,7 +26,6 @@ import { unpad } from '../utils/utils.js'
 const DEFAULT_FORCE_CONSTS = {...FORCE_CONSTS}
 
 export default function ProblemViewer({ problemId, problem, solution, onSaveSolution, stats, ...props }) {
-  useGlobalVar(FORCE_CONSTS)
   const defaultForceConstsInput = JSON.stringify(DEFAULT_FORCE_CONSTS, undefined, 2)
   const [ forceConstsInput, setForceConstsInput ] = useState(defaultForceConstsInput)
   const { hole, epsilon, figure, bonuses } = problem

@@ -16,7 +16,6 @@ const GLOBAL_FORCE_CONSTS = {
   holeGravityConst: 50,
   holeGravitySteepPower: 3,
   holeGravityMaxForce: 100,
-  simpleRepelConst: 10,
 }
 
 // global obj to mutate above values
