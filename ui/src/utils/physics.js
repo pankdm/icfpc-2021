@@ -4,16 +4,16 @@ import { defineGlobalVar } from './useGlobalVar.js'
 
 const GLOBAL_FORCE_CONSTS = {
   springConst: 200,
-  inflateConst: 50,
+  inflateConst: 150,
   inflateSteepPower: 2.5,
   inflateMaxForce: 100,
   stretchConst: 50,
-  stretchSteepPower: 2.5,
+  stretchSteepPower: 2,
   stretchMaxForce: 100,
   gravityConst: 50,
   gravitySteepPower: 2,
   gravityMaxForce: 100,
-  holeGravityConst: 50,
+  holeGravityConst: 150,
   holeGravitySteepPower: 3,
   holeGravityMaxForce: 100,
 }
