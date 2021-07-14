@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react'
-import _ from 'lodash'
+import _, { update } from 'lodash'
 import AspectRatioBox from './AspectRatioBox.jsx'
 import Spacer from './Spacer.jsx'
 import Flex, { FlexItem } from './Flex.jsx'
@@ -11,7 +11,7 @@ import Hole from './svg/Hole.jsx'
 import Figure from './svg/Figure.jsx'
 import styles from './ProblemViewer.module.css'
 import { getDistanceMap, getDistances, getScore, snapVecs, vecAdd, vecSub, vecMult, vecNorm, vecEquals, distance } from '../utils/graph.js'
-import { inflateLoop, inflateLocalLoop, inflateSimpleRadialLoop, relaxLoop, gravityLoop, applyShake, winningGraityLoop } from '../utils/physics.js'
+import { FORCE_CONSTS, inflateLoop, inflateLocalLoop, relaxLoop, gravityLoop, applyShake, winningGraityLoop } from '../utils/physics.js'
 import useOnChange, { useOnChangeValues } from '../utils/useOnChange.js'
 import useAnimLoop from '../utils/useAnimLoop.js'
 import { useHotkeys } from 'react-hotkeys-hook'
@@ -20,9 +20,14 @@ import useBlip from '../utils/useBlip.js'
 import useDebounce from '../utils/useDebounce.js'
 import useLocalStorage from '../utils/useLocalStorage.js'
 import useDOMEvent from '../utils/useDOMEvent.js'
+import { useGlobalVar } from '../utils/useGlobalVar.js'
+import { unpad } from '../utils/utils.js'
 
+const DEFAULT_FORCE_CONSTS = {...FORCE_CONSTS}
 
 export default function ProblemViewer({ problemId, problem, solution, onSaveSolution, stats, ...props }) {
+  useGlobalVar(FORCE_CONSTS)
+  const [ forceConstsInput, setForceConstsInput ] = useState(JSON.stringify(DEFAULT_FORCE_CONSTS, undefined, 2))
   const { hole, epsilon, figure, bonuses } = problem
   const epsilonFraction = epsilon/1e6
   const zeroPointLocation = useRef()
@@ -202,19 +207,19 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     let vertices = getCurrentVertices()
     const frozenPoints = frozenFigurePoints
     _.times(1 + (timeScale-1)*3, () => {
-    if (simMode == 'inflate') {
-      vertices = inflateLocalLoop(vertices, { optimalDistancesMap, frozenPoints })
-    }
-    if (simMode == 'stretch') {
-      vertices = inflateLoop(vertices, { optimalDistancesMap, frozenPoints })
-    }
-    if (simMode == 'gravity') {
-      vertices = gravityLoop(vertices, { gravityCenter: [xMean, yMean], frozenPoints })
-    }
-    if (simMode == 'winningGravity') {
-      vertices = winningGraityLoop(vertices, { holeVertcies: hole, frozenPoints })
-    }
-    vertices = relaxLoop(vertices, { optimalDistancesMap, frozenPoints })
+      if (simMode == 'inflate') {
+        vertices = inflateLocalLoop(vertices, { optimalDistancesMap, frozenPoints })
+      }
+      if (simMode == 'stretch') {
+        vertices = inflateLoop(vertices, { optimalDistancesMap, frozenPoints })
+      }
+      if (simMode == 'gravity') {
+        vertices = gravityLoop(vertices, { frozenPoints })
+      }
+      if (simMode == 'winningGravity') {
+        vertices = winningGraityLoop(vertices, { holeVertcies: hole, frozenPoints })
+      }
+      vertices = relaxLoop(vertices, { optimalDistancesMap, frozenPoints })
     })
     setOverriddenVertices(vertices)
   }, {}, [frozenFigurePoints, simMode, optimalDistancesMap, xMean, yMean, timeScale])
@@ -449,186 +454,212 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     reset()
   })
   return (
-    <div className={styles.viewer}>
-      <div className={styles.topLeft}>
-        <TrafficLight
-          size='14em'
-          red={debncHasBrokenEdges}
-          yellow={false}
-          green={!debncHasBrokenEdges}
-        />
-      <Flex>
-        {/* <TrafficLight
-          size='4em'
-          red={hasBrokenEdges}
-          yellow={false}
-          green={!hasBrokenEdges}
-        /> */}
-        <div>
-          <input placeholder='username / manual solutions alias' value={username} onChange={ev => setUsername(ev.target.value)} />
-          <button
-            disabled={saved}
-            style={_.merge({}, debncHasBrokenEdges && { opacity: 0.75 })}
-            onClick={() => {
-              stopPlaying()
-              snapVertices()
-              onSaveSolution(problemId, username, { vertices: getCurrentVertices(), fixedPoints: [...frozenFigurePoints] })
-              toggleSaved()
-            }
-          }>
-            {debncHasBrokenEdges
-              ? (saved ? 'Okay...' : 'Save?')
-              : (saved ? 'Saved' : 'Save')}
-          </button>
-          <button
-            disabled={saved}
-            style={_.merge({}, debncHasBrokenEdges && { opacity: 0.75 })}
-            onClick={() => {
-              stopPlaying()
-              snapVertices()
-              onSaveSolution(problemId, username, { vertices: getCurrentVertices() },  /* forSubmit */ true)
-              toggleSaved()
-            }
-          }>
-            {debncHasBrokenEdges
-              ? (saved ? 'Okay...' : 'Save for Submit?')
-              : (saved ? 'Saved' : 'Save for Submit')}
-          </button>
-        <pre style={{overflowX: 'scroll'}}>
-{`
-Stretched Edges:
-${_.keys(overstretchedEdges).length
-  ? _.keys(overstretchedEdges).map((k) => `(${figure.edges[k].join(',')})`).join(', ')
-  : 'None'
-}
+    <div>
+      <div className={styles.viewer}>
+        <div className={styles.topLeft}>
+          <TrafficLight
+            size='14em'
+            red={debncHasBrokenEdges}
+            yellow={false}
+            green={!debncHasBrokenEdges}
+          />
+        <Flex>
+          <div>
+            <input
+              className={styles.usernameInput}
+              placeholder='username / manual solutions alias'
+              value={username}
+              onChange={ev => setUsername(ev.target.value)}
+            />
+            <button
+              disabled={saved}
+              style={_.merge({}, debncHasBrokenEdges && { opacity: 0.75 })}
+              onClick={() => {
+                stopPlaying()
+                snapVertices()
+                onSaveSolution(problemId, username, { vertices: getCurrentVertices(), fixedPoints: [...frozenFigurePoints] })
+                toggleSaved()
+              }
+            }>
+              {debncHasBrokenEdges
+                ? (saved ? 'Okay...' : 'Save?')
+                : (saved ? 'Saved' : 'Save')}
+            </button>
+            <button
+              disabled={saved}
+              style={_.merge({}, debncHasBrokenEdges && { opacity: 0.75 })}
+              onClick={() => {
+                stopPlaying()
+                snapVertices()
+                onSaveSolution(problemId, username, { vertices: getCurrentVertices() },  /* forSubmit */ true)
+                toggleSaved()
+              }
+            }>
+              {debncHasBrokenEdges
+                ? (saved ? 'Okay...' : 'Save for Submit?')
+                : (saved ? 'Saved' : 'Save for Submit')}
+            </button>
+          <pre style={{overflowX: 'scroll'}}>
+          {unpad(`
+          Stretched Edges:
+          ${_.keys(overstretchedEdges).length
+            ? _.keys(overstretchedEdges).map((k) => `(${figure.edges[k].join(',')})`).join(', ')
+            : 'None'
+          }
 
-Shrinked Edges:
-${_.keys(overshrinkedEdges).length
-  ? _.keys(overshrinkedEdges).map((k) => `(${figure.edges[k].join(',')})`).join(', ')
-  : 'None'
-}
-`}
-        </pre>
-        </div>
-      </Flex>
-    </div>
-    <AspectRatioBox className={styles.svgWrapper}>
-      <svg ref={svgRef} className={styles.svg} viewBox={`${0} ${0} ${xMax - xMin} ${yMax - yMin}`}>
-        <Group x={-xMin} y={-yMin}>
-          <Group x={(xMax-xMin)/2} y={(yMax-yMin)/2} scale={1/zoomScale}>
-            <Group x={-(xMax-xMin)/2+panOffset[0]} y={-(yMax-yMin)/2+panOffset[1]}>
-              <Group ref={zeroPointLocation} x={0} y={0} />
-              <Hole safePadding={safePadding} vertices={hole} />
-              <Bonuses vertices={bonuses}/>
-              <Grid xMin={xMin} yMin={yMin} xMax={xMax} yMax={yMax} color='#787' />
-              <Figure
-                animate={false}
-                vertices={getCurrentVertices()}
-                pointRadius={pointRadius}
-                edges={figure.edges}
-                epsilon={epsilonFraction}
-                edgeStretches={edgeStretches}
-                overstretchedEdges={overstretchedEdges}
-                overshrinkedEdges={overshrinkedEdges}
-                frozenPoints={frozenFigurePoints}
-                onPointGrab={(ev, idx) => {
-                  ev.stopPropagation()
-                  addFrozenFigurePoint(idx)
-                }}
-                onPointRelease={(ev, idx) => {
-                  let wasFrozen = frozenFigurePoints.has(idx);
-                  if (!multiselectMode) {
-                    removeFrozenFigurePoint(idx)
-                  }
-                  if (powerClickMode) {
-                    powerClick(idx);
-                    addFrozenFigurePoint(idx);
-                  }
-                }}
-                onPointDrag={(ev, idx) => {
-                  const localDelta = clientDeltaToLocalSpaceDelta([ev.movementX, ev.movementY])
-                  updateVerticePosition(idx, localDelta)
-                }}
-              />
+          Shrinked Edges:
+          ${_.keys(overshrinkedEdges).length
+            ? _.keys(overshrinkedEdges).map((k) => `(${figure.edges[k].join(',')})`).join(', ')
+            : 'None'
+          }
+          `)}
+          </pre>
+          </div>
+        </Flex>
+      </div>
+      <AspectRatioBox className={styles.svgWrapper}>
+        <svg ref={svgRef} className={styles.svg} viewBox={`${0} ${0} ${xMax - xMin} ${yMax - yMin}`}>
+          <Group x={-xMin} y={-yMin}>
+            <Group x={(xMax-xMin)/2} y={(yMax-yMin)/2} scale={1/zoomScale}>
+              <Group x={-(xMax-xMin)/2+panOffset[0]} y={-(yMax-yMin)/2+panOffset[1]}>
+                <Group ref={zeroPointLocation} x={0} y={0} />
+                <Hole safePadding={safePadding} vertices={hole} />
+                <Bonuses vertices={bonuses}/>
+                <Grid xMin={xMin} yMin={yMin} xMax={xMax} yMax={yMax} color='#787' />
+                <Figure
+                  animate={false}
+                  vertices={getCurrentVertices()}
+                  pointRadius={pointRadius}
+                  edges={figure.edges}
+                  epsilon={epsilonFraction}
+                  edgeStretches={edgeStretches}
+                  overstretchedEdges={overstretchedEdges}
+                  overshrinkedEdges={overshrinkedEdges}
+                  frozenPoints={frozenFigurePoints}
+                  onPointGrab={(ev, idx) => {
+                    ev.stopPropagation()
+                    addFrozenFigurePoint(idx)
+                  }}
+                  onPointRelease={(ev, idx) => {
+                    let wasFrozen = frozenFigurePoints.has(idx);
+                    if (!multiselectMode) {
+                      removeFrozenFigurePoint(idx)
+                    }
+                    if (powerClickMode) {
+                      powerClick(idx);
+                      addFrozenFigurePoint(idx);
+                    }
+                  }}
+                  onPointDrag={(ev, idx) => {
+                    const localDelta = clientDeltaToLocalSpaceDelta([ev.movementX, ev.movementY])
+                    updateVerticePosition(idx, localDelta)
+                  }}
+                />
+              </Group>
             </Group>
           </Group>
-        </Group>
-      </svg>
-    </AspectRatioBox>
-    <div className={styles.topRight}>
-      <button onClick={togglePlaying}>{playing ? '(_) Physics: on' : '(_) Physics: off'}</button>
-      <button onClick={() => toggleSimMode('inflate')}>{simMode == 'inflate' ? '(I) Inflating' : '(I) Inflate'}</button>
-      <button onClick={() => toggleSimMode('stretch')}>{simMode == 'stretch' ? '(O) Stretching' : '(O) Stretch'}</button>
-      <button onClick={() => toggleSimMode('gravity')}>{simMode == 'gravity' ? '(G) Gravitating' : '(G) Gravity'}</button>
-      <button onClick={() => toggleSimMode('winningGravity')}>{simMode == 'winningGravity' ? '(U) Holing...' : '(U) Hole It'}</button>
-      <button onClick={singleShake}>(K) Shake</button>
-      <button onClick={() => snapVertices()}>(S) Snap</button>
-      <button onClick={randomize}>Randomize</button>
-      <button onClick={reset}>Reset</button>
-      <Spacer />
-      <button style={{ height: '2.5em' }} onClick={() => setMultiselectMode(!multiselectMode)}>{multiselectMode ? 'Selecting...' : '⬆️ Glue Points'}</button>
-      <button style={{ height: '2.5em' }} onClick={() => snapWinningVertices()}>Snap Winners</button>
-      <button disabled={!frozenFigurePoints.size} onClick={() => unselectAllGluedPoints()}>Unselect {frozenFigurePoints.size}</button>
-      <button onClick={toggleDragMode}>{dragMode ? 'Pan Enabled' : 'Pan Disabled'}</button>
-      <button onClick={() => setZoom(zoom+1)}>+</button>
-      <button onClick={() => setZoom(zoom-1)}>-</button>
-      <Flex alignItems='center'>
-        <FlexItem basis='1.5em' grow={0} shrink={0}>
-          <button style={{minWidth: 0, margin: 0}} onClick={() => setTimeScale(Math.max(timeScale-1, 1))}>-</button>
-        </FlexItem>
-        <Flex grow={1} justifyContent='center' alignSelf='stretch'>
-          Speed: {timeScale}
+        </svg>
+      </AspectRatioBox>
+      <div className={styles.topRight}>
+        <button onClick={togglePlaying}>{playing ? '(_) Physics: on' : '(_) Physics: off'}</button>
+        <button onClick={() => toggleSimMode('inflate')}>{simMode == 'inflate' ? '(I) Inflating' : '(I) Inflate'}</button>
+        <button onClick={() => toggleSimMode('stretch')}>{simMode == 'stretch' ? '(O) Stretching' : '(O) Stretch'}</button>
+        <button onClick={() => toggleSimMode('gravity')}>{simMode == 'gravity' ? '(G) Gravitating' : '(G) Gravity'}</button>
+        <button onClick={() => toggleSimMode('winningGravity')}>{simMode == 'winningGravity' ? '(U) Holing...' : '(U) Hole It'}</button>
+        <button onClick={singleShake}>(K) Shake</button>
+        <button onClick={() => snapVertices()}>(S) Snap</button>
+        <button onClick={randomize}>Randomize</button>
+        <button onClick={reset}>Reset</button>
+        <Spacer />
+        <button style={{ height: '2.5em' }} onClick={() => setMultiselectMode(!multiselectMode)}>{multiselectMode ? 'Selecting...' : '⬆️ Glue Points'}</button>
+        <button style={{ height: '2.5em' }} onClick={() => snapWinningVertices()}>Snap Winners</button>
+        <button disabled={!frozenFigurePoints.size} onClick={() => unselectAllGluedPoints()}>Unselect {frozenFigurePoints.size}</button>
+        <button onClick={toggleDragMode}>{dragMode ? 'Pan Enabled' : 'Pan Disabled'}</button>
+        <button onClick={() => setZoom(zoom+1)}>+</button>
+        <button onClick={() => setZoom(zoom-1)}>-</button>
+        <Flex alignItems='center'>
+          <FlexItem basis='1.5em' grow={0} shrink={0}>
+            <button style={{minWidth: 0, margin: 0}} onClick={() => setTimeScale(Math.max(timeScale-1, 1))}>-</button>
+          </FlexItem>
+          <Flex grow={1} justifyContent='center' alignSelf='stretch'>
+            Speed: {timeScale}
+          </Flex>
+          <FlexItem basis='1.5em' grow={0} shrink={0}>
+            <button style={{minWidth: 0, margin: 0}} onClick={() => setTimeScale(timeScale+1)}>+</button>
+          </FlexItem>
         </Flex>
-        <FlexItem basis='1.5em' grow={0} shrink={0}>
-          <button style={{minWidth: 0, margin: 0}} onClick={() => setTimeScale(timeScale+1)}>+</button>
-        </FlexItem>
-      </Flex>
-      <Flex alignItems='center'>
-        <FlexItem basis='1.5em' grow={0} shrink={0}>
-          <button style={{minWidth: 0, margin: 0}} onClick={() => setPointRadius(Math.max(pointRadius-0.5, 0.5))}>-</button>
-        </FlexItem>
-        <Flex grow={1} justifyContent='center' alignSelf='stretch'>
-          Size: {pointRadius}
+        <Flex alignItems='center'>
+          <FlexItem basis='1.5em' grow={0} shrink={0}>
+            <button style={{minWidth: 0, margin: 0}} onClick={() => setPointRadius(Math.max(pointRadius-0.5, 0.5))}>-</button>
+          </FlexItem>
+          <Flex grow={1} justifyContent='center' alignSelf='stretch'>
+            Size: {pointRadius}
+          </Flex>
+          <FlexItem basis='1.5em' grow={0} shrink={0}>
+            <button style={{minWidth: 0, margin: 0}} onClick={() => setPointRadius(pointRadius+0.5)}>+</button>
+          </FlexItem>
         </Flex>
-        <FlexItem basis='1.5em' grow={0} shrink={0}>
-          <button style={{minWidth: 0, margin: 0}} onClick={() => setPointRadius(pointRadius+0.5)}>+</button>
-        </FlexItem>
-      </Flex>
-      <pre className={styles.score}>
-        Zoom: {zoom > 0 && '+'}{zoom < 0 && '-'}{Math.abs(zoom)}
-      </pre>
-      <pre className={styles.score}>
-        Epsilon: {_.round(epsilonFraction, 4)}
-      </pre>
-      <pre className={styles.score}>
-        Score: {_.padStart(score, 4, ' ')}
-      </pre>
-      <pre className={styles.score}>
-        Best: {_.padStart(stats.min_dislikes, 5, ' ')}
-      </pre>
+        <pre className={styles.score}>
+          Zoom: {zoom > 0 && '+'}{zoom < 0 && '-'}{Math.abs(zoom)}
+        </pre>
+        <pre className={styles.score}>
+          Epsilon: {_.round(epsilonFraction, 4)}
+        </pre>
+        <pre className={styles.score}>
+          Score: {_.padStart(score, 4, ' ')}
+        </pre>
+        <pre className={styles.score}>
+          Best: {_.padStart(stats.min_dislikes, 5, ' ')}
+        </pre>
+      </div>
+      <div className={styles.bottomRight}>
+      </div>
     </div>
-    <div className={styles.bottomRight}>
-    </div>
-    <pre className={styles.hotkeysInstruction}>
-    {`
-Extra hotkeys:
+    <Flex alignItems='flex-start' style={{ padding: '1em 0 2em' }}>
+      <pre className={styles.hotkeysInstruction}>
+        {unpad(`
+          Extra hotkeys:
 
-          E  - rotate +CW
-          Q  - rotate -CW
-          D  - flip vertical
-          A  - mirror horiztl
+                    E  - rotate +CW
+                    Q  - rotate -CW
+                    D  - flip vertical
+                    A  - mirror horiztl
 
-         up  - move up
-       down  - move down
-      right  - move left
-       left  - move right
+                  up  - move up
+                down  - move down
+                right  - move left
+                left  - move right
 
-   shift+up  - power move up
- shift+down  - power move down
-shift+right  - power move left
- shift+left  - power move right
-    `.trim()}
-    </pre>
+            shift+up  - power move up
+          shift+down  - power move down
+          shift+right  - power move left
+          shift+left  - power move right
+        `)}
+      </pre>
+    <FlexItem style={{ marginLeft: '1em' }}>
+      <pre>
+        {unpad(`
+        Physics consts:
+
+        `)}
+      </pre>
+      <textarea
+        className={styles.configEditor}
+        style={{ width: '100%' }}
+        value={forceConstsInput}
+        onInput={(ev) => {
+          const value = ev.target.value
+          setForceConstsInput(value)
+          try {
+            const updatedJson = JSON.parse(value)
+            Object.assign(FORCE_CONSTS, updatedJson)
+          } catch (err) {
+            Object.assign(FORCE_CONSTS, DEFAULT_FORCE_CONSTS)
+          }
+        }}
+      />
+    </FlexItem>
+    </Flex>
     </div>
   )
 }

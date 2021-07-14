@@ -15,6 +15,17 @@ export function getSearchQuery() {
   return qs.parse(search[0] == '?' ? search.slice(1) : search)
 }
 
+export function unpad(str) {
+  const lines = str.split('\n')
+  const firstMeaningfulLine = _.find(lines, l => !_.isEmpty(l))
+  if (!firstMeaningfulLine) {
+    return ''
+  }
+  const padding = firstMeaningfulLine.match(/^\ */)[0].length
+  console.log(lines)
+  return lines.map(l => l.slice(padding)).join('\n')
+}
+
 export function naturalSort(a, b) {
   const numA = parseInt(a)
   const numB = parseInt(b)

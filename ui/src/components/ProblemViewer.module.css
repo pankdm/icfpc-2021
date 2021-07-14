@@ -31,14 +31,12 @@
   text-align: left;
 }
 
-input {
-  width: 10em;
+input,
+textarea {
   font-family: 'Courier New', Courier, monospace;
   font-weight: bold;
-  text-align: center;
-  font-size: 100%;
-  min-width: 7em;
   outline: none;
+  font-size: 100%;
   padding: .25em;
 }
 button {
@@ -58,7 +56,7 @@ button:active {
 }
 
 .hotkeys-instruction {
-  margin: 1em 0;
+  margin: 0;
 }
 
 pre {
@@ -66,6 +64,24 @@ pre {
   font-weight: bold;
   margin: 0;
   white-space: pre-wrap;
+}
+
+.username-input {
+  width: 10em;
+  min-width: 7em;
+  text-align: center;
+}
+
+.config-editor {
+  background-color: transparent;
+  border: none;
+  font-size: 1em;
+  font-weight: bold;
+  padding: 0;
+  margin: 0;
+  white-space: pre-wrap;
+  height: 12em;
+  resize: none;
 }
 
 .bottom-right {
