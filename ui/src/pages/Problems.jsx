@@ -17,7 +17,13 @@ function Problems() {
   }
   const [solutionId, setSolutionId] = useState(null)
   const { data: problems } = useProblems()
-  const { data: problem } = useProblem(problemId, { enabled: !!problemId })
+  const { data: _problem } = useProblem(problemId, { enabled: !!problemId })
+  const problem = _problem && _.merge({}, _problem, {
+    holeEdgeVerticePairs: _.map(_problem.hole, (h, idx) => [
+      h,
+      _problem.hole[(idx+1)%_problem.hole.length]
+    ])
+  })
   const { data: solutions, refetch: refetchSolutions } = useSolutions(problemId, { enabled: !!problemId, refreshInterval: 60000 })
   const { data: solution, refetch: refetchSolution } = useSolution(problemId, solutionId, { enabled: !!problemId && !!solutionId })
   const { data: stats } = useStats()

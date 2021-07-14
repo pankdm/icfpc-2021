@@ -10,7 +10,7 @@ import Grid from './svg/Grid.jsx'
 import Hole from './svg/Hole.jsx'
 import Figure from './svg/Figure.jsx'
 import styles from './ProblemViewer.module.css'
-import { getDistanceMap, getDistances, getScore, snapVecs, vecAdd, vecSub, vecMult, vecNorm, vecEquals, distance } from '../utils/graph.js'
+import { getDistanceMap, getDistances, getScore, snapVecs, vecAdd, vecSub, vecMult, vecNorm, distance, checkEdgesIntersect } from '../utils/graph.js'
 import { FORCE_CONSTS, stretchLoop, inflateLoop, relaxLoop, gravityLoop, applyShake, winningGraityLoop } from '../utils/physics.js'
 import useOnChange, { useOnChangeValues } from '../utils/useOnChange.js'
 import useAnimLoop from '../utils/useAnimLoop.js'
@@ -20,7 +20,6 @@ import useBlip from '../utils/useBlip.js'
 import useDebounce from '../utils/useDebounce.js'
 import useLocalStorage from '../utils/useLocalStorage.js'
 import useDOMEvent from '../utils/useDOMEvent.js'
-import { useGlobalVar } from '../utils/useGlobalVar.js'
 import { unpad } from '../utils/utils.js'
 
 const DEFAULT_FORCE_CONSTS = {...FORCE_CONSTS}
@@ -28,7 +27,7 @@ const DEFAULT_FORCE_CONSTS = {...FORCE_CONSTS}
 export default function ProblemViewer({ problemId, problem, solution, onSaveSolution, stats, ...props }) {
   const defaultForceConstsInput = JSON.stringify(DEFAULT_FORCE_CONSTS, undefined, 2)
   const [ forceConstsInput, setForceConstsInput ] = useState(defaultForceConstsInput)
-  const { hole, epsilon, figure, bonuses } = problem
+  const { hole, holeEdgeVerticePairs, epsilon, figure, bonuses } = problem
   const epsilonFraction = epsilon/1e6
   const zeroPointLocation = useRef()
   const getZeroPointClientLocation = () => {
@@ -166,6 +165,8 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   }, [figure])
   const getCurrentVertices = () => overriddenVertices.current || (solution && solution.vertices) || figure.vertices
   const currentVertices = getCurrentVertices()
+  const getCurrentEdgeVerticePairs = () => _.map(figure.edges, ([v1, v2]) => [currentVertices[v1], currentVertices[v2]])
+  const currentEdgeVerticePairs = getCurrentEdgeVerticePairs()
   const currentDistances = useMemo(() => {
     return getDistances(currentVertices, figure.edges)
   }, [currentVertices, figure])
@@ -186,7 +187,11 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     ]
   }, [figure, optimalDistancesMap, currentDistances, epsilon])
   const hasBrokenEdges = _.size(overstretchedEdges) > 0 || _.size(overshrinkedEdges) > 0
-  const debncHasBrokenEdges = useDebounce(hasBrokenEdges, hasBrokenEdges ? 0 : 500)
+  const hasIntersectingEdges = _.some(currentEdgeVerticePairs, figureEdgePoints => {
+    return _.some(holeEdgeVerticePairs, holeEdgePoints => checkEdgesIntersect(figureEdgePoints, holeEdgePoints))
+  })
+  const badForSubmission = hasBrokenEdges || hasIntersectingEdges
+  const debncBadForSubmission = useDebounce(badForSubmission, badForSubmission ? 0 : 500)
   const score = useMemo(() => {
     return Math.floor(getScore(hole, currentVertices))
   }, [currentVertices, hole])
@@ -458,9 +463,9 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         <div className={styles.topLeft}>
           <TrafficLight
             size='14em'
-            red={debncHasBrokenEdges}
+            red={debncBadForSubmission}
             yellow={false}
-            green={!debncHasBrokenEdges}
+            green={!debncBadForSubmission}
           />
         <Flex>
           <div>
@@ -472,7 +477,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
             />
             <button
               disabled={saved}
-              style={_.merge({}, debncHasBrokenEdges && { opacity: 0.75 })}
+              style={_.merge({}, debncBadForSubmission && { opacity: 0.75 })}
               onClick={() => {
                 stopPlaying()
                 snapVertices()
@@ -480,13 +485,13 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
                 toggleSaved()
               }
             }>
-              {debncHasBrokenEdges
+              {debncBadForSubmission
                 ? (saved ? 'Okay...' : 'Save?')
                 : (saved ? 'Saved' : 'Save')}
             </button>
             <button
               disabled={saved}
-              style={_.merge({}, debncHasBrokenEdges && { opacity: 0.75 })}
+              style={_.merge({}, debncBadForSubmission && { opacity: 0.75 })}
               onClick={() => {
                 stopPlaying()
                 snapVertices()
@@ -494,7 +499,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
                 toggleSaved()
               }
             }>
-              {debncHasBrokenEdges
+              {debncBadForSubmission
                 ? (saved ? 'Okay...' : 'Save for Submit?')
                 : (saved ? 'Saved' : 'Save for Submit')}
             </button>
