@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react'
-import _, { update } from 'lodash'
+import React, { useMemo, useRef, useState } from 'react'
+import _ from 'lodash'
 import AspectRatioBox from './AspectRatioBox.jsx'
 import Spacer from './Spacer.jsx'
 import Flex, { FlexItem } from './Flex.jsx'
@@ -11,7 +11,7 @@ import Hole from './svg/Hole.jsx'
 import Figure from './svg/Figure.jsx'
 import styles from './ProblemViewer.module.css'
 import { getDistanceMap, getDistances, getScore, snapVecs, vecAdd, vecSub, vecMult, vecNorm, vecEquals, distance } from '../utils/graph.js'
-import { FORCE_CONSTS, inflateLoop, inflateLocalLoop, relaxLoop, gravityLoop, applyShake, winningGraityLoop } from '../utils/physics.js'
+import { FORCE_CONSTS, stretchLoop, inflateLoop, relaxLoop, gravityLoop, applyShake, winningGraityLoop } from '../utils/physics.js'
 import useOnChange, { useOnChangeValues } from '../utils/useOnChange.js'
 import useAnimLoop from '../utils/useAnimLoop.js'
 import { useHotkeys } from 'react-hotkeys-hook'
@@ -27,7 +27,8 @@ const DEFAULT_FORCE_CONSTS = {...FORCE_CONSTS}
 
 export default function ProblemViewer({ problemId, problem, solution, onSaveSolution, stats, ...props }) {
   useGlobalVar(FORCE_CONSTS)
-  const [ forceConstsInput, setForceConstsInput ] = useState(JSON.stringify(DEFAULT_FORCE_CONSTS, undefined, 2))
+  const defaultForceConstsInput = JSON.stringify(DEFAULT_FORCE_CONSTS, undefined, 2)
+  const [ forceConstsInput, setForceConstsInput ] = useState(defaultForceConstsInput)
   const { hole, epsilon, figure, bonuses } = problem
   const epsilonFraction = epsilon/1e6
   const zeroPointLocation = useRef()
@@ -208,10 +209,10 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
     const frozenPoints = frozenFigurePoints
     _.times(1 + (timeScale-1)*3, () => {
       if (simMode == 'inflate') {
-        vertices = inflateLocalLoop(vertices, { optimalDistancesMap, frozenPoints })
+        vertices = inflateLoop(vertices, { optimalDistancesMap, frozenPoints })
       }
       if (simMode == 'stretch') {
-        vertices = inflateLoop(vertices, { optimalDistancesMap, frozenPoints })
+        vertices = stretchLoop(vertices, { optimalDistancesMap, frozenPoints })
       }
       if (simMode == 'gravity') {
         vertices = gravityLoop(vertices, { frozenPoints })
@@ -300,7 +301,7 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
   const getNeighbors = (idx) => {
     return figure.edges
         .filter(([v1, v2]) => v1 === idx || v2 === idx)
-        .map(([v1, v2]) => (v1 === idx? v2: v1));
+        .map(([v1, v2]) => (v1 === idx ? v2 : v1));
   }
   const powerClick = (idx) => {
     let vertices = _.cloneDeep(getCurrentVertices())
@@ -313,7 +314,6 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
 
             const oldPt = vertices[v]
             const norm = vecNorm(vecSub(oldPt, currPt))
-            const scaled = vecMult(norm, originalDistance)
             let newPt = vecAdd(vecMult(norm, originalDistance), currPt)
 
             vertices[v] = newPt
@@ -637,15 +637,19 @@ export default function ProblemViewer({ problemId, problem, solution, onSaveSolu
         `)}
       </pre>
     <FlexItem style={{ marginLeft: '1em' }}>
-      <pre>
-        {unpad(`
+      <pre style={{ padding: '1em 0 0' }}>
         Physics consts:
-
-        `)}
+        {`    `}
+        {forceConstsInput != defaultForceConstsInput &&
+          <span style={{ cursor: 'pointer' }} onClick={() => {
+            setForceConstsInput(JSON.stringify(DEFAULT_FORCE_CONSTS, undefined, 2))
+            Object.assign(FORCE_CONSTS, DEFAULT_FORCE_CONSTS)
+          }}>reset</span>
+        }
       </pre>
       <textarea
         className={styles.configEditor}
-        style={{ width: '100%' }}
+        style={{ height: '20em' }}
         value={forceConstsInput}
         onInput={(ev) => {
           const value = ev.target.value

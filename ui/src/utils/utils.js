@@ -22,7 +22,6 @@ export function unpad(str) {
     return ''
   }
   const padding = firstMeaningfulLine.match(/^\ */)[0].length
-  console.log(lines)
   return lines.map(l => l.slice(padding)).join('\n')
 }
 

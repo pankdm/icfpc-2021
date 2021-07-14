@@ -3,12 +3,20 @@ import _ from 'lodash'
 import { defineGlobalVar } from './useGlobalVar.js'
 
 const GLOBAL_FORCE_CONSTS = {
-  linearGravityConst: 100,
-  holeGravityConst: 50,
-  simpleRepelConst: 10,
-  repelConst: 50,
-  maxRepel: 100,
   springConst: 200,
+  inflateConst: 50,
+  inflateSteepPower: 2.5,
+  inflateMaxForce: 100,
+  stretchConst: 50,
+  stretchSteepPower: 2.5,
+  stretchMaxForce: 100,
+  gravityConst: 50,
+  gravitySteepPower: 2,
+  gravityMaxForce: 100,
+  holeGravityConst: 50,
+  holeGravitySteepPower: 3,
+  holeGravityMaxForce: 100,
+  simpleRepelConst: 10,
 }
 
 // global obj to mutate above values
@@ -17,14 +25,6 @@ window.FORCE_CONSTS = FORCE_CONSTS
 const TIME_STEP = 0.01
 const ZERO_VEC = [0, 0]
 
-export const getLinearFravityForce = (point, gravityCenter) => {
-  const toGravityCenter = vecSub(gravityCenter, point)
-  if (isVecZero(toGravityCenter)) {
-    return [0, 0]
-  }
-  const { linearGravityConst } = GLOBAL_FORCE_CONSTS
-  return vecClampAbs(vecMult(toGravityCenter, linearGravityConst), 0, linearGravityConst)
-}
 export const getAttractForce = (point, otherPoint, { steepPower=2, attractConst=50, maxForce=100 }) => {
   const toOtherPoint = vecSub(otherPoint, point)
   if (isVecZero(toOtherPoint)) {
@@ -41,9 +41,8 @@ export const getRepelForce = (point, otherPoint, { steepPower=2, repelConst=50, 
   const dist = distance(point, otherPoint)
   return vecClampAbs(vecMult(fromOtherPoint, repelConst/(dist**steepPower)), 0, maxForce)
 }
-const getSpringForce = (point, otherPoint, { optimalDistance }) => {
+const getSpringForce = (point, otherPoint, { optimalDistance, springConst }) => {
   const dist = distance(point, otherPoint)
-  const { springConst } = GLOBAL_FORCE_CONSTS
   let mult = springConst * (1 / dist - 1 / optimalDistance)
   // HACK: cap spring force, to avoid small edges oscillating
   mult = Math.sign(mult) * Math.min(Math.abs(mult), dist*0.75)
@@ -60,7 +59,8 @@ const mapApplyForce = (vertices, forceFn) => vertices.map((v, idx) => applyForce
 // mutating map-apply force
 const mapApplyForce_ = (vertices, forceFn) => vertices.forEach((v, idx) => applyForce_(v, forceFn(v, idx)))
 
-export const applyConstraints = (vertices, { optimalDistancesMap, frozenPoints, mutate=false }) => {
+export const applyConstraints = (vertices, { optimalDistancesMap, frozenPoints }) => {
+  const { springConst } = GLOBAL_FORCE_CONSTS
   const getTensionForce = (v, idx) => {
     if (frozenPoints && frozenPoints.has(idx)) {
       return ZERO_VEC
@@ -70,7 +70,7 @@ export const applyConstraints = (vertices, { optimalDistancesMap, frozenPoints, 
       if (ov == v) return
       const optimalDistance = optimalDistancesMap[idx][ovIdx] || null
       if (optimalDistance) {
-        const springForce = getSpringForce(v, ov, { optimalDistance })
+        const springForce = getSpringForce(v, ov, { optimalDistance, springConst })
         sumForce = vecAdd_(sumForce, springForce)
       }
     })
@@ -79,12 +79,14 @@ export const applyConstraints = (vertices, { optimalDistancesMap, frozenPoints, 
   return mapApplyForce(vertices, getTensionForce)
 }
 
-export const applyGravity = (vertices, { gravityCenter, frozenPoints }) => {
+export const applyGravity = (vertices, { frozenPoints }) => {
+  const gravityCenter = vecMean(vertices)
+  const { gravityConst, gravitySteepPower } = GLOBAL_FORCE_CONSTS
   const getGravityForce = (v, idx) => {
     if (frozenPoints && frozenPoints.has(idx)) {
       return ZERO_VEC
     }
-    return getLinearFravityForce(v, gravityCenter)
+    return getAttractForce(v, gravityCenter, { attractConst: gravityConst, steepPower: gravitySteepPower })
   }
   return mapApplyForce(vertices, getGravityForce)
 }
@@ -114,18 +116,7 @@ export const applyShake = (vertices, { maxAmplitude, frozenPoints }) => {
   return newVertices
 }
 
-export const inflateSimpleRadial = (vertices, { meanCoords, simpleRepelConst, frozenPoints }) => {
-  const getInflateForce = (v, idx) => {
-    if (frozenPoints && frozenPoints.has(idx)) {
-      return ZERO_VEC
-    }
-    let repelForce = getSimpleRadialForce(v, meanCoords, simpleRepelConst)
-    return repelForce
-  }
-  return mapApplyForce(vertices, getInflateForce)
-}
-
-export const inflate = (vertices, { steepPower, repelConst, maxRepel, frozenPoints }) => {
+export const inflate = (vertices, { steepPower, repelConst, maxForce, frozenPoints }) => {
   const getInflateForce = (v, idx) => {
     if (frozenPoints && frozenPoints.has(idx)) {
       return ZERO_VEC
@@ -133,7 +124,7 @@ export const inflate = (vertices, { steepPower, repelConst, maxRepel, frozenPoin
     let repelForce = [0, 0]
     vertices.forEach((ov, ovIdx) => {
       if (ov == v) return
-      const _repelForce = getRepelForce(v, ov, { steepPower, repelConst, maxForce: maxRepel })
+      const _repelForce = getRepelForce(v, ov, { steepPower, repelConst, maxForce })
       repelForce = vecAdd_(repelForce, _repelForce)
     })
     return repelForce
@@ -142,13 +133,15 @@ export const inflate = (vertices, { steepPower, repelConst, maxRepel, frozenPoin
 }
 
 // Top Level Anim Loop Simulation Functions
-export const inflateLoop = (vertices, { optimalDistancesMap, frozenPoints }) => {
-  vertices = inflate(vertices, { frozenPoints })
+export const stretchLoop = (vertices, { optimalDistancesMap, frozenPoints }) => {
+  const { stretchConst, stretchSteepPower, stretchMaxForce } = GLOBAL_FORCE_CONSTS
+  vertices = inflate(vertices, { frozenPoints, repelConst: stretchConst, steepPower: stretchSteepPower, maxForce: stretchMaxForce })
   vertices = applyConstraints(vertices, { optimalDistancesMap, frozenPoints })
   return vertices
 }
-export const inflateLocalLoop = (vertices, { optimalDistancesMap, frozenPoints }) => {
-  vertices = inflate(vertices, { frozenPoints, steepPower: 2.5 })
+export const inflateLoop = (vertices, { optimalDistancesMap, frozenPoints }) => {
+  const { inflateConst, inflateSteepPower, inflateMaxForce } = GLOBAL_FORCE_CONSTS
+  vertices = inflate(vertices, { frozenPoints, repelConst: inflateConst, steepPower: inflateSteepPower, maxForce: inflateMaxForce })
   vertices = applyConstraints(vertices, { optimalDistancesMap, frozenPoints })
   return vertices
 }
@@ -158,10 +151,10 @@ export const relaxLoop = (vertices, { optimalDistancesMap, frozenPoints }) => {
 }
 
 export const gravityLoop = (vertices, { frozenPoints }) => {
-  const meanCoords = vecMean(vertices)
-  return applyGravity(vertices, { gravityCenter: meanCoords, frozenPoints })
+  return applyGravity(vertices, { frozenPoints })
 }
 
 export const winningGraityLoop = (vertices, { holeVertcies, frozenPoints }) => {
-  return applyMultiGravity(vertices, { gravityPoints: holeVertcies, steepPower: 3, frozenPoints })
+  const { holeGravityConst, holeGravitySteepPower } = GLOBAL_FORCE_CONSTS
+  return applyMultiGravity(vertices, { gravityPoints: holeVertcies, steepPower: holeGravitySteepPower, gravityConst: holeGravityConst, frozenPoints })
 }
