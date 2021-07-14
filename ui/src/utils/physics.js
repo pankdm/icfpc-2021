@@ -27,7 +27,7 @@ const ZERO_VEC = [0, 0]
 export const getAttractForce = (point, otherPoint, { steepPower=2, attractConst=50, maxForce=100 }) => {
   const toOtherPoint = vecSub(otherPoint, point)
   if (isVecZero(toOtherPoint)) {
-    return vecRand(maxForce)
+    return ZERO_VEC
   }
   const dist = distance(point, otherPoint)
   return vecClampAbs(vecMult(toOtherPoint, attractConst/(dist**steepPower)), 0, Math.min(dist, maxForce))
