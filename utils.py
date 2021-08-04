@@ -19,11 +19,12 @@ class JSLikeObject():
     def __repr__(self):
         return str(self)
 
-
-def read_problem(problem_id, root='.'):
-    with open(f'{root}/problems/{problem_id}') as f:
+def read_json(file_name):
+    with open(file_name) as f:
         return json.loads(f.read())
 
+def read_problem(problem_id, root='.'):
+    return read_json(f'{root}/problems/{problem_id}')
 
 def bonus_graph():
     num_problems = len([name for name in os.listdir('problems')])

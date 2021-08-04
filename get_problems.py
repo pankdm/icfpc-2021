@@ -22,6 +22,8 @@ def submit_solution(problem_id, js_str):
     print ('Submitting problem {} -> {} {}'.format(
         problem_id, r.status_code, http_error(r.status_code)
     ))
+    if r.status_code != 200:
+        print ('   {}'.format(r.content))
 
 
 
