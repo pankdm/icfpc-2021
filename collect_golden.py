@@ -13,6 +13,7 @@ from utils import read_problem, read_json
 LAST_PROBLEM = 132
 EPSILON = 1e-6
 
+DEBUG = True
 
 def dist2(pt1, pt2):
     x1, y1 = pt1
@@ -21,7 +22,7 @@ def dist2(pt1, pt2):
 
 
 def check_distance(spec, orig_dist, new_dist):
-    if abs(1.0 * new_dist / orig_dist - 1) <= spec['epsilon'] / 10**6:
+    if abs(new_dist - orig_dist) * 10**6 <= spec['epsilon'] * orig_dist:
         return True
     return False
 
@@ -84,6 +85,8 @@ def validate_solution(spec, solution):
     # check that coordinates integers
     for (x, y) in new_vertices:
         if x != round(x) or y != round(y):
+            if DEBUG:
+                print ('  Coordinates ({}, {}) are not integers'.format(x, y))
             return False
 
     # check distances
@@ -92,6 +95,9 @@ def validate_solution(spec, solution):
         new_dist = dist2(new_vertices[a], new_vertices[b])
         ok = check_distance(spec, orig_dist, new_dist)
         if not ok:
+            if DEBUG:
+                print ('  Edge ({}, {}) has wrong size: {} (orig={})'.format(
+                    a, b, new_dist, orig_dist))
             return False
     
     # check that all edges are not intersecting
@@ -99,7 +105,8 @@ def validate_solution(spec, solution):
         A = new_vertices[a]
         B = new_vertices[b]
         if not is_edge_inside(spec, A, B):
-            # print ('Edge {}-{} ({} to {}) is not inside'.format(a, b, A, B))
+            if DEBUG:
+                print ('  Edge {}-{} ({} to {}) is not inside'.format(a, b, A, B))
             return False
 
     return True
@@ -139,12 +146,14 @@ def main():
         best_file = None
 
         for file in solutions[i_str]:
-            # print('processing {}'.format(file))
+            if DEBUG:
+                print('processing {}'.format(file))
             solution = read_json(file)
             ok = validate_solution(spec, solution)
             if ok:
                 dislikes = count_dislikes(spec, solution)
-                # print ('  solution {} is OK, dislikes = {}'.format(file, dislikes))
+                if DEBUG:
+                    print ('  solution {} is OK, dislikes = {}'.format(file, dislikes))
                 if best_dislikes is None or dislikes < best_dislikes:
                     best_dislikes = dislikes
                     best_file = file

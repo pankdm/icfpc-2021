@@ -45,9 +45,10 @@ function StatsRow({ problemId, problem, stat, fromBonuses, ...props }) {
           </Flex>
         </Flex>
       </td>
-      <td> {stat['dislikes'] == stat['min_dislikes'] ? '✅ ': ''}</td>
+      {/* <td> {stat['dislikes'] == stat['min_dislikes'] ? '✅ ': ''}</td> */}
       <td> {stat['dislikes']}</td>
-      <td> {stat['min_dislikes']}</td>
+      <td> {stat['min_dislikes_contest']} {stat['dislikes'] == stat['min_dislikes_contest'] ? '✅ ': ''}</td>
+      <td> {stat['min_dislikes']} {stat['dislikes'] == stat['min_dislikes'] ? '✅ ': ''}</td>
       <td> {stat['score']}</td>
       <td> {stat['max_score']}</td>
       <td> {stat['delta']}</td>
@@ -115,9 +116,10 @@ export default function Scores(props) {
         <tbody>
           <tr>
             <Th sortOrder={getSortOrder('id')} onClick={() => toggleSort('id', 'asc')}> problem </Th>
-            <Th> best? </Th>
+            {/* <Th> best? </Th> */}
             <Th sortOrder={getSortOrder('dislikes')} onClick={() => toggleSort('dislikes', 'desc')}> your dislikes</Th>
-            <Th sortOrder={getSortOrder('min_dislikes')} onClick={() => toggleSort('min_dislikes', 'desc')}> minimal dislikes </Th>
+            <Th sortOrder={getSortOrder('min_dislikes_contest')} onClick={() => toggleSort('min_dislikes_contest', 'desc')}> minimal (contest) </Th>
+            <Th sortOrder={getSortOrder('min_dislikes')} onClick={() => toggleSort('min_dislikes', 'desc')}> minimal </Th>
             <Th sortOrder={getSortOrder('score')} onClick={() => toggleSort('score', 'desc')}> your score </Th>
             <Th sortOrder={getSortOrder('max_score')} onClick={() => toggleSort('max_score', 'desc')}> max score </Th>
             <Th sortOrder={getSortOrder('delta')} onClick={() => toggleSort('delta', 'desc')}> delta </Th>

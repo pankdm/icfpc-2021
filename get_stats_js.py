@@ -39,12 +39,12 @@ def parse_problems_html(html):
     # skipping header
     output = {}
 
-
     for row in rows[1:]:
-        td1, td2, td3 = row.find_all('td')
+        td1, td2, td3, td4 = row.find_all('td')
         problem_id = int(td1.string)
         dislikes = td2.string
-        min_dislikes = td3.string
+        min_dislikes_contest = td3.string
+        min_dislikes = td4.string
         spec = read_problem(problem_id, root=root)
         mult = 1000 * math.log2(len(spec['figure']['vertices']) * len(spec['figure']['edges']) * len(spec['hole']) / 6.0)
         max_score = int(math.ceil(mult))
@@ -59,10 +59,11 @@ def parse_problems_html(html):
         if min_dislikes is not None:
             min_dislikes = int(min_dislikes)
 
-        # print (problem, dislikes, min_dislikes)
+        print (problem_id, dislikes, min_dislikes_contest, min_dislikes)
         output[problem_id] = {
             'dislikes': dislikes,
             'min_dislikes': min_dislikes,
+            'min_dislikes_contest': min_dislikes_contest,
             'score': my_score,
             'max_score': max_score,
         }
@@ -71,7 +72,7 @@ def parse_problems_html(html):
 if __name__ == "__main__":
     html = get_problem_stats()
     output = parse_problems_html(html)
-    file_name = "{}/data/stats_js.json".format(root)
+    file_name = "{}/data/stats_after_party.json".format(root)
     print ('Writing stats to {}'.format(file_name))
     with open(file_name, 'w') as f:
         f.write(json.dumps(output, indent=4))
