@@ -47,8 +47,8 @@ function StatsRow({ problemId, problem, stat, fromBonuses, ...props }) {
       </td>
       {/* <td> {stat['dislikes'] == stat['min_dislikes'] ? '✅ ': ''}</td> */}
       <td> {stat['dislikes']}</td>
-      <td> {stat['min_dislikes_contest']} {stat['dislikes'] == stat['min_dislikes_contest'] ? '✅ ': ''}</td>
-      <td> {stat['min_dislikes']} {stat['dislikes'] == stat['min_dislikes'] ? '✅ ': ''}</td>
+      <td> {stat['dislikes'] == stat['min_dislikes_contest'] ? '✅ ': ''} {stat['min_dislikes_contest']}</td>
+      <td> {stat['dislikes'] == stat['min_dislikes'] ? '✅ ': ''} {stat['min_dislikes']}</td>
       <td> {stat['score']}</td>
       <td> {stat['max_score']}</td>
       <td> {stat['delta']}</td>
