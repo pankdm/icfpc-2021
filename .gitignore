@@ -139,3 +139,9 @@ solutions/current
 solutions/solver
 
 data/stats_js.json
+
+
+# Rust
+**/*.rs.bk
+rust_solve/target/
+Cargo.lock
