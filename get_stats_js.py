@@ -59,7 +59,7 @@ def parse_problems_html(html):
         if min_dislikes is not None:
             min_dislikes = int(min_dislikes)
 
-        print (problem_id, dislikes, min_dislikes_contest, min_dislikes)
+        # print (problem_id, dislikes, min_dislikes_contest, min_dislikes)
         output[problem_id] = {
             'dislikes': dislikes,
             'min_dislikes': min_dislikes,

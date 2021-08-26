@@ -96,7 +96,7 @@ async function createServer() {
   })
 
   app.get('/api/stats', (req, res) => {
-    shell.exec('../get_stats_js.py ../')
+    // shell.exec('../get_stats_js.py ../')
     // const stats = JSON.parse(fs.readFileSync('../data/stats_js.json'))
 
     // switch to frozen stats
